@@ -1,0 +1,29 @@
+{% extends 'base/global_base.html' %}
+{% load static %}
+{% block head %}
+{{block.super}}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="{% static 'css/mdb.min.css' %}">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+<style>
+    .form-control {
+        margin-bottom: 1.5rem;
+    }
+</style>
+<script src="{% static 'js/mdb.min.js' %}" defer></script>
+{% endblock head %}
+{% block body %}
+<header>
+    {% block header %}
+    {% block navbar %}
+    {% endblock navbar %}
+    {% block sidenav %}
+    {% endblock sidenav %}
+    {% block heading %}
+    {% endblock heading %}
+    {% endblock header %}
+</header>
+<main>
+    {% block main %}{% endblock main %}
+</main>
+{% endblock body %}

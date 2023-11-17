@@ -1,0 +1,20 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block header %}
+<nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand mt-2 mt-lg-0" href="#">
+            <img src="{% static 'images/logo.png' %}" height="35" alt="Feria Tabasco" loading="lazy" />
+        </a>
+        <ul class="navbar-nav ms-auto d-flex flex-row">
+            <li class="nav-item">
+                <a class="nav-link me-3 me-lg-0 dropdown-toggle hidden-arrow" href="/logout" role="button">
+                    Salir<i class="fas fa-right-from-bracket ms-2"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+{% endblock header %}
+{% block main %}
+{% endblock main %}

@@ -1,0 +1,159 @@
+{% extends 'places/base.html' %}
+{% load static %}
+{% block head %}
+{{block.super}}
+<style>
+    input[type="file"]::file-selector-button {
+        background-color: #1c3e95 !important;
+        color: white;
+    }
+</style>
+{% endblock head %}
+{% block main %}
+<div class="container-fluid p-5">
+    <div class="row gx-xl-5">
+        <div class="col-xl-3">
+            <div class="shadow-4 p-4 bg-white rounded-5 mb-4">
+                <a href="{% url 'places:main' %}" type="button" class="btn btn-primary btn-rounded btn-lg w-100"><i
+                        class="fas fa-angle-left me-3"></i>Volver al Inicio</a>
+            </div>
+            <div class="shadow-4 bg-white rounded-5 overflow-hidden d-none d-xl-block">
+                <div class="bg-light p-4 text-center">
+                    <h5 class="mb-0">Solicitudes Anteriores</h5>
+                </div>
+                <div class="p-4">
+                    {% for rq in requests %}
+                    <a href="{% url 'places:detail_request' rq.uuid %}" role="button"
+                        class="btn btn-link btn-rounded w-100 text-start text-capitalize">
+                        {{rq.folio}} - {{rq.nombre_comercial}}
+                    </a>
+                    {% empty %}
+                    <div class="alert" role="alert" data-mdb-color="warning">
+                        No se han creado solicitudes anteriormente
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-9 mb-4 mb-lg-0">
+            <div
+                class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold"><i class="fas fa-plus me-3"></i>Crear una Solicitud</h4>
+                <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block" href="{% url 'places:main' %}"
+                    role="button">Ver
+                    mis solicitudes<i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+            <div class="shadow-4 bg-white rounded-5 p-5">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% include 'base/validations.html' %}
+                    <div class="row">
+                        <div class="col">
+                            {{form.regimen_fiscal}}
+                            <label class="form-label select-label">{{form.regimen_fiscal.label}}</label>
+                        </div>
+                        <div class="col">
+                            <div class="form-outline">
+                                {{form.rfc_txt}}
+                                <label class="form-label" for="{{form.rfc_txt.id}}">{{form.rfc_txt.label}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-outline">
+                                {{form.nombre_persona}}
+                                <label class="form-label"
+                                    for="{{form.nombre_persona.id}}">{{form.nombre_persona.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-outline">
+                                {{form.nombre_comercial}}
+                                <label class="form-label"
+                                    for="{{form.nombre_comercial.id}}">{{form.nombre_comercial.label}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-outline">
+                                {{form.calle}}
+                                <label class="form-label" for="{{form.calle.id}}">{{form.calle.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-outline">
+                                {{form.no_calle}}
+                                <label class="form-label" for="{{form.no_calle.id}}">{{form.no_calle.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-outline">
+                                {{form.colonia}}
+                                <label class="form-label" for="{{form.colonia.id}}">{{form.colonia.label}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-outline">
+                                {{form.codigo_postal}}
+                                <label class="form-label"
+                                    for="{{form.codigo_postal.id}}">{{form.codigo_postal.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            {{form.estado}}
+                            <label class="form-label select-label">{{form.estado.label}}</label>
+                        </div>
+                        <div class="col">
+                            <div class="form-outline">
+                                {{form.municipio}}
+                                <label class="form-label" for="{{form.municipio.id}}">{{form.municipio.label}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-outline">
+                                {{form.cantidad_espacios}}
+                                <label class="form-label" for="{{form.cantidad_espacios.id}}">{{form.cantidad_espacios.label}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label class="form-label">{{form.constancia_fiscal.label}}</label><br>
+                            {{form.constancia_fiscal}}
+                        </div>
+                        <div class="col">
+                            <label class="form-label">{{form.comprobante_domicilio.label}}</label><br>
+                            {{form.comprobante_domicilio}}
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label class="form-label">{{form.acta_constitutiva.label}}</label><br>
+                            {{form.acta_constitutiva}}
+                        </div>
+                        <div class="col">
+                            <label class="form-label">{{form.poder_notarial.label}}</label><br>
+                            {{form.poder_notarial}}
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-6">
+                            <label class="form-label">{{form.identificacion.label}}</label><br>
+                            {{form.identificacion}}
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 col-6 mx-auto mt-3">
+                        <button class="btn btn-primary" type="submit">Guardar registro</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main %}

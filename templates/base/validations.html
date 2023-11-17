@@ -1,0 +1,51 @@
+{% if messages %}
+<div class="container-fluid p-0 m-0">
+	{% for message in messages %}
+	{% if message.tags == 'error' %}
+	<div class="alert alert-dismissible fade show" role="alert" data-mdb-color="danger"><i
+			class="fas fa-times-circle me-3"></i>{{message|safe}}<button type="button" class="btn-close"
+			data-mdb-dismiss="alert" aria-label="Close"></button></div>
+	{% endif %}
+	{% if message.tags == 'success' %}
+	<div class="alert alert-dismissible fade show" role="alert" data-mdb-color="success"><i
+			class="fas fa-check-circle me-3"></i>{{message|safe}}<button type="button" class="btn-close"
+			data-mdb-dismiss="alert" aria-label="Close"></button></div>
+	{% endif %}
+	{% if message.tags == 'warning' %}
+	<div class="alert alert-dismissible fade show" role="alert" data-mdb-color="warning"><i
+			class="fas fa-exclamation-triangle me-3"></i>{{message|safe}}<button type="button" class="btn-close"
+			data-mdb-dismiss="alert" aria-label="Close"></button></div>
+	{% endif %}
+	{% if message.tags == 'info' %}
+	<div class="alert alert-dismissible fade show" role="alert" data-mdb-color="info"><i
+			class="fas fa-chevron-circle-right me-3"></i>{{message|safe}}<button type="button" class="btn-close"
+			data-mdb-dismiss="alert" aria-label="Close"></button></div>
+	{% endif %}
+	{% endfor %}
+</div>
+{% endif %}
+{% if form.errors %}
+<div class="container-sm p-0">
+	<div class="alert alert-dismissible fade show" role="alert" data-mdb-color="danger">
+		<i class="fas fa-times-circle me-3"></i><b>Ha ocurrido un error al guardar la información</b>
+		<ul>
+			{% if form.non_field_errors %}
+			<li>{{ form.non_field_errors }}</li>
+			{% endif %}
+			{% for field in form %}
+			{% if field.errors %}
+			<li>
+				{{ field.label }}
+				<ul>
+					{% for error in field.errors %}
+					<li>{{ error }}</li>
+					{% endfor %}
+				</ul>
+			</li>
+			{% endif %}
+			{% endfor %}
+		</ul>
+		<button type="button" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
+	</div>
+</div>
+{% endif %}

@@ -1,0 +1,179 @@
+{% extends 'places/base.html' %}
+{% load static %}
+{% block head %}
+{{block.super}}
+<style>
+    input[type="file"]::file-selector-button {
+        background-color: #1c3e95 !important;
+        color: white;
+    }
+</style>
+{% endblock head %}
+{% block main %}
+<div class="container-fluid p-5">
+    <div class="row gx-xl-5">
+        <div class="col-xl-3">
+            <div class="shadow-4 p-4 bg-white rounded-5 mb-4">
+                <a href="{% url 'places:create_request' %}" type="button"
+                    class="btn btn-primary btn-rounded btn-lg w-100"><i class="fas fa-plus me-3"></i>Crear solicitud</a>
+            </div>
+            <div class="shadow-4 bg-white rounded-5 overflow-hidden d-none d-xl-block">
+                <div class="bg-light p-4 text-center">
+                    <h5 class="mb-0">Solicitudes Anteriores</h5>
+                </div>
+                <div class="p-4">
+                    {% for rq in requests %}
+                    <a href="{% url 'places:detail_request' rq.uuid %}" role="button"
+                        class="btn btn-link btn-rounded w-100 text-start text-capitalize">
+                        {{rq.folio}} - {{rq.nombre_comercial}}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-9 mb-4 mb-lg-0">
+            <div
+                class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold"><i class="fas fa-circle-info me-3"></i>Solicitud {{object.folio}}</h4>
+                <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block" href="{% url 'places:main' %}"
+                    role="button">Ver
+                    mis solicitudes<i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+            {% include 'base/validations.html' %}
+            {% if not object.comercio %}
+            <div class="alert" role="alert" data-mdb-color="warning">
+                <i class="fas fa-exclamation-triangle me-3"></i>Para continuar con el proceso de la Solicitud <a
+                    href="{% url 'places:create_shop' object.uuid %}" class="btn btn-sm btn-warning shadow-0 ms-2">Agrega un comercio</a>
+            </div>
+            {% endif %}
+            <div class="shadow-4 bg-white rounded-5 p-5">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Folio</th>
+                                <td>{{object.folio}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Régimen Fiscal</th>
+                                <td>{{object.get_regimen_fiscal_display}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">RFC</th>
+                                <td>{{object.rfc_txt|upper}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Nombre de la Persona Física o del Representante
+                                    Legal</th>
+                                <td>{{object.nombre_persona}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Nombre Comercial o Razón Social</th>
+                                <td>{{object.nombre_comercial}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Calle</th>
+                                <td>{{object.calle}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Número de Calle</th>
+                                <td>{{object.no_calle}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Colonia</th>
+                                <td>{{object.colonia}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Código Postal</th>
+                                <td>{{object.codigo_postal}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Estado</th>
+                                <td>{{object.get_estado_display}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Municipio</th>
+                                <td>{{object.municipio}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Cantidad de espacios solicitados</th>
+                                <td>{{object.cantidad_espacios}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Constancia de Situación Fiscal</th>
+                                <td><a href="{{object.constancia_fiscal.url}}" target="_blank" type="button"
+                                        class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Comprobante de Domicilio</th>
+                                <td><a href="{{object.comprobante_domicilio.url}}" target="_blank" type="button"
+                                        class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Acta Constitutiva</th>
+                                <td><a href="{{object.acta_constitutiva.url}}" target="_blank" type="button"
+                                        class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Poder Notarial</th>
+                                <td><a href="{{object.poder_notarial.url}}" target="_blank" type="button"
+                                        class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Identificación Oficial</th>
+                                <td><a href="{{object.identificacion.url}}" target="_blank" type="button"
+                                        class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div
+                id="comercio" class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold"><i class="fas fa-circle-info me-3"></i>Comercio {{object.comercio.folio}}</h4>
+            </div>
+            <div class="shadow-4 bg-white rounded-5 p-5 my-4">
+                {% if not object.comercio %}
+                <a href="{% url 'places:create_shop' object.uuid %}" type="button"
+                    class="btn btn-primary btn-rounded btn-lg w-100"><i class="fas fa-plus me-3"></i>Agregar
+                    Comercio</a>
+                {% else %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Folio</th>
+                                <td>{{object.comercio.folio}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Nombre del Comercio</th>
+                                <td>{{object.comercio.nombre}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Descripción del comercio</th>
+                                <td>{{object.comercio.descripcion|upper}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Vende alcohol</th>
+                                <td>{{object.comercio.get_vende_alcohol_display}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Cómo será el local</th>
+                                <td><a href="{{object.comercio.imagen.url}}" target="_blank" type="button"
+                                        class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main %}
