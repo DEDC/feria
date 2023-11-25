@@ -29,6 +29,20 @@
                     </a>
                     {% endfor %}
                 </div>
+                <div class="bg-light p-4 text-center">
+                    <h5 class="mb-0">Citas Agendadas</h5>
+                </div>
+                <div class="p-4">
+                    {% for dt in dates %}
+                    <a href="#" role="button" class="btn btn-link btn-rounded w-100 text-start text-capitalize">
+                        {{dt.folio}} - {{dt.fecha}} - {{dt.hora}} horas
+                    </a>
+                    {% empty %}
+                    <div class="alert" role="alert" data-mdb-color="warning">
+                        No se han agendado Citas anteriormente
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
         <div class="col-xl-9 mb-4 mb-lg-0">
@@ -171,6 +185,42 @@
                         </tbody>
                     </table>
                 </div>
+                {% endif %}
+            </div>
+            <div
+                id="citas" class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold"><i class="fas fa-circle-info me-3"></i>Cita Agendada</h4>
+            </div>
+            <div class="shadow-4 bg-white rounded-5 p-5 my-4">
+                {% if not user.citas.first %}
+                <a href="{% url 'places:create_date' object.uuid %}" type="button"
+                    class="btn btn-primary btn-rounded btn-lg w-100"><i class="fas fa-plus me-3"></i>Agendar una
+                    Cita</a>
+                {% else %}
+                {% with date=user.citas.first %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Folio</th>
+                                <td>{{date.folio}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Fecha</th>
+                                <td>{{date.fecha}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Hora</th>
+                                <td>{{date.hora}} horas</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Lugar</th>
+                                <td>Parque Tabasco Dora María</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% endwith %}
                 {% endif %}
             </div>
         </div>

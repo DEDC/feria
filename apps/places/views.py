@@ -3,9 +3,13 @@ from django.views.generic import TemplateView, CreateView, DetailView
 from django.urls import reverse_lazy, reverse
 from django.http import Http404
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
+from django.shortcuts import redirect
 # places
 from apps.places.models import Solicitudes, Comercios
 from apps.places.forms import RequestForm, ShopForm
+# dates
+from apps.dates.models import CitasAgendadas
 
 class Main(TemplateView):
     template_name = 'places/main.html'
@@ -13,7 +17,33 @@ class Main(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['requests'] = self.request.user.solicitudes.all()
+        context['dates'] = self.request.user.citas.order_by('fecha', 'hora')
         return context
+
+class Dates(TemplateView):
+    template_name = 'places/dates.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            self.request_ = Solicitudes.objects.get(uuid=self.kwargs['uuid'])
+        except Solicitudes.DoesNotExist:
+            raise Http404()
+        context['dates'] = self.request.user.citas.order_by('fecha', 'hora')
+        context['request_'] = self.request_
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        modules = 5
+        context = self.get_context_data(**kwargs)
+        date = request.POST.get('date')
+        time = request.POST.get('time')
+        scheduled = CitasAgendadas.objects.filter(fecha=date, hora=time)
+        if scheduled.count() < modules:
+            CitasAgendadas.objects.create(fecha=date, hora=time, usuario=request.user)
+            messages.success(request, 'Cita agendada exitosamente')
+            return redirect('places:detail_request', self.request_.uuid)
+        return self.render_to_response(context)
 
 class CreateRequest(SuccessMessageMixin, CreateView):
     template_name = 'places/create.html'
@@ -47,6 +77,7 @@ class Request(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['requests'] = self.request.user.solicitudes.all()
+        context['dates'] = self.request.user.citas.order_by('fecha', 'hora')
         return context
 
 class CreateShop(SuccessMessageMixin, CreateView):

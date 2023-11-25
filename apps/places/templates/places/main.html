@@ -10,25 +10,28 @@
             </div>
             <div class="shadow-4 bg-white rounded-5 overflow-hidden d-none d-xl-block">
                 <div class="bg-light p-4 text-center">
-                    <h5 class="mb-0">Mis Citas</h5>
+                    <h5 class="mb-0">Citas Agendadas</h5>
                 </div>
-                <div class="py-4 px-2">
+                <div class="p-4">
+                    {% for dt in dates %}
+                    <a href="#" role="button" class="btn btn-link btn-rounded w-100 text-start text-capitalize">
+                        {{dt.folio}} - {{dt.fecha}} - {{dt.hora}} horas
+                    </a>
+                    {% empty %}
+                    <div class="alert" role="alert" data-mdb-color="warning">
+                        No se han agendado Citas anteriormente
+                    </div>
+                    {% endfor %}
                 </div>
                 <div class="bg-light p-4 text-center">
                     <h5 class="mb-0">Años</h5>
                 </div>
                 <div class="py-4 px-2">
                     <a href="#" role="button" class="btn btn-link btn-rounded w-100 text-start text-capitalize">
-                        2019
+                        2023
                     </a>
                     <a href="#" role="button" class="btn btn-link btn-rounded w-100 text-start text-capitalize">
-                        2020
-                    </a>
-                    <a href="#" role="button" class="btn btn-link btn-rounded w-100 text-start text-capitalize">
-                        2021
-                    </a>
-                    <a href="#" role="button" class="btn btn-link btn-rounded w-100 text-start text-capitalize">
-                        2022
+                        2024
                     </a>
                 </div>
             </div>
