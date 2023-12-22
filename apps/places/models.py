@@ -34,4 +34,6 @@ class Comercios(ControlInfo):
     descripcion = models.TextField('Describe tu Comercio')
     imagen = models.ImageField('En una imagen, representa la estructura física de tu local', upload_to=UploadTo('PROPUESTA_LOCAL', 'propuestas_locales'))
     vende_alcohol = models.BooleanField('¿En su Comercio vende alcohol?', choices=((True, 'Sí'), (False, 'No')))
+    voltaje = models.CharField('¿Qué voltaje necesita su Comercio?',   max_length=10, choices=(('110', '110v'), ('220', '220v')), null=True)
+    equipos = models.CharField('¿Qué equipos usará para operar en su Comercio?', max_length=500, null=True)
     solicitud = models.OneToOneField(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='comercio')

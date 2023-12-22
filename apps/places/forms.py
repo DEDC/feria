@@ -24,7 +24,10 @@ class ShopForm(forms.ModelForm):
     class Meta:
         model = Comercios
         fields = '__all__'
-        widgets = {}
+        widgets = {
+            'equipos': forms.TextInput(attrs={'placeholder': 'Ej. Mesas, Estúfa, Hornos, Refrigeradoes, etc.'}),
+            'voltaje': forms.Select(attrs={'class': 'select'}),
+        }
     
     def __init__(self, *args, **kwargs):
         super(ShopForm, self).__init__(*args, **kwargs)

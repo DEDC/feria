@@ -74,6 +74,15 @@
                     </div>
                     <div class="row">
                         <div class="col">
+                            <div class="form-outline">
+                                {{form.equipos}}
+                                <label class="form-label"
+                                    for="{{form.equipos.id}}">{{form.equipos.label}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
                             <label class="form-check-label ms-2 fw-bold me-3">{{form.vende_alcohol.label}}</label>
                             <div class="btn-group shadow-0">
                                 <input type="radio" class="btn-check" name="vende_alcohol" value="True" id="option1"
@@ -83,6 +92,13 @@
                                     required>
                                 <label class="btn btn-light" for="option2">No</label>
                             </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            {{form.voltaje}}
+                            <label class="form-label select-label">{{form.voltaje.label}}</label>
                         </div>
                     </div>
                     <div class="d-grid gap-2 col-6 mx-auto mt-5">
