@@ -48,7 +48,7 @@
         <div class="col-xl-9 mb-4 mb-lg-0">
             <div
                 class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
-                <h4 class="mb-0 fw-bold"><i class="fas fa-circle-info me-3"></i>Solicitud {{object.folio}}</h4>
+                <h4 class="mb-0 fw-bold"><i class="fas fa-clipboard-list me-3"></i>Solicitud {{object.folio}}</h4>
                 <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block" href="{% url 'places:main' %}"
                     role="button">Ver
                     mis solicitudes<i class="fas fa-arrow-right ms-2"></i></a>
@@ -57,7 +57,8 @@
             {% if not object.comercio %}
             <div class="alert" role="alert" data-mdb-color="warning">
                 <i class="fas fa-exclamation-triangle me-3"></i>Para continuar con el proceso de la Solicitud <a
-                    href="{% url 'places:create_shop' object.uuid %}" class="btn btn-sm btn-warning shadow-0 ms-2">Agrega un comercio</a>
+                    href="{% url 'places:create_shop' object.uuid %}"
+                    class="btn btn-sm btn-warning shadow-0 ms-2">Agrega un comercio</a>
             </div>
             {% endif %}
             <div class="shadow-4 bg-white rounded-5 p-5">
@@ -147,9 +148,9 @@
                     </table>
                 </div>
             </div>
-            <div
-                id="comercio" class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
-                <h4 class="mb-0 fw-bold"><i class="fas fa-circle-info me-3"></i>Comercio {{object.comercio.folio}}</h4>
+            <div id="comercio"
+                class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold"><i class="fas fa-shop me-3"></i>Comercio {{object.comercio.folio}}</h4>
             </div>
             <div class="shadow-4 bg-white rounded-5 p-5 my-4">
                 {% if not object.comercio %}
@@ -195,9 +196,9 @@
                 </div>
                 {% endif %}
             </div>
-            <div
-                id="citas" class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
-                <h4 class="mb-0 fw-bold"><i class="fas fa-circle-info me-3"></i>Cita Agendada</h4>
+            <div id="citas"
+                class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold"><i class="fas fa-calendar-day me-3"></i>Cita Agendada</h4>
             </div>
             <div class="shadow-4 bg-white rounded-5 p-5 my-4">
                 {% if not user.citas.first %}

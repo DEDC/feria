@@ -1,12 +1,13 @@
+# Python
+import uuid
 # Django
 from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator, MinLengthValidator, RegexValidator
+from django.core.validators import MinValueValidator, MinLengthValidator, RegexValidator
 # users
 from apps.users.models import Usuarios
 # utils
 from utils.models import ControlInfo, UploadTo
 from utils.validators import validate_pdf_file
-
 
 class Solicitudes(ControlInfo):
     identifier = 'SLC'
@@ -26,7 +27,15 @@ class Solicitudes(ControlInfo):
     municipio = models.CharField('Municipio', max_length = 200)
     cantidad_espacios = models.PositiveSmallIntegerField('Cantidad de espacios para el comercio', validators=[MinValueValidator(1)], null=True)
     estado = models.CharField('Estado', max_length = 200, choices=(('tabasco', 'Tabasco'),))    
+    estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Pendiente'), ('validated', 'Validado'), ('rejected', 'Rechazado')), null=True)
     usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='solicitudes')
+
+class Validaciones(ControlInfo):
+    identifier = 'VAL'
+    estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Pendiente'), ('validated', 'Validado'), ('rejected', 'Rechazado')), null=True)
+    solicitud = models.ForeignKey(Solicitudes, related_name='validaciones', on_delete=models.CASCADE)
+    campos = models.JSONField(null=True)
+    comentarios = models.TextField(null=True)
 
 class Comercios(ControlInfo):
     identifier = 'COM'
@@ -37,3 +46,10 @@ class Comercios(ControlInfo):
     voltaje = models.CharField('¿Qué voltaje necesita su Comercio?',   max_length=10, choices=(('110', '110v'), ('220', '220v')), null=True)
     equipos = models.CharField('¿Qué equipos usará para operar en su Comercio?', max_length=500, null=True)
     solicitud = models.OneToOneField(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='comercio')
+
+class Lugares(ControlInfo):
+    identifier='PLC'
+    uuid_place = models.UUIDField(default=uuid.uuid4, editable=False, unique_for_year=True)
+    estatus = models.CharField(max_length=20, choices=(('temp', 'Temporal'), ('assign', 'Asignado')), default='temp')
+    usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='usuario_lugar')
+    solicitud = models.ForeignKey(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='solicitud_lugar')

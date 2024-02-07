@@ -4,24 +4,26 @@
 <div class="container-fluid p-5">
     <div class="row gx-xl-5">
         <div class="col-xl-3">
-            <div class="bg-light p-4 text-center">
-                <h5 class="mb-0">Administrador</h5>
-            </div>
-            <div class="shadow-4 p-4 bg-white rounded-5 mb-4">
-                <ul class="nav nav-pills nav-justified mb-4" id="ex1" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="ex3-tab-1" data-mdb-toggle="pill" href="#ex3-pills-1" role="tab"
-                            aria-controls="ex3-pills-1" aria-selected="true">Solicitudes</a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="ex3-tab-2" data-mdb-toggle="pill" href="#ex3-pills-2" role="tab"
-                            aria-controls="ex3-pills-2" aria-selected="false" tabindex="-1">Citas Agendadas</a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="ex3-tab-3" data-mdb-toggle="pill" href="#ex3-pills-3" role="tab"
-                            aria-controls="ex3-pills-3" aria-selected="false" tabindex="-1">Comercios</a>
-                    </li>
-                </ul>
+            <div class="shadow-4 bg-white rounded-5 overflow-hidden d-none d-xl-block">
+                <div class="bg-light p-4 text-center">
+                    <h5 class="mb-0">Administrador</h5>
+                </div>
+                <div class="p-4">
+                    <ul class="nav nav-pills nav-justified mb-4" id="ex1" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" id="ex3-tab-1" data-mdb-toggle="pill" href="#ex3-pills-1"
+                                role="tab" aria-controls="ex3-pills-1" aria-selected="true">Solicitudes</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="ex3-tab-2" data-mdb-toggle="pill" href="#ex3-pills-2" role="tab"
+                                aria-controls="ex3-pills-2" aria-selected="false" tabindex="-1">Citas Agendadas</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="ex3-tab-3" data-mdb-toggle="pill" href="#ex3-pills-3" role="tab"
+                                aria-controls="ex3-pills-3" aria-selected="false" tabindex="-1">Comercios</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="col-xl-9 mb-4 mb-lg-0">
@@ -30,10 +32,8 @@
                     <div
                         class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
                         <h4 class="mb-0 fw-bold">
-                            <i class="fas fa-folder-tree me-3 green-text"></i>Solicitudes
+                            <i class="fas fa-clipboard-list me-3 green-text"></i>Solicitudes
                         </h4>
-                        <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block" href="#" role="button">Ver
-                            todo<i class="fas fa-arrow-right ms-2"></i></a>
                     </div>
                     <div class="shadow-4 bg-white rounded-5 p-4">
                         <div class="datatable" data-mdb-rows-text="Resultados por página"
@@ -42,6 +42,7 @@
                                 <thead>
                                     <tr>
                                         <th class="th-sm">Folio</th>
+                                        <th class="th-sm">Estatus</th>
                                         <th class="th-sm">Fecha de creación</th>
                                         <th class="th-sm">Nombre</th>
                                         <th class="th-sm">RFC</th>
@@ -54,11 +55,22 @@
                                     {% for rq in requests %}
                                     <tr>
                                         <td>
-                                            <a href="#" type="button"
+                                            <a href="{% url 'admin:request' rq.uuid %}" type="button"
                                                 class="btn btn-sm btn-link btn-rounded">
                                                 {{rq.folio}}
                                                 <i class="fas fa-angle-right ms-2"></i>
                                             </a>
+                                        </td>
+                                        <td>
+                                            {% if rq.estatus == 'validated' %}
+                                            <h6 class="badge rounded-pill badge-success">Validado</span>
+                                                {% elif rq.estatus == 'rejected' %}
+                                                <span class="badge rounded-pill badge-success">Rechazado</span>
+                                                {% elif rq.estatus == 'pending' %}
+                                                <span class="badge rounded-pill badge-warning">Pendiente</span>
+                                                {% else %}
+                                                <span class="badge rounded-pill badge-secondary">No asignado</span>
+                                                {% endif %}
                                         </td>
                                         <td>{{rq.fecha_reg}}</td>
                                         <td>{{rq.nombre_persona}}</td>
@@ -105,8 +117,7 @@
                                     {% for dt in dates %}
                                     <tr>
                                         <td>
-                                            <a href="#" type="button"
-                                                class="btn btn-sm btn-link btn-rounded">
+                                            <a href="#" type="button" class="btn btn-sm btn-link btn-rounded">
                                                 {{dt.folio}}
                                                 <i class="fas fa-angle-right ms-2"></i>
                                             </a>
@@ -148,8 +159,7 @@
                                     {% for bc in branches %}
                                     <tr>
                                         <td>
-                                            <a href="#" type="button"
-                                                class="btn btn-sm btn-link btn-rounded">
+                                            <a href="#" type="button" class="btn btn-sm btn-link btn-rounded">
                                                 {{bc.folio}}
                                                 <i class="fas fa-angle-right ms-2"></i>
                                             </a>
