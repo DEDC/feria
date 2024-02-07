@@ -408,6 +408,9 @@
                                 <th scope="col">Sección</th>
                                 <th scope="col">Precio</th>
                                 <th scope="col">Fecha de asignación</th>
+                                <th>Gafete</th>
+                                <th>Estacionamiento</th>
+                                <th>Suministros</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -418,6 +421,9 @@
                                 <td>{{sp.section}}</td>
                                 <td>${{sp.price}}</td>
                                 <td>{{sp.date}}</td>
+                                <td class="text-center"><a href="{% static 'docs/gafete.pdf' %}" download><i class="fas fa-download"></i></a></td>
+                                <td class="text-center"><a href="{% static 'docs/estacionamiento.pdf' %}" download><i class="fas fa-download"></i></a></td>
+                                <td class="text-center"><a href="{% static 'docs/suministros.pdf' %}" download><i class="fas fa-download"></i></a></td>
                             </tr>
                             {% endfor %}
                         </tbody>
