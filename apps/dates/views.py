@@ -12,8 +12,8 @@ from apps.dates.tools import get_dates_from_range, get_times_from_range
 from apps.dates.models import CitasAgendadas
 
 modules = 5
-dates = get_dates_from_range('2024/3/11', '2024/3/30')
-hours = get_times_from_range('9:00', '15:00', '30min')
+dates = get_dates_from_range('2024/2/29', '2024/3/14')
+hours = get_times_from_range('9:00', '17:40', '40min')
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
