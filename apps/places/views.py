@@ -35,7 +35,7 @@ class Dates(TemplateView):
         return context
     
     def post(self, request, *args, **kwargs):
-        modules = 5
+        modules = 6
         context = self.get_context_data(**kwargs)
         date = request.POST.get('date')
         time = request.POST.get('time')
