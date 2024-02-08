@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from apps.dates.tools import get_dates_from_range, get_times_from_range
 from apps.dates.models import CitasAgendadas
 
-modules = 5
+modules = 6
 dates = get_dates_from_range('2024/2/29', '2024/3/14')
 hours = get_times_from_range('9:00', '17:40', '40min')
 
