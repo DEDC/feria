@@ -69,6 +69,9 @@ class CreateRequest(SuccessMessageMixin, CreateView):
     def form_valid(self, form):
         form.instance.usuario = self.request.user
         self.uuid = form.instance.uuid
+        if form.instance.cantidad_espacios > self.max_places:
+            messages.warning(self.request, 'Ha superado el número límite de lugares para sus Comercios')
+            return redirect('places:main')
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
