@@ -269,6 +269,7 @@
                                 </div>
                             </div>
                         </li>
+                        {% if object.constancia_fiscal %}
                         <li
                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
                             <div class="ms-2 me-auto">
@@ -286,6 +287,8 @@
                                 </div>
                             </div>
                         </li>
+                        {% endif %}
+                        {% if object.comprobante_domicilio %}
                         <li
                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
                             <div class="ms-2 me-auto">
@@ -304,6 +307,8 @@
                                 </div>
                             </div>
                         </li>
+                        {% endif %}
+                        {% if object.acta_constitutiva %}
                         <li
                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
                             <div class="ms-2 me-auto">
@@ -321,6 +326,8 @@
                                 </div>
                             </div>
                         </li>
+                        {% endif %}
+                        {% if object.poder_notarial %}
                         <li
                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
                             <div class="ms-2 me-auto">
@@ -338,6 +345,8 @@
                                 </div>
                             </div>
                         </li>
+                        {% endif %}
+                        {% if object.identificacion %}
                         <li
                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
                             <div class="ms-2 me-auto">
@@ -355,6 +364,7 @@
                                 </div>
                             </div>
                         </li>
+                        {% endif %}
                     </ul>
                 </div>
                 {% if object.estatus == 'validated' %}
