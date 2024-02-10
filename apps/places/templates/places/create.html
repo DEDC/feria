@@ -8,6 +8,7 @@
         color: white;
     }
 </style>
+<script src="{% static 'js/app_create.js' %}" defer></script>
 {% endblock head %}
 {% block main %}
 <div class="container-fluid p-5">
@@ -25,7 +26,7 @@
                     {% for rq in requests %}
                     <a href="{% url 'places:detail_request' rq.uuid %}" role="button"
                         class="btn btn-link btn-rounded w-100 text-start text-capitalize">
-                        {{rq.folio}} - {{rq.nombre_comercial}}
+                        {{rq.folio}} - {{rq.nombre}}
                     </a>
                     {% empty %}
                     <div class="alert" role="alert" data-mdb-color="warning">
@@ -44,114 +45,156 @@
                     mis solicitudes<i class="fas fa-arrow-right ms-2"></i></a>
             </div>
             <div class="shadow-4 bg-white rounded-5 p-5">
-                <form method="post" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data" id="form-request">
                     {% csrf_token %}
                     {% include 'base/validations.html' %}
+                    <h6><b>Información General</b></h6>
+                    <hr>
                     <div class="row">
-                        <div class="col">
-                            {{form.regimen_fiscal}}
-                            <label class="form-label select-label">{{form.regimen_fiscal.label}}</label>
+                        <div class="col-6 mb-4">
+                            <label class="form-check-label ms-2 me-3">¿Desea facturar la compra de su
+                                Stand?:</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="factura" id="factura1" value="True"
+                                    required />
+                                <label class="form-check-label" for="factura1">Sí</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="factura" id="factura2" value="False"
+                                    required />
+                                <label class="form-check-label" for="factura2">No</label>
+                            </div>
                         </div>
-                        <div class="col">
+                        <div class="col-6 mb-4">
+                            <label class="form-check-label ms-2 me-3">Régimen Fiscal</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="regimen_fiscal" id="reg1"
+                                    value="fisica" />
+                                <label class="form-check-label" for="reg1">Persona Física</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="regimen_fiscal" id="reg2"
+                                    value="moral" />
+                                <label class="form-check-label" for="reg2">Persona Moral</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.nombre}}
+                                <label class="form-label">{{form.nombre.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.nombre_replegal}}
+                                <label class="form-label">{{form.nombre_replegal.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
                             <div class="form-outline">
                                 {{form.rfc_txt}}
-                                <label class="form-label" for="{{form.rfc_txt.id}}">{{form.rfc_txt.label}}</label>
+                                <label class="form-label">{{form.rfc_txt.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.curp_txt}}
+                                <label class="form-label">{{form.curp_txt.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                <input type="number" name="cantidad_espacios" min="1" max="{{max_places}}"
+                                    class="form-control" required id="id_cantidad_espacios">
+                                <label class="form-label"
+                                    for="{{form.cantidad_espacios.id}}">{{form.cantidad_espacios.label}}</label>
                             </div>
                         </div>
                     </div>
+                    <h6><b>Datos de la Dirección</b></h6>
+                    <hr>
                     <div class="row">
-                        <div class="col">
-                            <div class="form-outline">
-                                {{form.nombre_persona}}
-                                <label class="form-label"
-                                    for="{{form.nombre_persona.id}}">{{form.nombre_persona.label}}</label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-outline">
-                                {{form.nombre_comercial}}
-                                <label class="form-label"
-                                    for="{{form.nombre_comercial.id}}">{{form.nombre_comercial.label}}</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
+                        <div class="col-6">
                             <div class="form-outline">
                                 {{form.calle}}
-                                <label class="form-label" for="{{form.calle.id}}">{{form.calle.label}}</label>
+                                <label class="form-label">{{form.calle.label}}</label>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-6">
                             <div class="form-outline">
                                 {{form.no_calle}}
-                                <label class="form-label" for="{{form.no_calle.id}}">{{form.no_calle.label}}</label>
+                                <label class="form-label">{{form.no_calle.label}}</label>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-6">
                             <div class="form-outline">
                                 {{form.colonia}}
-                                <label class="form-label" for="{{form.colonia.id}}">{{form.colonia.label}}</label>
+                                <label class="form-label">{{form.colonia.label}}</label>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
+                        <div class="col-6">
                             <div class="form-outline">
                                 {{form.codigo_postal}}
-                                <label class="form-label"
-                                    for="{{form.codigo_postal.id}}">{{form.codigo_postal.label}}</label>
+                                <label class="form-label">{{form.codigo_postal.label}}</label>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-6">
                             {{form.estado}}
                             <label class="form-label select-label">{{form.estado.label}}</label>
                         </div>
-                        <div class="col">
+                        <div class="col-6">
                             <div class="form-outline">
                                 {{form.municipio}}
-                                <label class="form-label" for="{{form.municipio.id}}">{{form.municipio.label}}</label>
+                                <label class="form-label">{{form.municipio.label}}</label>
                             </div>
                         </div>
                     </div>
+                    <h6><b>Documentos</b></h6>
+                    <hr>
                     <div class="row">
-                        <div class="col-4">
-                            <div class="form-outline">
-                                {{form.cantidad_espacios}}
-                                <label class="form-label" for="{{form.cantidad_espacios.id}}">{{form.cantidad_espacios.label}}</label>
-                            </div>
+                        <div class="col-12">
+                            <label class="form-label">{{form.identificacion.label}}</label><br>
+                            {{form.identificacion}}
                         </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col">
-                            <label class="form-label">{{form.constancia_fiscal.label}}</label><br>
-                            {{form.constancia_fiscal}}
-                        </div>
-                        <div class="col">
+                        <div class="col-12">
                             <label class="form-label">{{form.comprobante_domicilio.label}}</label><br>
                             {{form.comprobante_domicilio}}
                         </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col">
+                        <div class="col-12">
+                            <label class="form-label">{{form.constancia_fiscal.label}}</label><br>
+                            {{form.constancia_fiscal}}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">{{form.curp.label}}</label><br>
+                            {{form.curp}}
+                        </div>
+                        <div class="col-12">
                             <label class="form-label">{{form.acta_constitutiva.label}}</label><br>
                             {{form.acta_constitutiva}}
-                        </div>
-                        <div class="col">
-                            <label class="form-label">{{form.poder_notarial.label}}</label><br>
-                            {{form.poder_notarial}}
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-6">
-                            <label class="form-label">{{form.identificacion.label}}</label><br>
-                            {{form.identificacion}}
                         </div>
                     </div>
                     <div class="d-grid gap-2 col-6 mx-auto mt-3">
                         <button class="btn btn-primary" type="submit">Guardar registro</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5 class="text-center">¿Estás seguro(a) de guardar la Solicitud?</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Aún
+                    no</button>
+                <button id="save-form" type="button" class="btn btn-primary" data-mdb-ripple-init>Sí, Guardar</button>
             </div>
         </div>
     </div>

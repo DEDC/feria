@@ -10,7 +10,8 @@ class RequestForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'regimen_fiscal': forms.Select(attrs={'class': 'select'}),
-            'estado': forms.Select(attrs={'class': 'select'})
+            'estado': forms.Select(attrs={'class': 'select'}),
+            'factura': forms.Select(attrs={'class': 'select'})
         }
     
     def __init__(self, *args, **kwargs):
@@ -27,6 +28,7 @@ class ShopForm(forms.ModelForm):
         widgets = {
             'equipos': forms.TextInput(attrs={'placeholder': 'Ej. Mesas, Estúfa, Hornos, Refrigeradoes, etc.'}),
             'voltaje': forms.Select(attrs={'class': 'select'}),
+            'descripcion': forms.Textarea(attrs={'rows': '3'})
         }
     
     def __init__(self, *args, **kwargs):

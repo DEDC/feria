@@ -34,6 +34,7 @@
                 <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block" href="#" role="button">Ver
                     todo<i class="fas fa-arrow-right ms-2"></i></a>
             </div>
+            {% include 'base/validations.html' %}
             <div class="shadow-4 bg-white rounded-5 p-4">
                 <!-- <div class="form-outline mb-4">
                     <i class="fas fa-magnifying-glass trailing"></i>
@@ -48,8 +49,6 @@
                                 <th class="th-sm">Folio</th>
                                 <th class="th-sm">Fecha de creación</th>
                                 <th class="th-sm">Nombre</th>
-                                <th class="th-sm">RFC</th>
-                                <th class="th-sm">Régimen Fiscal</th>
                                 <th class="th-sm">Comercio</th>
                             </tr>
                         </thead>
@@ -64,9 +63,7 @@
                                     </a>
                                 </td>
                                 <td>{{rq.fecha_reg}}</td>
-                                <td>{{rq.nombre_persona}}</td>
-                                <td>{{rq.rfc_txt}}</td>
-                                <td>{{rq.get_regimen_fiscal_display}}</td>
+                                <td>{{rq.nombre}}</td>
                                 <td>
                                     {% if not rq.comercio %}
                                     <a href="{% url 'places:create_shop' rq.uuid %}"

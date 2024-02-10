@@ -1,16 +1,18 @@
 # Django
-from django.forms.models import BaseModelForm
 from django.views.generic import TemplateView, CreateView, DetailView
 from django.urls import reverse_lazy, reverse
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.db.models import Sum
 # places
 from apps.places.models import Solicitudes, Comercios
 from apps.places.forms import RequestForm, ShopForm
 # dates
 from apps.dates.models import CitasAgendadas
+
+limit_places = 3
 
 class Main(TemplateView):
     template_name = 'places/main.html'
@@ -52,6 +54,14 @@ class CreateRequest(SuccessMessageMixin, CreateView):
     form_class = RequestForm
     success_url = reverse_lazy('places:create_request')
     success_message = 'Solicitud creada exitosamente'
+
+    def dispatch(self, request, *args, **kwargs):
+        used_places = self.request.user.solicitudes.filter(fecha_reg__year=2024).aggregate(places=Sum('cantidad_espacios'))['places']
+        self.max_places = limit_places - (used_places or 0)
+        if used_places == limit_places:
+            messages.warning(request, 'Ya ha alcanzado el número límite de lugares (3) para sus Comercios')
+            return redirect('places:main')
+        return super().dispatch(request, *args, **kwargs)
     
     def get_initial(self):
         return {'nombre_persona': self.request.user.get_full_name()}
@@ -64,6 +74,7 @@ class CreateRequest(SuccessMessageMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['requests'] = self.request.user.solicitudes.all()
+        context['max_places'] = self.max_places
         return context
 
     def get_success_url(self, *args, **kwargs):
@@ -92,6 +103,10 @@ class CreateShop(SuccessMessageMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['request_'] = self.request_
         context['shops'] = Comercios.objects.filter(solicitud__usuario=self.request.user)
+        try:
+            self.request_ = Solicitudes.objects.get(uuid=self.kwargs['uuid'])
+        except Solicitudes.DoesNotExist:
+            raise Http404()
         return context
 
     def form_valid(self, form):
@@ -103,7 +118,7 @@ class CreateShop(SuccessMessageMixin, CreateView):
             self.request_ = Solicitudes.objects.get(uuid=self.kwargs['uuid'])
         except Solicitudes.DoesNotExist:
             raise Http404()
-        return {'nombre': self.request_.nombre_comercial}
+        return {}
 
     def get_success_url(self, *args, **kwargs):
         return reverse_lazy('places:detail_request', kwargs={'uuid':self.request_.uuid})
