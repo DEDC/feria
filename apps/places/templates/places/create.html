@@ -20,7 +20,7 @@
             </div>
             <div class="shadow-4 bg-white rounded-5 overflow-hidden d-none d-xl-block">
                 <div class="bg-light p-4 text-center">
-                    <h5 class="mb-0">Solicitudes Anteriores</h5>
+                    <h5 class="mb-0">Solicitudes</h5>
                 </div>
                 <div class="p-4">
                     {% for rq in requests %}
@@ -30,7 +30,7 @@
                     </a>
                     {% empty %}
                     <div class="alert" role="alert" data-mdb-color="warning">
-                        No se han creado solicitudes anteriormente
+                        No se han creado solicitudes
                     </div>
                     {% endfor %}
                 </div>

@@ -1,5 +1,3 @@
-# Python
-import datetime
 # Django
 from django.utils import formats
 # DjangoRestFramework
@@ -7,13 +5,13 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from django.conf import settings
 # dates
 from apps.dates.tools import get_dates_from_range, get_times_from_range
 from apps.dates.models import CitasAgendadas
 
-modules = 6
-dates = get_dates_from_range('2024/2/29', '2024/3/14')
-hours = get_times_from_range('9:00', '17:40', '40min')
+dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
+hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
@@ -26,7 +24,7 @@ def get_available_dates(request):
             hours_completed = 0
             for hr in hours:
                 modules_scheduled = scheduled.filter(fecha=sch['fecha'], hora=hr).count()
-                if modules_scheduled >= modules:
+                if modules_scheduled >= settings.ATTENTION_MODULES:
                     hours_completed += 1
             if hours_completed == len(hours):
                 exclude_dates.append(sch['fecha'].strftime('%Y-%m-%d'))
@@ -40,7 +38,7 @@ def get_available_times(request, date):
     exclude_hours = []
     for hr in hours:
         modules_scheduled = CitasAgendadas.objects.filter(fecha=date, hora=hr).count()
-        if modules_scheduled >= modules:
+        if modules_scheduled >= settings.ATTENTION_MODULES:
             exclude_hours.append(hr)
     print(exclude_hours)
     fhours = [{'short_format': t} for t in hours if t not in exclude_hours]

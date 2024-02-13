@@ -9,7 +9,7 @@ from apps.admin.views import render_nave1
 # urlpatterns = router.urls
 
 urlpatterns = [
-    path('get-available-dates', get_available_dates),
-    path('get-available-times/<str:date>', get_available_times),
+    # path('get-available-dates', get_available_dates),
+    # path('get-available-times/<str:date>', get_available_times),
     path('nave/1/data', render_nave1)
 ]

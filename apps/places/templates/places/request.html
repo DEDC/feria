@@ -19,7 +19,7 @@
             </div>
             <div class="shadow-4 bg-white rounded-5 overflow-hidden d-none d-xl-block">
                 <div class="bg-light p-4 text-center">
-                    <h5 class="mb-0">Solicitudes Anteriores</h5>
+                    <h5 class="mb-0">Solicitudes</h5>
                 </div>
                 <div class="p-4">
                     {% for rq in requests %}
@@ -46,15 +46,6 @@
             </div>
         </div>
         <div class="col-xl-9 mb-4 mb-lg-0">
-            <div
-                class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
-                <h4 style="cursor: pointer;" data-mdb-toggle="collapse" data-mdb-target="#collapseExample"
-                    aria-expanded="true" class="mb-0 fw-bold"><i class="fas fa-clipboard-list me-3"></i>Solicitud
-                    {{object.folio}} <i class="fas fa-angle-down ms-3"></i></h4>
-                <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block" href="{% url 'places:main' %}"
-                    role="button">Ver
-                    mis solicitudes<i class="fas fa-arrow-right ms-2"></i></a>
-            </div>
             {% include 'base/validations.html' %}
             {% if not object.comercio %}
             <div class="alert" role="alert" data-mdb-color="warning">
@@ -63,7 +54,16 @@
                     class="btn btn-sm btn-warning shadow-0 ms-2">Agrega un comercio</a>
             </div>
             {% endif %}
-            <div class="shadow-4 bg-white rounded-5 p-5 collapse" id="collapseExample">
+            <div
+                class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                <h4 style="cursor: pointer;" data-mdb-toggle="collapse" data-mdb-target="#collapseRequest"
+                    aria-expanded="true" class="mb-0 fw-bold"><i class="fas fa-clipboard-list me-3"></i>Solicitud
+                    {{object.nombre}} <i class="fas fa-angle-down ms-3"></i></h4>
+                <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block" href="{% url 'places:main' %}"
+                    role="button">Ver
+                    mis solicitudes<i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+            <div class="shadow-4 bg-white rounded-5 p-5 collapse" id="collapseRequest">
                 <div class="table-responsive">
                     <table class="table">
                         <tbody>
@@ -179,11 +179,13 @@
                     </table>
                 </div>
             </div>
-            <div id="comercio"
+            <div id="comercio" data-mdb-toggle="collapse" data-mdb-target="#collapseShop" aria-expanded="true"
                 class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
-                <h4 class="mb-0 fw-bold"><i class="fas fa-shop me-3"></i>Comercio {{object.comercio.folio}}</h4>
+                <h4 style="cursor: pointer;" class="mb-0 fw-bold"><i class="fas fa-shop me-3"></i>Comercio
+                    {{object.comercio.nombre}} <i class="fas fa-angle-down ms-3"></i></h4>
             </div>
-            <div class="shadow-4 bg-white rounded-5 p-5 my-4">
+            <div class="shadow-4 bg-white rounded-5 p-5 my-4 collapse {% if not object.comercio %}show{% endif %}"
+                id="collapseShop">
                 {% if not object.comercio %}
                 <a href="{% url 'places:create_shop' object.uuid %}" type="button"
                     class="btn btn-primary btn-rounded btn-lg w-100"><i class="fas fa-plus me-3"></i>Agregar
@@ -227,16 +229,12 @@
                 </div>
                 {% endif %}
             </div>
+            {% if user.citas.first %}
             <div id="citas"
                 class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
                 <h4 class="mb-0 fw-bold"><i class="fas fa-calendar-day me-3"></i>Cita Agendada</h4>
             </div>
             <div class="shadow-4 bg-white rounded-5 p-5 my-4">
-                {% if not user.citas.first %}
-                <a href="{% url 'places:create_date' object.uuid %}" type="button"
-                    class="btn btn-primary btn-rounded btn-lg w-100"><i class="fas fa-plus me-3"></i>Agendar una
-                    Cita</a>
-                {% else %}
                 {% with date=user.citas.first %}
                 <div class="table-responsive">
                     <table class="table">
@@ -261,8 +259,8 @@
                     </table>
                 </div>
                 {% endwith %}
-                {% endif %}
             </div>
+            {% endif %}
         </div>
     </div>
 </div>

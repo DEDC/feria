@@ -6,13 +6,16 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.db.models import Sum
+from django.conf import settings
 # places
 from apps.places.models import Solicitudes, Comercios
 from apps.places.forms import RequestForm, ShopForm
 # dates
 from apps.dates.models import CitasAgendadas
+from apps.dates.tools import get_dates_from_range, get_times_from_range
 
-limit_places = 3
+dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
+hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
 
 class Main(TemplateView):
     template_name = 'places/main.html'
@@ -37,12 +40,11 @@ class Dates(TemplateView):
         return context
     
     def post(self, request, *args, **kwargs):
-        modules = 6
         context = self.get_context_data(**kwargs)
         date = request.POST.get('date')
         time = request.POST.get('time')
         scheduled = CitasAgendadas.objects.filter(fecha=date, hora=time)
-        if scheduled.count() < modules:
+        if scheduled.count() < settings.ATTENTION_MODULES:
             CitasAgendadas.objects.create(fecha=date, hora=time, usuario=request.user)
             messages.success(request, 'Cita agendada exitosamente')
             return redirect('places:detail_request', self.request_.uuid)
@@ -57,8 +59,8 @@ class CreateRequest(SuccessMessageMixin, CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         used_places = self.request.user.solicitudes.filter(fecha_reg__year=2024).aggregate(places=Sum('cantidad_espacios'))['places']
-        self.max_places = limit_places - (used_places or 0)
-        if used_places == limit_places:
+        self.max_places = settings.LIMIT_PLACES - (used_places or 0)
+        if used_places == settings.LIMIT_PLACES:
             messages.warning(request, 'Ya ha alcanzado el número límite de lugares (3) para sus Comercios')
             return redirect('places:main')
         return super().dispatch(request, *args, **kwargs)
@@ -114,6 +116,17 @@ class CreateShop(SuccessMessageMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.solicitud = self.request_
+        # assing date
+        assign = False
+        for d in dates:
+            if assign: break
+            for h in hours:
+                assigned_dates = CitasAgendadas.objects.filter(fecha=d, hora=h)
+                if assigned_dates.count() < settings.ATTENTION_MODULES:
+                    CitasAgendadas.objects.create(fecha=d, hora=h, usuario=self.request.user, solicitud=self.request_)
+                    assign = True
+                    messages.success(self.request, 'Cita asignada exitosamente')
+                    break
         return super().form_valid(form)
     
     def get_initial(self):
