@@ -116,17 +116,18 @@ class CreateShop(SuccessMessageMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.solicitud = self.request_
-        # assing date
-        assign = False
-        for d in dates:
-            if assign: break
-            for h in hours:
-                assigned_dates = CitasAgendadas.objects.filter(fecha=d, hora=h)
-                if assigned_dates.count() < settings.ATTENTION_MODULES:
-                    CitasAgendadas.objects.create(fecha=d, hora=h, usuario=self.request.user, solicitud=self.request_)
-                    assign = True
-                    messages.success(self.request, 'Cita asignada exitosamente')
-                    break
+        if not self.request.user.citas.exists():
+            # assing date
+            assign = False
+            for d in dates:
+                if assign: break
+                for h in hours:
+                    assigned_dates = CitasAgendadas.objects.filter(fecha=d, hora=h)
+                    if assigned_dates.count() < settings.ATTENTION_MODULES:
+                        CitasAgendadas.objects.create(fecha=d, hora=h, usuario=self.request.user)
+                        assign = True
+                        messages.success(self.request, 'Cita asignada exitosamente')
+                        break
         return super().form_valid(form)
     
     def get_initial(self):

@@ -10,7 +10,7 @@
             </div>
             <div class="shadow-4 bg-white rounded-5 overflow-hidden d-none d-xl-block">
                 <div class="bg-light p-4 text-center">
-                    <h5 class="mb-0">Citas Agendadas</h5>
+                    <h5 class="mb-0">Citas Asignadas</h5>
                 </div>
                 <div class="p-4">
                     {% for dt in dates %}
@@ -19,22 +19,27 @@
                     </a>
                     {% empty %}
                     <div class="alert" role="alert" data-mdb-color="warning">
-                        No se han agendado Citas anteriormente
+                        Aún no tiene <b>Citas</b> asignadas
                     </div>
                     {% endfor %}
                 </div>
             </div>
         </div>
         <div class="col-xl-9 mb-4 mb-lg-0">
+            {% include 'base/validations.html' %}
+            {% if not requests %}
+            <div class="alert" role="alert" data-mdb-color="warning">
+                <i class="fas fa-exclamation-triangle me-3"></i>Comience creando una Solicitud <a
+                    href="{% url 'places:create_request' %}" class="btn btn-sm btn-warning shadow-0 ms-2">Crear
+                    Solicitud</a>
+            </div>
+            {% endif %}
             <div
                 class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
                 <h4 class="mb-0 fw-bold">
                     <i class="fas fa-clipboard-list me-3 green-text"></i>Mis Solicitudes
                 </h4>
-                <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block" href="#" role="button">Ver
-                    todo<i class="fas fa-arrow-right ms-2"></i></a>
             </div>
-            {% include 'base/validations.html' %}
             <div class="shadow-4 bg-white rounded-5 p-4">
                 <!-- <div class="form-outline mb-4">
                     <i class="fas fa-magnifying-glass trailing"></i>
@@ -42,7 +47,7 @@
                     <label class="form-label" for="datatable-search-input">Buscar Auditoría</label>
                 </div> -->
                 <div class="datatable" data-mdb-rows-text="Resultados por página"
-                    data-mdb-no-found-message="No se encontraron resultados" data-mdb-of-text="de">
+                    data-mdb-no-found-message="No se encontraron Solicitudes" data-mdb-of-text="de">
                     <table>
                         <thead>
                             <tr>

@@ -19,7 +19,7 @@ class Solicitudes(ControlInfo):
     # direccion
     colonia = models.CharField('Colonia', max_length=200)
     calle = models.CharField('Calle', max_length=200)
-    no_calle = models.CharField('Número de Calle', max_length=6)
+    no_calle = models.CharField('Número de Casa', max_length=6)
     estado = models.CharField('Estado', max_length=200, choices=estadosmexico)
     municipio = models.CharField('Municipio o Delegación', max_length=200)
     codigo_postal = models.CharField('Código Postal', max_length=5, validators=[MinLengthValidator(5), RegexValidator('^[0-9]*$', 'Ingrese un código postal correcto')])

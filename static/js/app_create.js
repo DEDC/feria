@@ -27,39 +27,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const general_person = {
-        'exclude': ['id_rfc_txt', 'id_constancia_fiscal', 'id_acta_constitutiva', 'id_nombre_replegal'],
+        'exclude': ['id_rfc_txt', 'id_constancia_fiscal', 'id_acta_constitutiva', 'id_nombre_replegal', 'reg1', 'reg2'],
         'fields': ['id_curp', 'id_curp_txt', 'id_identificacion']
     }
 
     taxes.forEach(element => {
-        element.addEventListener('click', (e) => {
+        element.addEventListener('change', (e) => {
             if (e.target.value === 'False') {
                 show_hide_fields(general_person.fields, general_person.exclude)
-                regimen[0].disabled = true
-                regimen[1].disabled = true
-                regimen[0].required = false
-                regimen[1].required = false
             }
             else {
                 show_hide_fields(general_person.exclude, [])
-                regimen[0].disabled = false
-                regimen[1].disabled = false
-                regimen[0].required = true
-                regimen[1].required = true
             }
         })
     });
 
     regimen.forEach(element => {
-        element.addEventListener('click', (e) => {
+        element.addEventListener('change', (e) => {
             if (e.target.value === 'fisica') {
                 show_hide_fields(physical_person.fields, physical_person.exclude)
             }
             else if (e.target.value === 'moral') {
                 show_hide_fields(moral_person.fields, moral_person.exclude)
-            }
-            else {
-                show_hide_fields(general_person.fields, general_person.exclude)
             }
         })
     });
@@ -67,16 +56,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function show_hide_fields(fields, exclude) {
         for (const f of fields) {
             const field = document.querySelector(`#${f}`)
-            field.disabled = false
             field.required = true
-            field.value = ''
+            field.closest('[class^="col"]').classList.remove('d-none')
         }
 
         for (const f of exclude) {
             const field = document.querySelector(`#${f}`)
-            field.disabled = true
             field.required = false
-            field.value = ''
+            if (f === 'reg1' || f === 'reg2') {
+                field.checked = false
+            }
+            else {
+                field.value = ''
+            }
+            field.closest('[class^="col"]').classList.add('d-none')
         }
     }
 })
