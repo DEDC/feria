@@ -69,7 +69,7 @@
                                 <tbody>
                                     {% for rq in requests %}
                                     <tr>
-                                        <td>{{forloop.counter}}</td>
+                                        <td>{{rq.id}}</td>
                                         <td>
                                             <a href="{% url 'admin:request' rq.uuid %}" type="button"
                                                 class="btn btn-sm btn-link btn-rounded">
