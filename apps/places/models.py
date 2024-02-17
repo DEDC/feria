@@ -12,7 +12,7 @@ from utils.naves import estadosmexico
 
 class Solicitudes(ControlInfo):
     identifier = 'SLC'
-    estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Pendiente'), ('validated', 'Validado'), ('rejected', 'Rechazado')))
+    estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Observado'), ('validated', 'Validado'), ('rejected', 'Rechazado'), ('resolved', 'Solventado'),))
     usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='solicitudes')
     cantidad_espacios = models.PositiveSmallIntegerField('Cantidad de espacios para el comercio', validators=[MinValueValidator(1)])
     regimen_fiscal = models.CharField('Régimen fiscal', max_length=100, choices = (('moral', 'Persona Moral'), ('fisica', 'Persona Física')), null=True, blank=True)
@@ -42,7 +42,7 @@ class Solicitudes(ControlInfo):
 
 class Validaciones(ControlInfo):
     identifier = 'VAL'
-    estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Pendiente'), ('validated', 'Validado'), ('rejected', 'Rechazado')), null=True)
+    estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Observado'), ('validated', 'Validado'), ('rejected', 'Rechazado'), ('resolved', 'Solventado'),), null=True)
     solicitud = models.ForeignKey(Solicitudes, related_name='validaciones', on_delete=models.CASCADE)
     campos = models.JSONField(null=True)
     comentarios = models.TextField(null=True)

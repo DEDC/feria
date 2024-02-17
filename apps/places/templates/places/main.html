@@ -70,6 +70,8 @@
                                         <span class="badge rounded-pill badge-danger">Rechazado</span>
                                         {% elif rq.estatus == 'pending' %}
                                         <span class="badge rounded-pill badge-warning">Observado</span>
+                                        {% elif rq.estatus == 'resolved' %}
+                                        <span class="badge rounded-pill badge-primary">Solventado</span>
                                         {% else %}
                                         <span class="badge rounded-pill badge-secondary">No asignado</span>
                                         {% endif %}

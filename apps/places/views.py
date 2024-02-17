@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from django.db.models import Sum
 from django.conf import settings
 # places
-from apps.places.models import Solicitudes, Comercios
+from apps.places.models import Solicitudes, Comercios, Validaciones
 from apps.places.forms import RequestForm, ShopForm
 # dates
 from apps.dates.models import CitasAgendadas
@@ -46,7 +46,7 @@ class Dates(TemplateView):
         scheduled = CitasAgendadas.objects.filter(fecha=date, hora=time)
         if scheduled.count() < settings.ATTENTION_MODULES:
             CitasAgendadas.objects.create(fecha=date, hora=time, usuario=request.user)
-            messages.success(request, 'Cita agendada exitosamente')
+            messages.success(request, 'Cita agendada exitosamente.')
             return redirect('places:detail_request', self.request_.uuid)
         return self.render_to_response(context)
 
@@ -61,7 +61,7 @@ class CreateRequest(SuccessMessageMixin, CreateView):
         used_places = self.request.user.solicitudes.filter(fecha_reg__year=2024).aggregate(places=Sum('cantidad_espacios'))['places']
         self.max_places = settings.LIMIT_PLACES - (used_places or 0)
         if used_places == settings.LIMIT_PLACES:
-            messages.warning(request, 'Ya ha alcanzado el número límite de lugares (3) para sus Comercios')
+            messages.warning(request, 'Ya ha alcanzado el número límite de lugares (3) para sus Comercios.')
             return redirect('places:main')
         return super().dispatch(request, *args, **kwargs)
     
@@ -72,7 +72,7 @@ class CreateRequest(SuccessMessageMixin, CreateView):
         form.instance.usuario = self.request.user
         self.uuid = form.instance.uuid
         if form.instance.cantidad_espacios > self.max_places:
-            messages.warning(self.request, 'Ha superado el número límite de lugares para sus Comercios')
+            messages.warning(self.request, 'Ha superado el número límite de lugares para sus Comercios.')
             return redirect('places:main')
         return super().form_valid(form)
 
@@ -112,6 +112,26 @@ class ObservationsRequest(DetailView):
             context['obs_fields'] = last_validation.campos['just_fields'] or {}
             context['obs_comments'] = last_validation.campos['field_comments'] or {}
         return context
+    
+    def post(self, request, *args, **kwargs):
+        request_ = self.get_object()
+        last_validation = request_.get_last_unattended_validation()
+        if last_validation:
+            form = RequestForm(request.POST, request.FILES, instance=request_)
+            changed = all(field in form.changed_data for field in last_validation.campos['just_fields'])
+            if changed:
+                form.is_valid()
+                request_.__dict__.update(form.cleaned_data)
+                request_.estatus = 'resolved'
+                request_.save(update_fields=last_validation.campos['just_fields']+['estatus'])
+                last_validation.atendido = True
+                last_validation.save()
+                Validaciones.objects.create(solicitud=request_, estatus='resolved', validador=request.user.get_full_name())
+                messages.success(request, 'Observación solventada exitosamente.')
+            else:
+                messages.warning(request, 'No se completaron los cambios en los campos observados.')
+                return redirect('places:observations_request', request_.uuid)
+        return redirect('places:detail_request', request_.uuid)
 
 class CreateShop(SuccessMessageMixin, CreateView):
     template_name = 'places/create_shop.html'
@@ -142,7 +162,7 @@ class CreateShop(SuccessMessageMixin, CreateView):
                     if assigned_dates.count() < settings.ATTENTION_MODULES:
                         CitasAgendadas.objects.create(fecha=d, hora=h, usuario=self.request.user)
                         assign = True
-                        messages.success(self.request, 'Cita asignada exitosamente')
+                        messages.success(self.request, 'Cita asignada exitosamente.')
                         break
         return super().form_valid(form)
     

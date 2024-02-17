@@ -49,7 +49,10 @@
                         <h5 class="mb-0">Asigna un Estatus</h5>
                     </div>
                     <div class="p-4">
-                        {% if not object.estatus %}
+                        {% if not object.estatus or object.estatus == 'resolved' %}
+                        {% if object.estatus == 'resolved' %}
+                        <h1 class="text-center"><span class="badge rounded-pill badge-primary mb-2">Solventado</span></h1>
+                        {% endif %}
                         <button name="validated" type="submit" data-mdb-ripple-init data-mdb-ripple-color="dark"
                             class="btn btn-lg btn-rounded btn-outline-success shadow-0 w-100"><i
                                 class="fas fa-check me-2"></i>Validar</button>
@@ -61,7 +64,6 @@
                                 class="fas fa-ban me-2"></i>Rechazar</button>
                         {% elif object.estatus == 'validated' %}
                         <h1 class="text-center"><span class="badge rounded-pill badge-success">Validado</span></h1>
-                        <a class="text-center d-block text-secondary" href="#places">Seleccionar espacio</a>
                         {% elif object.estatus == 'rejected' %}
                         <h1 class="text-center"><span class="badge rounded-pill badge-danger">Rechazado</span></h1>
                         {% elif object.estatus == 'pending' %}
@@ -80,6 +82,7 @@
                 </div>
             </div>
             <div class="col-xl-9 mb-4 mb-lg-0">
+                {% include 'base/validations.html' %}
                 <div
                     class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
                     <h4 class="mb-0 fw-bold">
@@ -89,6 +92,7 @@
                         role="button">Ver
                         todo<i class="fas fa-arrow-right ms-2"></i></a>
                 </div>
+                {% comment %}
                 {% if object.estatus == 'validated' %}
                 {% if not selected_places %}
                 <div class="alert" role="alert" data-mdb-color="warning">
@@ -97,6 +101,7 @@
                 </div>
                 {% endif %}
                 {% endif %}
+                {% endcomment %}
                 <div class="shadow-4 bg-white rounded-5 p-4">
                     <ul class="list-group list-group-light">
                         <li
@@ -505,7 +510,7 @@
 </div>
 <!-- Modal Validations -->
 <div class="modal fade" id="modal-validations" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Historial de Validaciones</h5>
@@ -533,6 +538,8 @@
                                     <span class="badge rounded-pill badge-danger">Rechazado</span>
                                     {% elif vl.estatus == 'pending' %}
                                     <span class="badge rounded-pill badge-warning">Observado</span>
+                                    {% elif vl.estatus == 'resolved' %}
+                                    <span class="badge rounded-pill badge-primary">Solventado por el usuario</span>
                                     {% else %}
                                     <span class="badge rounded-pill badge-secondary">No asignado</span>
                                     {% endif %}

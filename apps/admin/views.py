@@ -36,10 +36,12 @@ class Request(DetailView):
             request_.estatus = 'validated'
             request_.save()
             Validaciones.objects.create(solicitud=request_, estatus='validated', validador=request.user.get_full_name())
+            messages.success(request, 'Estatus asignado exitosamente.')
         elif 'rejected' in request.POST:
             request_.estatus = 'rejected'
             request_.save()
             Validaciones.objects.create(solicitud=request_, estatus='rejected', validador=request.user.get_full_name())
+            messages.success(request, 'Estatus asignado exitosamente.')
         elif 'pending' in request.POST:
             validation_fields = ['factura', 'regimen_fiscal', 'nombre', 'nombre_replegal', 'rfc_txt', 'curp_txt', 'calle', 'no_calle', 'colonia', 'codigo_postal', 'estado', 'municipio', 'constancia_fiscal', 'comprobante_domicilio', 'acta_constitutiva', 'identificacion', 'curp']
             data = {
@@ -55,6 +57,9 @@ class Request(DetailView):
                 request_.estatus = 'pending'
                 request_.save()
                 Validaciones.objects.create(solicitud=request_, estatus='pending', validador=request.user.get_full_name(), campos=data)
+                messages.success(request, 'Estatus asignado exitosamente.')
+            else:
+                messages.warning(request, 'No se realizó ninguna acción. No se detectaron campos validados.')
         return redirect('admin:request', request_.uuid)
 
     def get_context_data(self, **kwargs):
