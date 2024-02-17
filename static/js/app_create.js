@@ -1,20 +1,29 @@
 document.addEventListener('DOMContentLoaded', () => {
+    var event = new Event('change');
     const taxes = document.querySelectorAll('input[name="factura"]');
+    const sted_taxes = document.querySelector('input[name="factura"]:checked')
     const regimen = document.querySelectorAll('input[name="regimen_fiscal"]');
+    const sted_regimen = document.querySelector('input[name="regimen_fiscal"]:checked')
     const form = document.querySelector('#form-request')
     const element = document.querySelector('#exampleModal');
     const save_btn = document.querySelector('#save-form');
-    const instance = new mdb.Modal(element)
+    if (element) {
+        const instance = new mdb.Modal(element)
+    }
 
-    form.addEventListener('submit', (e) => {
-        e.preventDefault()
-        instance.show()
-    })
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault()
+            instance.show()
+        })
+    }
 
-    save_btn.addEventListener('click', (e) => {
-        e.preventDefault()
-        form.submit()
-    })
+    if (save_btn) {
+        save_btn.addEventListener('click', (e) => {
+            e.preventDefault()
+            form.submit()
+        })
+    }
 
     const moral_person = {
         'exclude': ['id_curp', 'id_curp_txt'],
@@ -71,5 +80,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             field.closest('[class^="col"]').classList.add('d-none')
         }
+    }
+
+    if (sted_taxes) {
+        sted_taxes.dispatchEvent(event)
+    }
+
+    if (sted_regimen) {
+        sted_regimen.dispatchEvent(event)
     }
 })

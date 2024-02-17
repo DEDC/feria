@@ -97,6 +97,22 @@ class Request(DetailView):
         context['dates'] = self.request.user.citas.order_by('fecha', 'hora')
         return context
 
+class ObservationsRequest(DetailView):
+    template_name = 'places/observations.html'
+    model = Solicitudes
+    slug_field = 'uuid'
+    slug_url_kwarg = 'uuid'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        last_validation = self.object.get_last_unattended_validation()
+        if last_validation:
+            form = RequestForm(instance=self.object)
+            context['form'] = form
+            context['obs_fields'] = last_validation.campos['just_fields'] or {}
+            context['obs_comments'] = last_validation.campos['field_comments'] or {}
+        return context
+
 class CreateShop(SuccessMessageMixin, CreateView):
     template_name = 'places/create_shop.html'
     model = Comercios

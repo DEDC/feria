@@ -41,17 +41,13 @@
                 </h4>
             </div>
             <div class="shadow-4 bg-white rounded-5 p-4">
-                <!-- <div class="form-outline mb-4">
-                    <i class="fas fa-magnifying-glass trailing"></i>
-                    <input type="text" class="form-control form-control-lg" id="datatable-search-input" />
-                    <label class="form-label" for="datatable-search-input">Buscar Auditoría</label>
-                </div> -->
                 <div class="datatable" data-mdb-rows-text="Resultados por página"
                     data-mdb-no-found-message="No se encontraron Solicitudes" data-mdb-of-text="de">
                     <table>
                         <thead>
                             <tr>
                                 <th class="th-sm">Folio</th>
+                                <th class="th-sm">Estatus</th>
                                 <th class="th-sm">Fecha de creación</th>
                                 <th class="th-sm">Nombre</th>
                                 <th class="th-sm">Comercio</th>
@@ -67,12 +63,23 @@
                                         <i class="fas fa-angle-right ms-2"></i>
                                     </a>
                                 </td>
+                                <td>
+                                    {% if rq.estatus == 'validated' %}
+                                    <h6 class="badge rounded-pill badge-success">Validado</span>
+                                        {% elif rq.estatus == 'rejected' %}
+                                        <span class="badge rounded-pill badge-danger">Rechazado</span>
+                                        {% elif rq.estatus == 'pending' %}
+                                        <span class="badge rounded-pill badge-warning">Observado</span>
+                                        {% else %}
+                                        <span class="badge rounded-pill badge-secondary">No asignado</span>
+                                        {% endif %}
+                                </td>
                                 <td>{{rq.fecha_reg}}</td>
                                 <td>{{rq.nombre}}</td>
                                 <td>
                                     {% if not rq.comercio %}
                                     <a href="{% url 'places:create_shop' rq.uuid %}"
-                                        class="btn btn-sm btn-warning shadow-0 ms-2">Agregar comercio</a>
+                                        class="btn btn-sm btn-warning shadow-0">Agregar comercio</a>
                                     {% else %}
                                     {{rq.comercio.nombre}}
                                     {% endif %}

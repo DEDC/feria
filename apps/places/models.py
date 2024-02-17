@@ -37,12 +37,17 @@ class Solicitudes(ControlInfo):
     nombre_replegal = models.CharField('Nombre del Representante Legal', max_length=100, null=True, blank=True)
     factura = models.BooleanField('Factura', choices=((True, 'Sí'), (False, 'No')))
 
+    def get_last_unattended_validation(self):
+        return self.validaciones.filter(atendido=False, estatus='pending').last()
+
 class Validaciones(ControlInfo):
     identifier = 'VAL'
     estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Pendiente'), ('validated', 'Validado'), ('rejected', 'Rechazado')), null=True)
     solicitud = models.ForeignKey(Solicitudes, related_name='validaciones', on_delete=models.CASCADE)
     campos = models.JSONField(null=True)
     comentarios = models.TextField(null=True)
+    atendido = models.BooleanField(default=False, editable=False)
+    validador = models.CharField(max_length=200, editable=False, null=True)
 
 class Comercios(ControlInfo):
     identifier = 'COM'

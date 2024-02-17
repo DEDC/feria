@@ -1,5 +1,16 @@
 {% extends 'places/base.html' %}
 {% load static %}
+{% block head %}
+{{block.super}}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const instance = new mdb.Datatable(document.querySelector('#datatable-request'))
+        document.getElementById('datatable-search-request').addEventListener('input', (e) => {
+            instance.search(e.target.value);
+        });
+    })
+</script>
+{% endblock %}
 {% block main %}
 <div class="container-fluid p-5">
     <div class="row gx-xl-5">
@@ -36,7 +47,12 @@
                         </h4>
                     </div>
                     <div class="shadow-4 bg-white rounded-5 p-4">
-                        <div class="datatable" data-mdb-rows-text="Resultados por página"
+                        <div class="form-outline mb-4">
+                            <i class="fas fa-magnifying-glass trailing"></i>
+                            <input type="text" class="form-control form-control-lg" id="datatable-search-request" />
+                            <label class="form-label" for="datatable-search-input">Buscar Solicitud</label>
+                        </div>
+                        <div id="datatable-request" class="datatable" data-mdb-rows-text="Resultados por página"
                             data-mdb-no-found-message="No se encontraron resultados" data-mdb-of-text="de">
                             <table>
                                 <thead>
@@ -45,8 +61,6 @@
                                         <th class="th-sm">Estatus</th>
                                         <th class="th-sm">Fecha de creación</th>
                                         <th class="th-sm">Nombre</th>
-                                        <th class="th-sm">RFC</th>
-                                        <th class="th-sm">Régimen Fiscal</th>
                                         <th class="th-sm">Comercio</th>
                                         <th class="th-sm">Usuario</th>
                                     </tr>
@@ -65,25 +79,16 @@
                                             {% if rq.estatus == 'validated' %}
                                             <h6 class="badge rounded-pill badge-success">Validado</span>
                                                 {% elif rq.estatus == 'rejected' %}
-                                                <span class="badge rounded-pill badge-success">Rechazado</span>
+                                                <span class="badge rounded-pill badge-danger">Rechazado</span>
                                                 {% elif rq.estatus == 'pending' %}
-                                                <span class="badge rounded-pill badge-warning">Pendiente</span>
+                                                <span class="badge rounded-pill badge-warning">Observado</span>
                                                 {% else %}
                                                 <span class="badge rounded-pill badge-secondary">No asignado</span>
                                                 {% endif %}
                                         </td>
                                         <td>{{rq.fecha_reg}}</td>
-                                        <td>{{rq.nombre_persona}}</td>
-                                        <td>{{rq.rfc_txt}}</td>
-                                        <td>{{rq.get_regimen_fiscal_display}}</td>
-                                        <td>
-                                            {% if not rq.comercio %}
-                                            <a href="{% url 'places:create_shop' rq.uuid %}"
-                                                class="btn btn-sm btn-warning shadow-0 ms-2">Agregar comercio</a>
-                                            {% else %}
-                                            {{rq.comercio.nombre}}
-                                            {% endif %}
-                                        </td>
+                                        <td>{{rq.nombre}}</td>
+                                        <td>{{rq.comercio.nombre|default:'No especificado'}}</td>
                                         <td>{{rq.usuario.get_full_name}}</td>
                                     </tr>
                                     {% endfor %}

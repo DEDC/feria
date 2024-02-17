@@ -1,6 +1,7 @@
 # Django
 from django.views.generic import TemplateView, DetailView
 from django.shortcuts import redirect
+from django.contrib import messages
 # DjangoRestFramework
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -34,8 +35,26 @@ class Request(DetailView):
         if 'validated' in request.POST:
             request_.estatus = 'validated'
             request_.save()
-            Validaciones.objects.create(solicitud=request_, estatus='validated')
-            print('Validado')
+            Validaciones.objects.create(solicitud=request_, estatus='validated', validador=request.user.get_full_name())
+        elif 'rejected' in request.POST:
+            request_.estatus = 'rejected'
+            request_.save()
+            Validaciones.objects.create(solicitud=request_, estatus='rejected', validador=request.user.get_full_name())
+        elif 'pending' in request.POST:
+            validation_fields = ['factura', 'regimen_fiscal', 'nombre', 'nombre_replegal', 'rfc_txt', 'curp_txt', 'calle', 'no_calle', 'colonia', 'codigo_postal', 'estado', 'municipio', 'constancia_fiscal', 'comprobante_domicilio', 'acta_constitutiva', 'identificacion', 'curp']
+            data = {
+                'just_fields': [],
+                'field_comments': {}
+            }
+            for f in request.POST:
+                if f in validation_fields:
+                    if request.POST.get(f).strip() is not '':
+                        data['just_fields'].append(f)
+                        data['field_comments'][f] = request.POST.get(f).strip()
+            if data['just_fields']:
+                request_.estatus = 'pending'
+                request_.save()
+                Validaciones.objects.create(solicitud=request_, estatus='pending', validador=request.user.get_full_name(), campos=data)
         return redirect('admin:request', request_.uuid)
 
     def get_context_data(self, **kwargs):

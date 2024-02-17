@@ -54,6 +54,12 @@
                     class="btn btn-sm btn-warning shadow-0 ms-2">Agrega un comercio</a>
             </div>
             {% endif %}
+            {% if object.get_last_unattended_validation %}
+            <div class="alert" role="alert" data-mdb-color="warning">
+                <i class="fas fa-exclamation-triangle me-3"></i>Tiene una observación en su Solicitud <a
+                    href="{% url 'places:observations_request' object.uuid %}" class="btn btn-sm btn-warning shadow-0 ms-2">Atender observación</a>
+            </div>
+            {% endif %}
             <div
                 class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
                 <h4 style="cursor: pointer;" data-mdb-toggle="collapse" data-mdb-target="#collapseRequest"

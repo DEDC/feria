@@ -35,30 +35,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     })
 
-    btn_preselect.addEventListener('click', (e) => {
-        e.preventDefault()
-        const data = new FormData();
-        let places = document.querySelectorAll('td.selected')
-        places.forEach(element => {
-            data.append('places', element.dataset.uuid);
+    if (btn_preselect) {
+        btn_preselect.addEventListener('click', (e) => {
+            e.preventDefault()
+            const data = new FormData();
+            let places = document.querySelectorAll('td.selected')
+            places.forEach(element => {
+                data.append('places', element.dataset.uuid);
+            });
+            setPlaceTemp(request_uuid.value, data).then((resp) => {
+                console.log(resp)
+            }).then(() => {
+                instance_select_modal.show()
+                timer.start({ target: { minutes: 35 } });
+            }).catch((error) => {
+                console.log(error);
+            });
         });
-        setPlaceTemp(request_uuid.value, data).then((resp) => {
-            console.log(resp)
-        }).then(() => {
-            instance_select_modal.show()
-            timer.start({ target: { minutes: 35 } });
-        }).catch((error) => {
-            console.log(error);
-        });
-    });
+    }
 
     timer.addEventListener('secondsUpdated', function (e) {
         document.querySelector('#timer').textContent = timer.getTimeValues().toString();
     });
 
-    reload_places.addEventListener('click', () => {
-        get_places()
-    })
+    if (reload_places) {
+        reload_places.addEventListener('click', () => {
+            get_places()
+        })
+    }
 
     chks.forEach(chk => {
         chk.addEventListener('click', (e) => {
