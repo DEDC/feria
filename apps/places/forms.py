@@ -26,7 +26,7 @@ class ShopForm(forms.ModelForm):
         model = Comercios
         fields = '__all__'
         widgets = {
-            'equipos': forms.TextInput(attrs={'placeholder': 'Ej. Mesas, Estúfa, Hornos, Refrigeradoes, etc.'}),
+            'equipos': forms.TextInput(attrs={'placeholder': 'Ej. Mesas, Estúfas, Hornos, Refrigeradores, etc.'}),
             'voltaje': forms.Select(attrs={'class': 'select'}),
             'descripcion': forms.Textarea(attrs={'rows': '3'})
         }
