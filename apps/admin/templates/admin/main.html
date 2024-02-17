@@ -3,12 +3,12 @@
 {% block head %}
 {{block.super}}
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const instance = new mdb.Datatable(document.querySelector('#datatable-request'))
-        document.getElementById('datatable-search-request').addEventListener('input', (e) => {
-            instance.search(e.target.value);
-        });
-    })
+    // document.addEventListener('DOMContentLoaded', () => {
+    //     const instance = new mdb.Datatable(document.querySelector('#datatable-request'))
+    //     document.getElementById('datatable-search-request').addEventListener('input', (e) => {
+    //         instance.search(e.target.value);
+    //     });
+    // })
 </script>
 {% endblock %}
 {% block main %}
