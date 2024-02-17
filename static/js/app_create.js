@@ -7,9 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('#form-request')
     const element = document.querySelector('#exampleModal');
     const save_btn = document.querySelector('#save-form');
-    if (element) {
-        const instance = new mdb.Modal(element)
-    }
+    // if (element) {
+    const instance = new mdb.Modal(element)
+    // }
 
     if (form) {
         form.addEventListener('submit', (e) => {
