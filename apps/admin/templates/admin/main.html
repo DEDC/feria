@@ -57,6 +57,7 @@
                             <table>
                                 <thead>
                                     <tr>
+                                        <th class="th-sm">No.</th>
                                         <th class="th-sm">Folio</th>
                                         <th class="th-sm">Estatus</th>
                                         <th class="th-sm">Fecha de creación</th>
@@ -68,6 +69,7 @@
                                 <tbody>
                                     {% for rq in requests %}
                                     <tr>
+                                        <td>{{forloop.counter}}</td>
                                         <td>
                                             <a href="{% url 'admin:request' rq.uuid %}" type="button"
                                                 class="btn btn-sm btn-link btn-rounded">
