@@ -13,11 +13,13 @@ from apps.places.forms import RequestForm, ShopForm
 # dates
 from apps.dates.models import CitasAgendadas
 from apps.dates.tools import get_dates_from_range, get_times_from_range
+# utils
+from utils.permissions import UserPermissions
 
 dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
 
-class Main(TemplateView):
+class Main(UserPermissions, TemplateView):
     template_name = 'places/main.html'
     
     def get_context_data(self, **kwargs):
@@ -26,7 +28,7 @@ class Main(TemplateView):
         context['dates'] = self.request.user.citas.order_by('fecha', 'hora')
         return context
 
-class Dates(TemplateView):
+class Dates(UserPermissions, TemplateView):
     template_name = 'places/dates.html'
     
     def get_context_data(self, **kwargs):
@@ -50,7 +52,7 @@ class Dates(TemplateView):
             return redirect('places:detail_request', self.request_.uuid)
         return self.render_to_response(context)
 
-class CreateRequest(SuccessMessageMixin, CreateView):
+class CreateRequest(UserPermissions, SuccessMessageMixin, CreateView):
     template_name = 'places/create.html'
     model = Solicitudes
     form_class = RequestForm
@@ -85,7 +87,7 @@ class CreateRequest(SuccessMessageMixin, CreateView):
     def get_success_url(self, *args, **kwargs):
         return reverse('places:detail_request', kwargs={'uuid':self.uuid})
 
-class Request(DetailView):
+class Request(UserPermissions, DetailView):
     template_name = 'places/request.html'
     model = Solicitudes
     slug_field = 'uuid'
@@ -97,7 +99,7 @@ class Request(DetailView):
         context['dates'] = self.request.user.citas.order_by('fecha', 'hora')
         return context
 
-class ObservationsRequest(DetailView):
+class ObservationsRequest(UserPermissions, DetailView):
     template_name = 'places/observations.html'
     model = Solicitudes
     slug_field = 'uuid'
@@ -133,7 +135,7 @@ class ObservationsRequest(DetailView):
                 return redirect('places:observations_request', request_.uuid)
         return redirect('places:detail_request', request_.uuid)
 
-class CreateShop(SuccessMessageMixin, CreateView):
+class CreateShop(UserPermissions, SuccessMessageMixin, CreateView):
     template_name = 'places/create_shop.html'
     model = Comercios
     form_class = ShopForm

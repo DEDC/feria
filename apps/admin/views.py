@@ -1,7 +1,9 @@
 # Django
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, UpdateView
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.urls import reverse_lazy
+from django.contrib.messages.views import SuccessMessageMixin
 # DjangoRestFramework
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -9,12 +11,14 @@ from rest_framework.decorators import api_view, renderer_classes, permission_cla
 from rest_framework.permissions import IsAuthenticated
 # places
 from apps.places.models import Solicitudes, Comercios, Validaciones, Lugares
+from apps.places.forms import RequestForm
 # dates
 from apps.dates.models import CitasAgendadas
 # utils
 from utils.naves import nave1
+from utils.permissions import AdminPermissions
 
-class Main(TemplateView):
+class Main(AdminPermissions, TemplateView):
     template_name = 'admin/main.html'
 
     def get_context_data(self, **kwargs):
@@ -24,7 +28,22 @@ class Main(TemplateView):
         context['branches'] = Comercios.objects.all().order_by('nombre')
         return context
 
-class Request(DetailView):
+class UpdateRequest(AdminPermissions, SuccessMessageMixin, UpdateView):
+    template_name = 'admin/update_request.html'
+    model = Solicitudes
+    form_class = RequestForm
+    success_message = 'Solicitud actualizada exitosamente'
+    slug_field = 'uuid'
+    slug_url_kwarg = 'uuid'
+
+    def form_valid(self, form):
+        print(self.request.POST)
+        return super().form_valid(form)
+
+    def get_success_url(self, *args, **kwargs):
+        return reverse_lazy('admin:update_request', kwargs={'uuid':self.object.uuid})
+
+class Request(AdminPermissions, DetailView):
     template_name = 'admin/request.html'
     model = Solicitudes
     slug_field = 'uuid'
@@ -50,7 +69,7 @@ class Request(DetailView):
             }
             for f in request.POST:
                 if f in validation_fields:
-                    if request.POST.get(f).strip() is not '':
+                    if not request.POST.get(f).strip() == '':
                         data['just_fields'].append(f)
                         data['field_comments'][f] = request.POST.get(f).strip()
             if data['just_fields']:
@@ -74,7 +93,7 @@ class Request(DetailView):
         context['selected_places'] = selected_places
         return context
 
-class SetPlace(TemplateView):
+class SetPlace(AdminPermissions, TemplateView):
     template_name = 'admin/set_place.html'
 
 @api_view(['GET'])

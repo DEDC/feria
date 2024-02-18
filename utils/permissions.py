@@ -10,14 +10,8 @@ class AdminPermissions(LoginRequiredMixin, UserPassesTestMixin):
             return True
         return False
 
-class UserPermissionsWH(AdminPermissions):
+class UserPermissions(AdminPermissions):
     def test_func(self):
-        if not self.request.user.is_superuser and self.request.user.user_type == 'almacen':
-            return True
-        return False
-
-class UserPermissionsUO(AdminPermissions):
-    def test_func(self):
-        if not self.request.user.is_superuser and self.request.user.user_type == 'unidad':
+        if not self.request.user.is_superuser:
             return True
         return False

@@ -1,0 +1,171 @@
+{% extends 'places/base.html' %}
+{% load static %}
+{% block head %}
+{{block.super}}
+<style>
+    input[type="file"]::file-selector-button {
+        background-color: #1c3e95 !important;
+        color: white;
+    }
+</style>
+{% endblock head %}
+{% block main %}
+<div class="container-fluid p-5">
+    <div class="row gx-xl-5">
+        <div class="col-xl-3">
+            <div class="shadow-4 p-4 bg-white rounded-5 mb-4">
+                <a href="{% url 'admin:request' object.uuid %}" type="button"
+                    class="btn btn-primary btn-rounded btn-lg w-100"><i class="fas fa-angle-left me-3"></i>Volver a la
+                    solicitud</a>
+            </div>
+        </div>
+        <div class="col-xl-9 mb-4 mb-lg-0">
+            {% include 'base/validations.html' %}
+            <div
+                class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold">
+                    <i class="fas fa-clipboard-list me-3 green-text"></i>Editar Solicitud {{object.folio}} -
+                    {{object.id}}
+                </h4>
+                <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block" href="{% url 'admin:main' %}"
+                    role="button">Ver
+                    todo<i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+            <div class="shadow-4 bg-white rounded-5 p-4">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <h6><b>Información General</b></h6>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <label class="form-check-label ms-2 me-3 fw-bold">¿Desea facturar la compra de su
+                                Stand?:</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="factura" id="factura1" value="True"
+                                    required {% if object.factura %}checked{% endif %} />
+                                <label class="form-check-label" for="factura1">Sí</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="factura" id="factura2" value="False"
+                                    required {% if not object.factura %}checked{% endif %} />
+                                <label class="form-check-label" for="factura2">No</label>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-4">
+                            <label class="form-check-label ms-2 me-3 fw-bold">¿A qué Régimen Fiscal
+                                pertenece?</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="regimen_fiscal" id="reg1"
+                                    value="fisica" {% if object.regimen_fiscal == 'fisica' %} checked{% endif %} />
+                                <label class="form-check-label" for="reg1">Persona Física</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="regimen_fiscal" id="reg2"
+                                    value="moral" {% if object.regimen_fiscal == 'moral' %}checked{% endif %} />
+                                <label class="form-check-label" for="reg2">Persona Moral</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.nombre}}
+                                <label class="form-label">{{form.nombre.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.nombre_replegal}}
+                                <label class="form-label">{{form.nombre_replegal.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.rfc_txt}}
+                                <label class="form-label">{{form.rfc_txt.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.curp_txt}}
+                                <label class="form-label">{{form.curp_txt.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                <input type="number" name="cantidad_espacios" min="1" max="3" class="form-control"
+                                    required id="id_cantidad_espacios" value="{{object.cantidad_espacios}}">
+                                <label class="form-label"
+                                    for="{{form.cantidad_espacios.id}}">{{form.cantidad_espacios.label}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <h6><b>Datos de la Dirección</b></h6>
+                    <hr>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.calle}}
+                                <label class="form-label">{{form.calle.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.no_calle}}
+                                <label class="form-label">{{form.no_calle.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.colonia}}
+                                <label class="form-label">{{form.colonia.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.codigo_postal}}
+                                <label class="form-label">{{form.codigo_postal.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            {{form.estado}}
+                            <label class="form-label select-label">{{form.estado.label}}</label>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.municipio}}
+                                <label class="form-label">{{form.municipio.label}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <h6><b>Documentos</b></h6>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="form-label">{{form.identificacion.label}}</label><br>
+                            {{form.identificacion}}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">{{form.comprobante_domicilio.label}}</label><br>
+                            {{form.comprobante_domicilio}}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">{{form.constancia_fiscal.label}}</label><br>
+                            {{form.constancia_fiscal}}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">{{form.curp.label}}</label><br>
+                            {{form.curp}}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">{{form.acta_constitutiva.label}}</label><br>
+                            {{form.acta_constitutiva}}
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 col-6 mx-auto mt-3">
+                        <button class="btn btn-primary" type="submit">Editar registro</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main %}
