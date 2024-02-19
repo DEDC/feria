@@ -1,5 +1,5 @@
 # Django
-from django.views.generic import TemplateView, CreateView, DetailView
+from django.views.generic import TemplateView, CreateView, DetailView, RedirectView
 from django.urls import reverse_lazy, reverse
 from django.http import Http404
 from django.contrib.messages.views import SuccessMessageMixin
@@ -15,6 +15,7 @@ from apps.dates.models import CitasAgendadas
 from apps.dates.tools import get_dates_from_range, get_times_from_range
 # utils
 from utils.permissions import UserPermissions
+from utils.date import get_date_constancy
 
 dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
@@ -177,3 +178,13 @@ class CreateShop(UserPermissions, SuccessMessageMixin, CreateView):
 
     def get_success_url(self, *args, **kwargs):
         return reverse_lazy('places:detail_request', kwargs={'uuid':self.request_.uuid})
+
+class DownloadDateDoc(UserPermissions, RedirectView):
+    def get(self, request, *args, **kwargs):
+        try:
+            request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
+            date = CitasAgendadas.objects.get(uuid=kwargs['uuid_date'])
+            doc = get_date_constancy(request_, date)
+            return doc
+        except (Solicitudes.DoesNotExist, CitasAgendadas.DoesNotExist):
+            raise Http404()

@@ -263,7 +263,7 @@
                             </tr>
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Documento de Cita</th>
-                                <td><a target="_blank" class="btn btn-sm btn-success shadow-0" href="{% static 'docs/CITA_ESPACIOS_FERIA.pdf' %}">Descargar cita</a></td>
+                                <td><a target="_blank" class="btn btn-sm btn-success shadow-0" href="{% url 'places:download_date' object.uuid date.uuid %}">Descargar cita</a></td>
                             </tr>
                         </tbody>
                     </table>

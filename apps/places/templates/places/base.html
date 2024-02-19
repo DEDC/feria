@@ -6,6 +6,9 @@
         <a class="navbar-brand mt-2 mt-lg-0" href="#">
             <img src="{% static 'images/logo.png' %}" height="35" alt="Feria Tabasco" loading="lazy" />
         </a>
+        <span class="badge rounded-pill badge-secondary">
+            <span class="nav-link"><i class="fas fa-circle-user me-2"></i>{{user.first_name}}</span>
+        </span>
         <ul class="navbar-nav ms-auto d-flex flex-row">
             <li class="nav-item">
                 <a class="nav-link me-3 me-lg-0 dropdown-toggle hidden-arrow" href="/logout" role="button">
