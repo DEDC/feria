@@ -44,7 +44,7 @@ def get_date_constancy(request_, date):
     # curp/rfc
     pdf.drawString(247, 380, request_.curp_txt or request_.rfc_txt)
     # Fecha y Hora
-    pdf.drawString(247, 353, f'{date.fecha.strftime('%d/%m/%Y')} a las {date.hora.strftime('%H:%M')} hrs.')
+    pdf.drawString(247, 353, '{} a las {} hrs.'.format(date.fecha.strftime('%d/%m/%Y'), date.hora.strftime('%H:%M')))
     # Folio
     pdf.drawString(247, 273, date.folio)
     #pdf.setFillColor(HexColor('#878787'))
