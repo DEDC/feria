@@ -22,7 +22,7 @@ from reportlab.lib.units import mm, cm
 from reportlab.lib.pagesizes import letter
 
 def get_date_constancy(request_, date):
-    # fecha = formats.date_format(localtime(test.fecha_reg), "j \d\e F \d\e Y")
+    fecha = formats.date_format(localtime(date.fecha_reg), "j \d\e F \d\e Y \- h:m A")
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=CITA_ESPACIOS_FERIA.pdf'
     output = PdfWriter()
@@ -39,6 +39,8 @@ def get_date_constancy(request_, date):
     p.alignment = TA_CENTER
     p.fontSize = 11
     p.leading = 20
+    # fecha reg
+    pdf.drawString(237, 620, fecha)
     # username
     pdf.drawString(247, 410, textwrap.wrap(request_.usuario.get_full_name(), 40)[0])
     # curp/rfc
