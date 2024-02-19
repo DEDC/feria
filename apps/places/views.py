@@ -5,7 +5,7 @@ from django.http import Http404
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.conf import settings
 # places
 from apps.places.models import Solicitudes, Comercios, Validaciones
@@ -78,8 +78,13 @@ class CreateRequest(UserPermissions, SuccessMessageMixin, CreateView):
     def form_valid(self, form):
         form.instance.usuario = self.request.user
         self.uuid = form.instance.uuid
+        lookup = (Q(curp_txt=form.instance.curp_txt) | Q(rfc_txt=form.instance.rfc_txt))
+        dup = Solicitudes.objects.filter(lookup)
         if form.instance.cantidad_espacios > self.max_places:
             messages.warning(self.request, 'Ha superado el número límite de lugares para sus Comercios.')
+            return redirect('places:main')
+        if dup.exists():
+            messages.warning(self.request, 'Ya existe una solicitud con ese RFC/CURP registrada')
             return redirect('places:main')
         return super().form_valid(form)
 
