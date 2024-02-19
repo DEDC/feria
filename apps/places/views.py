@@ -78,7 +78,7 @@ class CreateRequest(UserPermissions, SuccessMessageMixin, CreateView):
     def form_valid(self, form):
         form.instance.usuario = self.request.user
         self.uuid = form.instance.uuid
-        lookup = (Q(curp_txt=form.instance.curp_txt) | Q(rfc_txt=form.instance.rfc_txt))
+        lookup = (Q(curp_txt=form.instance.curp_txt or '123') | Q(rfc_txt=form.instance.rfc_txt or '123'))
         dup = Solicitudes.objects.filter(lookup)
         if form.instance.cantidad_espacios > self.max_places:
             messages.warning(self.request, 'Ha superado el número límite de lugares para sus Comercios.')
