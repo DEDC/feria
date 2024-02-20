@@ -1,7 +1,6 @@
 import { getNave1Data, setPlaceTemp, unsetPlaceTemp, setPlace } from "../js/api/utilities.js";
 
 document.addEventListener('DOMContentLoaded', () => {
-    const chks = document.querySelectorAll('input[type="checkbox"]')
     const table_places = document.querySelector('.table-places')
     const reload_places = document.querySelector('#reload-places')
     const btn_preselect = document.querySelector('#preselection')
@@ -63,20 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
             get_places()
         })
     }
-
-    chks.forEach(chk => {
-        chk.addEventListener('click', (e) => {
-            const parent = e.target.closest('.list-group-item')
-            const textarea = parent.querySelector('textarea')
-            if (e.target.checked) {
-                textarea.name = e.target.value
-                textarea.classList.remove('d-none')
-            } else {
-                textarea.name = ''
-                textarea.classList.add('d-none')
-            }
-        });
-    });
 
     async function remove_temp_places() {
         const data = new FormData();

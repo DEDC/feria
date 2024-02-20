@@ -33,6 +33,7 @@
         background-color: #9FA6B2 !important;
     }
 </style>
+<script src="{% static 'js/validations.js' %}" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="{% static 'js/request.js' %}" type="module" defer></script>
 <script src="{% static 'js/easytimer.min.js' %}" defer></script>
@@ -51,7 +52,8 @@
                     <div class="p-4">
                         {% if not object.estatus or object.estatus == 'resolved' %}
                         {% if object.estatus == 'resolved' %}
-                        <h1 class="text-center"><span class="badge rounded-pill badge-primary mb-2">Solventado</span></h1>
+                        <h1 class="text-center"><span class="badge rounded-pill badge-primary mb-2">Solventado</span>
+                        </h1>
                         {% endif %}
                         <button name="validated" type="submit" data-mdb-ripple-init data-mdb-ripple-color="dark"
                             class="btn btn-lg btn-rounded btn-outline-success shadow-0 w-100"><i
@@ -103,11 +105,18 @@
                 {% endif %}
                 {% endcomment %}
                 <div class="shadow-4 bg-white rounded-5 p-4">
-                    {% if not object.estatus == 'validated' %}
                     <div class="d-flex justify-content-end">
-                        <a href="{% url 'admin:update_request' object.uuid %}" type="button" class="btn btn-sm shadow-0 btn-primary btn-rounded mb-2"><i class="fas fa-pen me-2"></i>Editar</a>
+                        {% if object.comercio %}
+                        <a href="{% url 'admin:shop' object.comercio.uuid %}" type="button"
+                            class="btn btn-sm shadow-0 btn-info btn-rounded mb-2"><i class="fas fa-shop me-2"></i>Ver
+                            comercio</a>
+                        {% endif %}
+                        {% if not object.estatus == 'validated' %}
+                        <a href="{% url 'admin:update_request' object.uuid %}" type="button"
+                            class="btn btn-sm shadow-0 btn-primary btn-rounded mb-2 ms-2"><i
+                                class="fas fa-pen me-2"></i>Editar</a>
+                        {% endif %}
                     </div>
-                    {% endif %}
                     <ul class="list-group list-group-light">
                         <li
                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
@@ -121,6 +130,19 @@
                             <div class="ms-2 me-auto">
                                 <div class="fw-bold">{{object.folio}}</div>
                                 <small>Folio</small>
+                            </div>
+                        </li>
+                        <li
+                            class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
+                            <div class="ms-2 me-auto">
+                                {% if object.comercio %}
+                                <div class="fw-bold"><a
+                                        href="{% url 'admin:shop' object.comercio.uuid %}">{{object.comercio.folio}}</a>
+                                </div>
+                                {% else %}
+                                <div class="fw-bold">No especificado</div>
+                                {% endif %}
+                                <small>Comercio relacionado</small>
                             </div>
                         </li>
                         <li
@@ -538,6 +560,7 @@
                             <th>Comentarios</th>
                             <th>Campos seleccionados</th>
                             <th>Validador</th>
+                            <th>Atendido</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -559,7 +582,16 @@
                             <td>{{vl.fecha_reg}}</td>
                             <td>{{vl.comentarios|default:"No especificado"}}</td>
                             <td>{{vl.campos|default:"No especificado"}}</td>
-                            <td>{{vl.validador}}</td>
+                            <td>
+                                {% if not vl.estatus == 'resolved' %}
+                                {{vl.validador}}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if vl.estatus == 'pending' %}
+                                {{vl.atendido|yesno:'Sí,No'}}
+                                {% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

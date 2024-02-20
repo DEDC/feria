@@ -53,11 +53,20 @@
                     href="{% url 'places:create_shop' object.uuid %}"
                     class="btn btn-sm btn-warning shadow-0 ms-2">Agrega un comercio</a>
             </div>
+            {% else %}
+            {% if object.comercio.get_last_unattended_validation %}
+            <div class="alert" role="alert" data-mdb-color="warning">
+                <i class="fas fa-exclamation-triangle me-3"></i>Tiene una observación en su <b>Comercio</b> <a
+                    href="{% url 'places:observations_shop' object.comercio.uuid %}"
+                    class="btn btn-sm btn-warning shadow-0 ms-2">Atender observación</a>
+            </div>
+            {% endif %}
             {% endif %}
             {% if object.get_last_unattended_validation %}
             <div class="alert" role="alert" data-mdb-color="warning">
-                <i class="fas fa-exclamation-triangle me-3"></i>Tiene una observación en su Solicitud <a
-                    href="{% url 'places:observations_request' object.uuid %}" class="btn btn-sm btn-warning shadow-0 ms-2">Atender observación</a>
+                <i class="fas fa-exclamation-triangle me-3"></i>Tiene una observación en su <b>Solicitud</b> <a
+                    href="{% url 'places:observations_request' object.uuid %}"
+                    class="btn btn-sm btn-warning shadow-0 ms-2">Atender observación</a>
             </div>
             {% endif %}
             <div
@@ -263,7 +272,9 @@
                             </tr>
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Documento de Cita</th>
-                                <td><a target="_blank" class="btn btn-sm btn-success shadow-0" href="{% url 'places:download_date' object.uuid date.uuid %}">Descargar cita</a></td>
+                                <td><a target="_blank" class="btn btn-sm btn-success shadow-0"
+                                        href="{% url 'places:download_date' object.uuid date.uuid %}">Descargar cita</a>
+                                </td>
                             </tr>
                         </tbody>
                     </table>

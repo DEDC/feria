@@ -1,0 +1,124 @@
+{% extends 'places/base.html' %}
+{% load static %}
+{% block head %}
+{{block.super}}
+<style>
+    input[type="file"]::file-selector-button {
+        background-color: #1c3e95 !important;
+        color: white;
+    }
+</style>
+<script src="{% static 'js/app_create.js' %}" defer></script>
+{% endblock head %}
+{% block main %}
+<div class="container-fluid p-5">
+    <div class="row gx-xl-5">
+        <div class="col-xl-3">
+            <div class="shadow-4 p-4 bg-white rounded-5 mb-4">
+                <a href="{% url 'places:detail_request' object.solicitud.uuid %}" type="button"
+                    class="btn btn-primary btn-rounded btn-lg w-100"><i class="fas fa-angle-left me-3"></i>Volver a la
+                    solicitud</a>
+            </div>
+        </div>
+        <div class="col-xl-9 mb-4 mb-lg-0">
+            {% include 'base/validations.html' %}
+            <div class="alert alert-warning" role="alert" data-mdb-color="warning">
+                <i class="fas fa-exclamation-triangle me-3"></i>Por favor, lea detenidamente cada <b>Observación</b>
+                asignada al campo correspondiente, edite y guarde la información para solventarla.
+            </div>
+            <div class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
+                id="observations">
+                <h4 class="mb-0 fw-bold text-warning"><i class="fas fas fa-triangle-exclamation me-3"></i>Observaciones
+                </h4>
+            </div>
+            {% if object.get_last_unattended_validation %}
+            <div class="shadow-4 bg-white rounded-5 p-5 my-4">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <h6><b>Información General</b></h6>
+                    <hr>
+                    <div class="row">
+                        {% if 'vende_alcohol' in obs_fields %}
+                        <div class="col-12 mb-4">
+                            <div class="alert alert-danger p-2" role="alert" data-mdb-color="danger">
+                                <small>{{obs_comments.vende_alcohol}}</small>
+                            </div>
+                            <label class="form-check-label ms-2 me-3 fw-bold">{{form.vende_alcohol.label}}</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="vende_alcohol" id="venta1"
+                                    value="True" required {% if object.vende_alcohol %}checked{% endif %} />
+                                <label class="form-check-label" for="venta1">Sí</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="vende_alcohol" id="venta2"
+                                    value="False" required {% if not object.vende_alcohol %}checked{% endif %} />
+                                <label class="form-check-label" for="venta2">No</label>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if 'nombre' in obs_fields %}
+                        <div class="col-6">
+                            <div class="alert alert-danger p-2" role="alert" data-mdb-color="danger">
+                                <small>{{obs_comments.nombre}}</small>
+                            </div>
+                            <div class="form-outline">
+                                {{form.nombre}}
+                                <label class="form-label">{{form.nombre.label}}</label>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if 'descripcion' in obs_fields %}
+                        <div class="col-6">
+                            <div class="alert alert-danger p-2" role="alert" data-mdb-color="danger">
+                                <small>{{obs_comments.descripcion}}</small>
+                            </div>
+                            <div class="form-outline">
+                                {{form.descripcion}}
+                                <label class="form-label">{{form.descripcion.label}}</label>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if 'imagen' in obs_fields %}
+                        <div class="col-12">
+                            <div class="alert alert-danger p-2" role="alert" data-mdb-color="danger">
+                                <small>{{obs_comments.imagen}}</small>
+                            </div>
+                            <label class="form-label">{{form.imagen.label}}</label><br>
+                            {{form.imagen}}
+                        </div>
+                        {% endif %}
+                        {% if 'equipos' in obs_fields %}
+                        <div class="col-6">
+                            <div class="alert alert-danger p-2" role="alert" data-mdb-color="danger">
+                                <small>{{obs_comments.equipos}}</small>
+                            </div>
+                            <div class="form-outline">
+                                {{form.equipos}}
+                                <label class="form-label">{{form.equipos.label}}</label>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if 'voltaje' in obs_fields %}
+                        <div class="col-6">
+                            <div class="alert alert-danger p-2" role="alert" data-mdb-color="danger">
+                                <small>{{obs_comments.voltaje}}</small>
+                            </div>
+                            {{form.voltaje}}
+                            <label class="form-label select-label">{{form.voltaje.label}}</label>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="d-grid gap-2 col-6 mx-auto mt-3">
+                        <button class="btn btn-primary" type="submit">Cambiar Información</button>
+                    </div>
+                </form>
+            </div>
+            {% else %}
+            <div class="alert alert-warning" role="alert" data-mdb-color="warning">
+                <i class="fas fa-exclamation-triangle me-3"></i>Aún no tiene Observaciones
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock main %}

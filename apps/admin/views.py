@@ -11,7 +11,7 @@ from rest_framework.decorators import api_view, renderer_classes, permission_cla
 from rest_framework.permissions import IsAuthenticated
 # places
 from apps.places.models import Solicitudes, Comercios, Validaciones, Lugares
-from apps.places.forms import RequestForm
+from apps.places.forms import RequestForm, ShopForm
 # dates
 from apps.dates.models import CitasAgendadas
 # utils
@@ -36,12 +36,19 @@ class UpdateRequest(AdminPermissions, SuccessMessageMixin, UpdateView):
     slug_field = 'uuid'
     slug_url_kwarg = 'uuid'
 
-    def form_valid(self, form):
-        print(self.request.POST)
-        return super().form_valid(form)
-
     def get_success_url(self, *args, **kwargs):
         return reverse_lazy('admin:update_request', kwargs={'uuid':self.object.uuid})
+
+class UpdateShop(AdminPermissions, SuccessMessageMixin, UpdateView):
+    template_name = 'admin/update_shop.html'
+    model = Comercios
+    form_class = ShopForm
+    success_message = 'Comercio actualizada exitosamente'
+    slug_field = 'uuid'
+    slug_url_kwarg = 'uuid'
+
+    def get_success_url(self, *args, **kwargs):
+        return reverse_lazy('admin:update_shop', kwargs={'uuid':self.object.uuid})
 
 class Request(AdminPermissions, DetailView):
     template_name = 'admin/request.html'
@@ -58,6 +65,8 @@ class Request(AdminPermissions, DetailView):
             messages.success(request, 'Estatus asignado exitosamente.')
         elif 'rejected' in request.POST:
             request_.estatus = 'rejected'
+            # delete date here
+            
             request_.save()
             Validaciones.objects.create(solicitud=request_, estatus='rejected', validador=request.user.get_full_name())
             messages.success(request, 'Estatus asignado exitosamente.')
@@ -92,6 +101,44 @@ class Request(AdminPermissions, DetailView):
                     selected_places.append(p2)
         context['selected_places'] = selected_places
         return context
+
+class Shop(AdminPermissions, DetailView):
+    template_name = 'admin/shop.html'
+    model = Comercios
+    slug_field = 'uuid'
+    slug_url_kwarg = 'uuid'
+
+    def post(self, request, *args, **kwargs):
+        shop_ = self.get_object()
+        if 'validated' in request.POST:
+            shop_.estatus = 'validated'
+            shop_.save()
+            Validaciones.objects.create(comercio=shop_, estatus='validated', validador=request.user.get_full_name())
+            messages.success(request, 'Estatus asignado exitosamente.')
+        elif 'rejected' in request.POST:
+            shop_.estatus = 'rejected'
+            shop_.save()
+            Validaciones.objects.create(comercio=shop_, estatus='rejected', validador=request.user.get_full_name())
+            messages.success(request, 'Estatus asignado exitosamente.')
+        elif 'pending' in request.POST:
+            validation_fields = ['nombre', 'descripcion', 'imagen', 'vende_alcohol', 'voltaje', 'equipos']
+            data = {
+                'just_fields': [],
+                'field_comments': {}
+            }
+            for f in request.POST:
+                if f in validation_fields:
+                    if not request.POST.get(f).strip() == '':
+                        data['just_fields'].append(f)
+                        data['field_comments'][f] = request.POST.get(f).strip()
+            if data['just_fields']:
+                shop_.estatus = 'pending'
+                shop_.save()
+                Validaciones.objects.create(comercio=shop_, estatus='pending', validador=request.user.get_full_name(), campos=data)
+                messages.success(request, 'Estatus asignado exitosamente.')
+            else:
+                messages.warning(request, 'No se realizó ninguna acción. No se detectaron campos validados.')
+        return redirect('admin:shop', shop_.uuid)
 
 class SetPlace(AdminPermissions, TemplateView):
     template_name = 'admin/set_place.html'

@@ -40,17 +40,9 @@ class Solicitudes(ControlInfo):
     def get_last_unattended_validation(self):
         return self.validaciones.filter(atendido=False, estatus='pending').last()
 
-class Validaciones(ControlInfo):
-    identifier = 'VAL'
-    estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Observado'), ('validated', 'Validado'), ('rejected', 'Rechazado'), ('resolved', 'Solventado'),), null=True)
-    solicitud = models.ForeignKey(Solicitudes, related_name='validaciones', on_delete=models.CASCADE)
-    campos = models.JSONField(null=True)
-    comentarios = models.TextField(null=True)
-    atendido = models.BooleanField(default=False, editable=False)
-    validador = models.CharField(max_length=200, editable=False, null=True)
-
 class Comercios(ControlInfo):
     identifier = 'COM'
+    estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Observado'), ('validated', 'Validado'), ('rejected', 'Rechazado'), ('resolved', 'Solventado'),), default='')
     nombre = models.CharField('Nombre del Comercio', max_length = 100)
     descripcion = models.TextField('Describa a qué se dedica su Comercio')
     imagen = models.ImageField('Adjunte el diseño en un archivo de imagen (JPG, PNG) del módulo o stand de su Comercio', upload_to=UploadTo('PROPUESTA_LOCAL', 'propuestas_locales'))
@@ -58,6 +50,19 @@ class Comercios(ControlInfo):
     voltaje = models.CharField('¿Qué voltaje necesita su Comercio?',   max_length=10, choices=(('110', '110v'), ('220', '220v')), null=True)
     equipos = models.CharField('¿Qué equipos usará para operar en su Comercio?', max_length=500, null=True)
     solicitud = models.OneToOneField(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='comercio')
+
+    def get_last_unattended_validation(self):
+        return self.validaciones_com.filter(atendido=False, estatus='pending').last()
+
+class Validaciones(ControlInfo):
+    identifier = 'VAL'
+    estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Observado'), ('validated', 'Validado'), ('rejected', 'Rechazado'), ('resolved', 'Solventado'),), null=True)
+    solicitud = models.ForeignKey(Solicitudes, related_name='validaciones', on_delete=models.CASCADE, null=True)
+    comercio = models.ForeignKey(Comercios, related_name='validaciones_com', on_delete=models.CASCADE, null=True)
+    campos = models.JSONField(null=True)
+    comentarios = models.TextField(null=True)
+    atendido = models.BooleanField(default=False, editable=False)
+    validador = models.CharField(max_length=200, editable=False, null=True)
 
 class Lugares(ControlInfo):
     identifier='PLC'

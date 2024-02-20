@@ -62,7 +62,7 @@
                                         <th class="th-sm">Estatus</th>
                                         <th class="th-sm">Fecha de creación</th>
                                         <th class="th-sm">Nombre</th>
-                                        <th class="th-sm">Comercio</th>
+                                        <th class="th-sm">Comercio relacionado</th>
                                         <th class="th-sm">Usuario</th>
                                     </tr>
                                 </thead>
@@ -85,14 +85,21 @@
                                                 {% elif rq.estatus == 'pending' %}
                                                 <span class="badge rounded-pill badge-warning">Observado</span>
                                                 {% elif rq.estatus == 'resolved' %}
-                                                <span class="badge rounded-pill badge-primary">Solventado por el usuario</span>
+                                                <span class="badge rounded-pill badge-primary">Solventado por el
+                                                    usuario</span>
                                                 {% else %}
                                                 <span class="badge rounded-pill badge-secondary">No asignado</span>
                                                 {% endif %}
                                         </td>
                                         <td>{{rq.fecha_reg}}</td>
                                         <td>{{rq.nombre}}</td>
-                                        <td>{{rq.comercio.nombre|default:'No especificado'}}</td>
+                                        <td>
+                                            {% if rq.comercio %}
+                                            <a href="{% url 'admin:shop' rq.comercio.uuid %}">{{rq.comercio.nombre}}</a>
+                                            {% else %}
+                                            No especificado
+                                            {% endif %}
+                                        </td>
                                         <td>{{rq.usuario.get_full_name}}</td>
                                     </tr>
                                     {% endfor %}
@@ -145,7 +152,7 @@
                     <div
                         class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
                         <h4 class="mb-0 fw-bold">
-                            <i class="fas fa-folder-tree me-3 green-text"></i>Comercios
+                            <i class="fas fa-shop me-3 green-text"></i>Comercios
                         </h4>
                         <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block" href="#" role="button">Ver
                             todo<i class="fas fa-arrow-right ms-2"></i></a>
@@ -156,28 +163,46 @@
                             <table>
                                 <thead>
                                     <tr>
+                                        <th class="th-sm">No.</th>
                                         <th class="th-sm">Folio</th>
+                                        <th class="th-sm">Estatus</th>
+                                        <th class="th-sm">Fecha de creación</th>
                                         <th class="th-sm">Nombre</th>
-                                        <th class="th-sm">Descripción</th>
-                                        <th class="th-sm">¿Vende Alcohol?</th>
-                                        <th class="th-sm">Voltaje</th>
-                                        <th class="th-sm">Equipos</th>
+                                        <th class="th-sm">Solicitud relacionada</th>
+                                        <th class="th-sm">Usuario</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for bc in branches %}
                                     <tr>
+                                        <td>{{bc.id}}</td>
                                         <td>
-                                            <a href="#" type="button" class="btn btn-sm btn-link btn-rounded">
+                                            <a href="{% url 'admin:shop' bc.uuid %}" type="button"
+                                                class="btn btn-sm btn-link btn-rounded">
                                                 {{bc.folio}}
                                                 <i class="fas fa-angle-right ms-2"></i>
                                             </a>
                                         </td>
+                                        <td>
+                                            {% if bc.estatus == 'validated' %}
+                                            <h6 class="badge rounded-pill badge-success">Validado</span>
+                                                {% elif bc.estatus == 'rejected' %}
+                                                <span class="badge rounded-pill badge-danger">Rechazado</span>
+                                                {% elif bc.estatus == 'pending' %}
+                                                <span class="badge rounded-pill badge-warning">Observado</span>
+                                                {% elif bc.estatus == 'resolved' %}
+                                                <span class="badge rounded-pill badge-primary">Solventado por el
+                                                    usuario</span>
+                                                {% else %}
+                                                <span class="badge rounded-pill badge-secondary">No asignado</span>
+                                                {% endif %}
+                                        </td>
+                                        <td>{{bc.fecha_reg}}</td>
                                         <td>{{bc.nombre}}</td>
-                                        <td>{{bc.descripcion}}</td>
-                                        <td>{{bc.vende_alcohol|yesno:"Sí,No"}}</td>
-                                        <td>{{bc.get_voltaje_display|default:"No especificado"}}</td>
-                                        <td>{{bc.equipos|default:"No especificado"}}</td>
+                                        <td><a
+                                                href="{% url 'admin:request' bc.solicitud.uuid %}">{{bc.solicitud.folio}}</a>
+                                        </td>
+                                        <td>{{bc.solicitud.usuario.get_full_name}}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>

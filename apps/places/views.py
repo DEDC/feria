@@ -145,6 +145,42 @@ class ObservationsRequest(UserPermissions, DetailView):
                 return redirect('places:observations_request', request_.uuid)
         return redirect('places:detail_request', request_.uuid)
 
+class ObservationsShop(UserPermissions, DetailView):
+    template_name = 'places/observations_shop.html'
+    model = Comercios
+    slug_field = 'uuid'
+    slug_url_kwarg = 'uuid'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        last_validation = self.object.get_last_unattended_validation()
+        if last_validation:
+            form = ShopForm(instance=self.object)
+            context['form'] = form
+            context['obs_fields'] = last_validation.campos['just_fields'] or {}
+            context['obs_comments'] = last_validation.campos['field_comments'] or {}
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        shop_ = self.get_object()
+        last_validation = shop_.get_last_unattended_validation()
+        if last_validation:
+            form = ShopForm(request.POST, request.FILES, instance=shop_)
+            changed = all(field in form.changed_data for field in last_validation.campos['just_fields'])
+            if changed:
+                form.is_valid()
+                shop_.__dict__.update(form.cleaned_data)
+                shop_.estatus = 'resolved'
+                shop_.save(update_fields=last_validation.campos['just_fields']+['estatus'])
+                last_validation.atendido = True
+                last_validation.save()
+                Validaciones.objects.create(comercio=shop_, estatus='resolved', validador=request.user.get_full_name())
+                messages.success(request, 'Observación solventada exitosamente.')
+            else:
+                messages.warning(request, 'No se completaron los cambios en los campos observados.')
+                return redirect('places:observations_shop', shop_.uuid)
+        return redirect('places:detail_request', shop_.solicitud.uuid)
+
 class CreateShop(UserPermissions, SuccessMessageMixin, CreateView):
     template_name = 'places/create_shop.html'
     model = Comercios
