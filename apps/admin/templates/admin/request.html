@@ -106,6 +106,10 @@
                 {% endcomment %}
                 <div class="shadow-4 bg-white rounded-5 p-4">
                     <div class="d-flex justify-content-end">
+                        {% if object.usuario.citas.first %}
+                        <a href="{% url 'admin:download_date' object.uuid object.usuario.citas.first.uuid %}" type="button"
+                            class="btn btn-sm shadow-0 btn-success btn-rounded mb-2 me-2"><i class="fas fa-download me-2"></i>Descargar Citas</a>
+                        {% endif %}
                         {% if object.comercio %}
                         <a href="{% url 'admin:shop' object.comercio.uuid %}" type="button"
                             class="btn btn-sm shadow-0 btn-info btn-rounded mb-2"><i class="fas fa-shop me-2"></i>Ver

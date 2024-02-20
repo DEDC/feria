@@ -1,10 +1,11 @@
 # Django
-from django.views.generic import TemplateView, DetailView, UpdateView
+from django.views.generic import TemplateView, DetailView, UpdateView, RedirectView
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
+from django.http import Http404
 # DjangoRestFramework
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -18,6 +19,7 @@ from apps.dates.models import CitasAgendadas
 # utils
 from utils.naves import nave1
 from utils.permissions import AdminPermissions
+from utils.date import get_date_constancy
 
 class Main(AdminPermissions, TemplateView):
     template_name = 'admin/main.html'
@@ -195,3 +197,13 @@ def set_place(request, uuid):
             pl.estatus = 'assign'
             pl.save()
     return Response({})
+
+class DownloadDateDoc(AdminPermissions, RedirectView):
+    def get(self, request, *args, **kwargs):
+        try:
+            request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
+            date = CitasAgendadas.objects.get(uuid=kwargs['uuid_date'])
+            doc = get_date_constancy(request_, date)
+            return doc
+        except (Solicitudes.DoesNotExist, CitasAgendadas.DoesNotExist):
+            raise Http404()
