@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
 # DjangoRestFramework
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -65,8 +66,14 @@ class Request(AdminPermissions, DetailView):
             messages.success(request, 'Estatus asignado exitosamente.')
         elif 'rejected' in request.POST:
             request_.estatus = 'rejected'
-            # delete date here
-            
+            lookup = (~Q(estatus='rejected'))
+            sib_req = Solicitudes.objects.filter(lookup, usuario=request_.usuario).exclude(uuid=request_.uuid)
+            if not sib_req.exists():
+                # quitar cita
+                date = request_.usuario.citas.first()
+                if date:
+                    messages.warning(request, 'La Cita {} - {} fue liberada.'.format(date.fecha, date.hora))
+                    date.delete()
             request_.save()
             Validaciones.objects.create(solicitud=request_, estatus='rejected', validador=request.user.get_full_name())
             messages.success(request, 'Estatus asignado exitosamente.')

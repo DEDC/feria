@@ -200,7 +200,7 @@ class CreateShop(UserPermissions, SuccessMessageMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.solicitud = self.request_
-        if not self.request.user.citas.exists():
+        if not self.request.user.citas.exists() and not self.request_.estatus == 'rejected':
             # assing date
             assign = False
             for d in dates:
