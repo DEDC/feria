@@ -1,5 +1,5 @@
 # Django
-from django.views.generic import TemplateView, DetailView, UpdateView, RedirectView
+from django.views.generic import TemplateView, DetailView, UpdateView, RedirectView, ListView
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.urls import reverse_lazy
@@ -30,6 +30,35 @@ class Main(AdminPermissions, TemplateView):
         context['dates'] = CitasAgendadas.objects.all().order_by('fecha', 'hora')
         context['branches'] = Comercios.objects.all().order_by('nombre')
         return context
+
+class ListRequests(AdminPermissions, ListView):
+    model = Solicitudes
+    paginate_by = 50
+    ordering = ['pk']
+    template_name = 'admin/list_requests.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        requests = Solicitudes.objects.all()
+        context['total'] = requests
+        context['validated'] = requests.filter(estatus='validated')
+        context['rejected'] = requests.filter(estatus='rejected')
+        context['pending'] = requests.filter(estatus='pending')
+        context['not_assign'] = requests.filter(estatus='')
+        context['q'] = self.request.GET.get('q', '')
+        return context
+    
+    def get_queryset(self):
+        q = self.request.GET.get('q', None)
+        e = self.request.GET.get('e', None)
+        queryset = self.model.objects.all()
+        if q:
+            print(q)
+            lookup = (Q(nombre__icontains=q)|Q(folio__icontains=q)|Q(comercio__nombre__icontains=q)|Q(usuario__first_name__icontains=q)|Q(usuario__last_name__icontains=q))
+            queryset = queryset.filter(lookup)
+        if e:
+            queryset = queryset.filter(estatus=e)
+        return queryset
 
 class UpdateRequest(AdminPermissions, SuccessMessageMixin, UpdateView):
     template_name = 'admin/update_request.html'
