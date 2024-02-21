@@ -34,7 +34,6 @@ class Main(AdminPermissions, TemplateView):
 class ListRequests(AdminPermissions, ListView):
     model = Solicitudes
     paginate_by = 30
-    ordering = ['pk']
     template_name = 'admin/list_requests.html'
 
     def get_context_data(self, **kwargs):
@@ -55,14 +54,14 @@ class ListRequests(AdminPermissions, ListView):
         q = self.request.GET.get('q', None)
         e = self.request.GET.get('e', None)
         if q:
-            lookup = (Q(nombre__icontains=q)|Q(folio__icontains=q)|Q(comercio__nombre__icontains=q)|Q(usuario__first_name__icontains=q)|Q(usuario__last_name__icontains=q))
+            lookup = (Q(pk__exact=q)|Q(nombre__icontains=q)|Q(folio__icontains=q)|Q(comercio__nombre__icontains=q)|Q(usuario__first_name__icontains=q)|Q(usuario__last_name__icontains=q))
             queryset = queryset.filter(lookup)
         if e:
             if e == 'noassign':
                 queryset = queryset.filter(estatus='')
             elif e in ['validated', 'rejected', 'resolved', 'pending']:
                 queryset = queryset.filter(estatus=e)
-        return queryset
+        return queryset.order_by('pk')
 
 class UpdateRequest(AdminPermissions, SuccessMessageMixin, UpdateView):
     template_name = 'admin/update_request.html'
