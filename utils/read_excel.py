@@ -1,3 +1,5 @@
+# Django
+from django.db import IntegrityError
 # openpyxl
 from openpyxl import load_workbook
 # users
@@ -20,7 +22,11 @@ def read_ambulantes():
         date = str(row[5].value).strip()
         hour = str(row[6].value).strip()
         print(counter, first_name)
-        usu = Usuarios.objects.create(email=email, first_name=first_name, last_name=last_name, phone_number=phone_number)
-        usu.set_password(password)
-        usu.save()
-        date = CitasAgendadas.objects.get_or_create(fecha=date, hora=hour, usuario=usu)
+        try:
+            usu = Usuarios.objects.create(email=email, first_name=first_name, last_name=last_name, phone_number=phone_number)
+            usu.set_password(password)
+            usu.save()
+            date = CitasAgendadas.objects.get_or_create(fecha=date, hora=hour, usuario=usu)
+        except IntegrityError:
+            print(email, 'repetido')
+            pass
