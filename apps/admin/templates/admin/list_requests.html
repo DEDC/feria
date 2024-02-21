@@ -87,18 +87,28 @@
             </div>
             <div class="shadow-4 bg-white rounded-5 mb-4 p-4">
                 <form>
-                    <div class="form-outline">
-                        <i class="fas fa-magnifying-glass trailing"></i>
-                        <input name="q" type="text" class="form-control form-control-lg mb-3" value="{{q}}"/>
-                        <label class="form-label" for="datatable-search-input">Buscar Solicitud</label>
+                    <div class="input-group mb-4">
+                        <input name="q" value="{{q}}" type="search" class="form-control m-0 form-control-lg"
+                            placeholder="Buscar Solicitud" />
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
                     </div>
+                    <input type="hidden" name="e" value="{{e}}">
+                    <input type="hidden" name="page" value="{{page_obj.number}}">
                 </form>
                 <span class="me-2 text-secondary">Filtrar por:</span>
-                <span class="badge rounded-pill badge-success me-1">Validados</span>
-                <span class="badge rounded-pill badge-danger me-1">Rechazados</span>
-                <span class="badge rounded-pill badge-warning me-1">Observados</span>
-                <span class="badge rounded-pill badge-primary me-1">Solventado por el usuario</span>
-                <span class="badge rounded-pill badge-secondary">No asignados</span>
+                <a href="?q={{q}}&page={{page_obj.number}}" class="badge rounded-pill badge-info me-1 {% if e == '' %}border border-2{% endif %}">Todos</a>
+                <a href="?q={{q}}&e=validated&page={{page_obj.number}}"
+                    class="badge rounded-pill badge-success me-1 {% if e == 'validated' %}border border-2{% endif %}">Validados</a>
+                <a href="?q={{q}}&e=rejected&page={{page_obj.number}}"
+                    class="badge rounded-pill badge-danger me-1 {% if e == 'rejected' %}border border-2{% endif %}">Rechazados</a>
+                <a href="?q={{q}}&e=pending&page={{page_obj.number}}"
+                    class="badge rounded-pill badge-warning me-1 {% if e == 'pending' %}border border-2{% endif %}">Observados</a>
+                <a href="?q={{q}}&e=resolved&page={{page_obj.number}}"
+                    class="badge rounded-pill badge-primary me-1 {% if e == 'resolved' %}border border-2{% endif %}">Solventado por el usuario</a>
+                <a href="?q={{q}}&e=noassign&page={{page_obj.number}}" class="badge rounded-pill badge-secondary {% if e == 'noassign' %}border border-2{% endif %}">No
+                    asignados</a>
             </div>
             <div class="shadow-4 bg-white rounded-5 p-4">
                 <div class="table-responsive">
@@ -153,6 +163,7 @@
                     </table>
                 </div>
             </div>
+            {% include 'base/pagination.html' %}
         </div>
     </div>
 </div>

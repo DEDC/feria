@@ -33,7 +33,7 @@ class Main(AdminPermissions, TemplateView):
 
 class ListRequests(AdminPermissions, ListView):
     model = Solicitudes
-    paginate_by = 50
+    paginate_by = 30
     ordering = ['pk']
     template_name = 'admin/list_requests.html'
 
@@ -46,18 +46,22 @@ class ListRequests(AdminPermissions, ListView):
         context['pending'] = requests.filter(estatus='pending')
         context['not_assign'] = requests.filter(estatus='')
         context['q'] = self.request.GET.get('q', '')
+        context['e'] = self.request.GET.get('e', '')
+        print(context)
         return context
     
     def get_queryset(self):
+        queryset = self.model._default_manager.all()
         q = self.request.GET.get('q', None)
         e = self.request.GET.get('e', None)
-        queryset = self.model.objects.all()
         if q:
-            print(q)
             lookup = (Q(nombre__icontains=q)|Q(folio__icontains=q)|Q(comercio__nombre__icontains=q)|Q(usuario__first_name__icontains=q)|Q(usuario__last_name__icontains=q))
             queryset = queryset.filter(lookup)
         if e:
-            queryset = queryset.filter(estatus=e)
+            if e == 'noassign':
+                queryset = queryset.filter(estatus='')
+            elif e in ['validated', 'rejected', 'resolved', 'pending']:
+                queryset = queryset.filter(estatus=e)
         return queryset
 
 class UpdateRequest(AdminPermissions, SuccessMessageMixin, UpdateView):

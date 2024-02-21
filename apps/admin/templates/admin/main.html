@@ -22,15 +22,14 @@
                 <div class="p-4">
                     <ul class="nav nav-pills nav-justified mb-4" id="ex1" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link active" id="ex3-tab-1" data-mdb-toggle="pill" href="#ex3-pills-1"
-                                role="tab" aria-controls="ex3-pills-1" aria-selected="true">Solicitudes</a>
+                            <a class="nav-link" href="{% url 'admin:list_requests' %}" role="tab">Solicitudes</a>
                         </li>
                         <li class="nav-item" role="presentation">
                             <a class="nav-link" id="ex3-tab-2" data-mdb-toggle="pill" href="#ex3-pills-2" role="tab"
                                 aria-controls="ex3-pills-2" aria-selected="false" tabindex="-1">Citas Agendadas</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="ex3-tab-3" data-mdb-toggle="pill" href="#ex3-pills-3" role="tab"
+                            <a class="nav-link active" id="ex3-tab-3" data-mdb-toggle="pill" href="#ex3-pills-3" role="tab"
                                 aria-controls="ex3-pills-3" aria-selected="false" tabindex="-1">Comercios</a>
                         </li>
                     </ul>
@@ -39,75 +38,6 @@
         </div>
         <div class="col-xl-9 mb-4 mb-lg-0">
             <div class="tab-content" id="ex2-content">
-                <div class="tab-pane fade active show" id="ex3-pills-1" role="tabpanel" aria-labelledby="ex3-tab-1">
-                    <div
-                        class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0 fw-bold">
-                            <i class="fas fa-clipboard-list me-3 green-text"></i>Solicitudes
-                        </h4>
-                    </div>
-                    <div class="shadow-4 bg-white rounded-5 p-4">
-                        <div class="form-outline mb-4">
-                            <i class="fas fa-magnifying-glass trailing"></i>
-                            <input type="text" class="form-control form-control-lg" id="datatable-search-request" />
-                            <label class="form-label" for="datatable-search-input">Buscar Solicitud</label>
-                        </div>
-                        <div id="datatable-request" class="datatable" data-mdb-rows-text="Resultados por página"
-                            data-mdb-no-found-message="No se encontraron resultados" data-mdb-of-text="de">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th class="th-sm">No.</th>
-                                        <th class="th-sm">Folio</th>
-                                        <th class="th-sm">Estatus</th>
-                                        <th class="th-sm">Fecha de creación</th>
-                                        <th class="th-sm">Nombre</th>
-                                        <th class="th-sm">Comercio relacionado</th>
-                                        <th class="th-sm">Usuario</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for rq in requests %}
-                                    <tr>
-                                        <td>{{rq.id}}</td>
-                                        <td>
-                                            <a href="{% url 'admin:request' rq.uuid %}" type="button"
-                                                class="btn btn-sm btn-link btn-rounded">
-                                                {{rq.folio}}
-                                                <i class="fas fa-angle-right ms-2"></i>
-                                            </a>
-                                        </td>
-                                        <td>
-                                            {% if rq.estatus == 'validated' %}
-                                            <h6 class="badge rounded-pill badge-success">Validado</span>
-                                                {% elif rq.estatus == 'rejected' %}
-                                                <span class="badge rounded-pill badge-danger">Rechazado</span>
-                                                {% elif rq.estatus == 'pending' %}
-                                                <span class="badge rounded-pill badge-warning">Observado</span>
-                                                {% elif rq.estatus == 'resolved' %}
-                                                <span class="badge rounded-pill badge-primary">Solventado por el
-                                                    usuario</span>
-                                                {% else %}
-                                                <span class="badge rounded-pill badge-secondary">No asignado</span>
-                                                {% endif %}
-                                        </td>
-                                        <td>{{rq.fecha_reg}}</td>
-                                        <td>{{rq.nombre}}</td>
-                                        <td>
-                                            {% if rq.comercio %}
-                                            <a href="{% url 'admin:shop' rq.comercio.uuid %}">{{rq.comercio.nombre}}</a>
-                                            {% else %}
-                                            No especificado
-                                            {% endif %}
-                                        </td>
-                                        <td>{{rq.usuario.get_full_name}}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
                 <div class="tab-pane fade" id="ex3-pills-2" role="tabpanel" aria-labelledby="ex3-tab-2">
                     <div
                         class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
@@ -148,7 +78,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="ex3-pills-3" role="tabpanel" aria-labelledby="ex3-tab-3">
+                <div class="tab-pane fade show active" id="ex3-pills-3" role="tabpanel" aria-labelledby="ex3-tab-3">
                     <div
                         class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
                         <h4 class="mb-0 fw-bold">
