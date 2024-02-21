@@ -7,7 +7,7 @@ app_name = 'places'
 
 urlpatterns = [
     path('main', Main.as_view(), name='main'),
-    path('solicitud/crear', Main.as_view(), name='create_request'),
+    path('solicitud/crear/temp', CreateRequest.as_view(), name='create_request'),
     path('solicitud/<uuid:uuid>', Request.as_view(), name='detail_request'),
     path('solicitud/<uuid:uuid>/observaciones', ObservationsRequest.as_view(), name='observations_request'),
     path('comercio/<uuid:uuid>/observaciones', ObservationsShop.as_view(), name='observations_shop'),
