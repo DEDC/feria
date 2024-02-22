@@ -601,7 +601,8 @@
                     </tbody>
                 </table>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer d-flex justify-content-between">
+                <a type="button" href="{% url 'admin:unlock_validation' object.uuid %}" class="btn btn-warning shadow-0">Desbloquear solicitud</a>
                 <button type="button" class="btn btn-secondary" data-mdb-ripple-init
                     data-mdb-dismiss="modal">Cerrar</button>
             </div>

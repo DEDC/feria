@@ -239,3 +239,19 @@ class DownloadDateDoc(AdminPermissions, RedirectView):
             return doc
         except (Solicitudes.DoesNotExist, CitasAgendadas.DoesNotExist):
             raise Http404()
+
+class UnlockRequest(AdminPermissions, RedirectView):
+    def get(self, request, *args, **kwargs):
+        try:
+            request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
+            validation = request_.get_last_unattended_validation()
+            if validation:
+                validation.atendido = True
+                validation.save()
+            request_.estatus = ''
+            request_.save()
+            Validaciones.objects.create(solicitud=request_, comentarios='Validación desbloqueada por el validador', estatus='pending', atendido=True, validador=request.user.get_full_name())
+            messages.success(request, 'Validación Desbloqueada')
+            return redirect('admin:request', request_.uuid)
+        except (Solicitudes.DoesNotExist):
+            raise Http404()
