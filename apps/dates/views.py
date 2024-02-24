@@ -40,6 +40,5 @@ def get_available_times(request, date):
         modules_scheduled = CitasAgendadas.objects.filter(fecha=date, hora=hr).count()
         if modules_scheduled >= settings.ATTENTION_MODULES:
             exclude_hours.append(hr)
-    print(exclude_hours)
     fhours = [{'short_format': t} for t in hours if t not in exclude_hours]
     return Response(fhours)

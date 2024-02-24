@@ -2,12 +2,13 @@
 from django.urls import path
 # admin
 from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, UpdateShop, DownloadDateDoc, 
-                              ListRequests, UnlockRequest, set_place_temp, unset_place_temp, set_place)
+                              ListRequests, ListUsers, UnlockRequest, set_place_temp, unset_place_temp, set_place)
 app_name = 'admin'
 
 urlpatterns = [
     path('main', Main.as_view(), name='main'),
     path('solicitudes', ListRequests.as_view(), name='list_requests'),
+    path('usuarios', ListUsers.as_view(), name='list_users'),
     path('solicitud/<uuid:uuid>', Request.as_view(), name='request'),
     path('solicitud/<uuid:uuid>/editar', UpdateRequest.as_view(), name='update_request'),
     path('comercio/<uuid:uuid>/editar', UpdateShop.as_view(), name='update_shop'),

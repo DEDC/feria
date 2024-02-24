@@ -15,6 +15,8 @@ from rest_framework.permissions import IsAuthenticated
 # places
 from apps.places.models import Solicitudes, Comercios, Validaciones, Lugares
 from apps.places.forms import RequestForm, ShopForm
+# users
+from apps.users.models import Usuarios
 # dates
 from apps.dates.models import CitasAgendadas
 # utils
@@ -47,7 +49,6 @@ class ListRequests(AdminPermissions, ListView):
         context['not_assign'] = requests.filter(estatus='')
         context['q'] = self.request.GET.get('q', '')
         context['e'] = self.request.GET.get('e', '')
-        print(context)
         return context
     
     def get_queryset(self):
@@ -62,6 +63,26 @@ class ListRequests(AdminPermissions, ListView):
                 queryset = queryset.filter(estatus='')
             elif e in ['validated', 'rejected', 'resolved', 'pending']:
                 queryset = queryset.filter(estatus=e)
+        return queryset.order_by('pk')
+
+class ListUsers(AdminPermissions, ListView):
+    model = Usuarios
+    paginate_by = 30
+    template_name = 'admin/list_users.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        users = Usuarios.objects.all()
+        context['total'] = users
+        context['q'] = self.request.GET.get('q', '')
+        return context
+    
+    def get_queryset(self):
+        queryset = self.model._default_manager.all()
+        q = self.request.GET.get('q', None)
+        if q:
+            lookup = (Q(first_name__icontains=q)|Q(last_name__icontains=q)|Q(email__icontains=q)|Q(phone_number__icontains=q))
+            queryset = queryset.filter(lookup)
         return queryset.order_by('pk')
 
 class UpdateRequest(AdminPermissions, SuccessMessageMixin, UpdateView):
