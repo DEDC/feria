@@ -3,6 +3,16 @@ from django import forms
 # users
 from apps.users.models import Usuarios
 
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Usuarios
+        fields = ['first_name', 'last_name', 'email', 'phone_number']
+
+    def __init__(self, *args, **kwargs):
+        super(UserUpdateForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs.setdefault('class', 'form-control')
+
 class UsersForm(forms.ModelForm):
     repeat_password = forms.CharField(label = 'Confirmar contraseña', widget = forms.PasswordInput())
 

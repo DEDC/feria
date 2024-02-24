@@ -17,6 +17,7 @@ from apps.places.models import Solicitudes, Comercios, Validaciones, Lugares
 from apps.places.forms import RequestForm, ShopForm
 # users
 from apps.users.models import Usuarios
+from apps.users.forms import UserUpdateForm
 # dates
 from apps.dates.models import CitasAgendadas
 # utils
@@ -106,6 +107,15 @@ class UpdateShop(AdminPermissions, SuccessMessageMixin, UpdateView):
 
     def get_success_url(self, *args, **kwargs):
         return reverse_lazy('admin:update_shop', kwargs={'uuid':self.object.uuid})
+
+class UpdateUser(AdminPermissions, SuccessMessageMixin, UpdateView):
+    template_name = 'admin/update_user.html'
+    model = Usuarios
+    form_class = UserUpdateForm
+    success_message = 'Usuario actualizado exitosamente'
+
+    def get_success_url(self, *args, **kwargs):
+        return reverse_lazy('admin:update_user', kwargs={'pk':self.object.pk})
 
 class Request(AdminPermissions, DetailView):
     template_name = 'admin/request.html'
