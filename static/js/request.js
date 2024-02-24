@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const n_1_btn = document.querySelector('#n-1')
     const n_3_btn = document.querySelector('#n-2')
     const zone_title = document.querySelector('#zone_title')
-    const limit_places = document.querySelector('input[name="limit_places"]')
+    // const limit_places = document.querySelector('input[name="limit_places"]')
     const table_places = document.querySelector('.table-places')
     const reload_places = document.querySelector('#reload-places')
     const btn_preselect = document.querySelector('#preselection')
@@ -210,10 +210,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         place.addEventListener('click', (e) => {
                             e.target.classList.toggle('selected')
                             let all_selected = document.querySelectorAll('.table-places td.selected')
-                            if (all_selected.length > limit_places.value) {
-                                e.target.classList.remove('selected')
-                                all_selected = document.querySelectorAll('.table-places td.selected')
-                            }
+                            // if (all_selected.length > limit_places.value) {
+                                // e.target.classList.remove('selected')
+                                // all_selected = document.querySelectorAll('.table-places td.selected')
+                            // }
                             all_selected.length == 0 ? btn_preselect.disabled = true : btn_preselect.disabled = false
                         })
                     }
