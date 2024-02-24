@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const chks = document.querySelectorAll('input[type="checkbox"]')
+    const chks = document.querySelectorAll('input[type="checkbox"]:not(.config-chk)')
 
     chks.forEach(chk => {
         chk.addEventListener('click', (e) => {

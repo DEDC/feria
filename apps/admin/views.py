@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.http import Http404
+from rest_framework import status
 # DjangoRestFramework
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -17,7 +18,7 @@ from apps.places.forms import RequestForm, ShopForm
 # dates
 from apps.dates.models import CitasAgendadas
 # utils
-from utils.naves import nave1
+from utils.naves import nave1, nave3, zona_a
 from utils.permissions import AdminPermissions
 from utils.date import get_date_constancy
 
@@ -134,13 +135,18 @@ class Request(AdminPermissions, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         selected_places = []
+        places_price = 0
+        places = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a}
         for p in self.object.solicitud_lugar.filter(fecha_reg__year=2024, estatus='assign'):
-            for p2 in nave1['places']:
+            for p2 in places[p.zona]['places']:
                 if p2['uuid'] == str(p.uuid_place):
                     p2['folio_bd'] = p.folio
                     p2['date'] = p.fecha_reg
+                    p2['section'] = places[p.zona]['title']
+                    places_price = places_price + p2['price']
                     selected_places.append(p2)
         context['selected_places'] = selected_places
+        context['places_price'] = places_price
         return context
 
 class Shop(AdminPermissions, DetailView):
@@ -187,24 +193,32 @@ class SetPlace(AdminPermissions, TemplateView):
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([IsAuthenticated,])
-def render_nave1(request):
-    for p in nave1['places']:
+def render_place(request, key):
+    places = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a}
+    for p in places[key]['places']:
         if p['uuid']:
             p['status'] = 'available'
             if Lugares.objects.filter(uuid_place=p['uuid']).exists():
                 p['status'] = 'unavailable'
-    return Response(nave1)
+    return Response(places[key])
 
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([IsAuthenticated,])
-def set_place_temp(request, uuid):
+def set_place_temp(request, uuid, zone):
     places = request.POST.getlist('places')
     request_ = Solicitudes.objects.get(uuid=uuid)
-    for p in places:
-        if not Lugares.objects.filter(uuid_place=p).exists():
-            Lugares.objects.create(uuid_place=p, solicitud=request_, usuario=request.user, estatus='temp')
-    return Response({})
+    objects = []
+    if zone in ['z_a', 'z_b', 'z_c', 'z_d', 'n_1', 'n_3']:
+        for p in places:
+            objects.append(Lugares(uuid_place=p, solicitud=request_, usuario=request.user, estatus='temp', zona=zone))
+        try:
+            obj = Lugares.objects.bulk_create(objects)
+            for o in obj:
+                o.save()
+            return Response({'status_code': 'saved'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'status_code': 'notsaved'}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
@@ -212,7 +226,7 @@ def set_place_temp(request, uuid):
 def unset_place_temp(request, uuid):
     places = request.POST.getlist('places')
     for p in places:
-        p_ = Lugares.objects.filter(uuid_place=p)
+        p_ = Lugares.objects.filter(uuid_place=p, estatus='temp')
         if p_.exists():
             p_.get().delete()
     return Response({})

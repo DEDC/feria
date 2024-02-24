@@ -12,10 +12,10 @@ urlpatterns = [
     path('solicitud/<uuid:uuid>/editar', UpdateRequest.as_view(), name='update_request'),
     path('comercio/<uuid:uuid>/editar', UpdateShop.as_view(), name='update_shop'),
     path('comercio/<uuid:uuid>', Shop.as_view(), name='shop'),
-    path('solicitud/<uuid:uuid>/lugares', SetPlace.as_view(), name='set_place'),
+    path('solicitud/<uuid:uuid>/espacios', SetPlace.as_view(), name='set_place'),
     path('solicitud/<uuid:uuid>/cita/<uuid:uuid_date>/descargar', DownloadDateDoc.as_view(), name='download_date'),
     path('solicitud/<uuid:uuid>/validacion/desbloquear', UnlockRequest.as_view(), name='unlock_validation'),
-    path('solicitud/<uuid:uuid>/lugar/temp', set_place_temp),
+    path('solicitud/<uuid:uuid>/<str:zone>/lugar/temp', set_place_temp),
     path('solicitud/<uuid:uuid>/lugar/unset/temp', unset_place_temp),
     path('solicitud/<uuid:uuid>/lugar/set', set_place)
 ]

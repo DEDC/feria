@@ -1,4 +1,4 @@
-import { url_dates, url_times, url_nave_1 } from '../api/endpoints.js'
+import { url_dates, url_times } from '../api/endpoints.js'
 import { getAPICall, postAPICall, patchAPICall, deleteAPICall } from '../api/api.js'
 
 export const getAvailableDates = async () => {
@@ -11,13 +11,13 @@ export const getAvailableTimes = async (date) => {
     return response;
 }
 
-export const getNave1Data = async (date) => {
-    const response = await getAPICall(url_nave_1);
+export const getPlaces = async (url) => {
+    const response = await getAPICall(url);
     return response;
 }
 
-export const setPlaceTemp = async (uuid, data) => {
-    const response = await postAPICall(`/admin/solicitud/${uuid}/lugar/temp`, data);
+export const setPlaceTemp = async (uuid, data, zone) => {
+    const response = await postAPICall(`/admin/solicitud/${uuid}/${zone}/lugar/temp`, data);
     return response;
 }
 

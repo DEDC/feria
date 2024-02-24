@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.places',
     'apps.dates',
-    'apps.admin'
+    'apps.admin',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [

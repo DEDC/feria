@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework import routers
 from apps.dates.views import get_available_dates, get_available_times
 # admin
-from apps.admin.views import render_nave1
+from apps.admin.views import render_place
 
 # router = routers.SimpleRouter()
 # router.register('get-available-dates', get_available_dates)
@@ -11,5 +11,5 @@ from apps.admin.views import render_nave1
 urlpatterns = [
     # path('get-available-dates', get_available_dates),
     # path('get-available-times/<str:date>', get_available_times),
-    path('nave/1/data', render_nave1)
+    path('places/<str:key>/data', render_place)
 ]

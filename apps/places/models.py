@@ -66,7 +66,8 @@ class Validaciones(ControlInfo):
 
 class Lugares(ControlInfo):
     identifier='PLC'
-    uuid_place = models.UUIDField(default=uuid.uuid4, editable=False, unique_for_year=True)
+    uuid_place = models.UUIDField(editable=False, unique=True)
     estatus = models.CharField(max_length=20, choices=(('temp', 'Temporal'), ('assign', 'Asignado')), default='temp')
+    zona = models.CharField(max_length=20, choices=(('z_a', 'Zona A'), ('z_b', 'Zona B'), ('z_c', 'Zona C'), ('z_d', 'Zona D'), ('n_1', 'Nave 1'), ('n_3', 'Nave 3')), null=True)
     usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='usuario_lugar')
     solicitud = models.ForeignKey(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='solicitud_lugar')

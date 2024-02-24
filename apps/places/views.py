@@ -65,10 +65,10 @@ class CreateRequest(UserPermissions, SuccessMessageMixin, CreateView):
         used_places = self.request.user.solicitudes.filter(fecha_reg__year=2024).aggregate(places=Sum('cantidad_espacios'))['places']
         self.max_places = settings.LIMIT_PLACES - (used_places or 0)
         if all_used_places == settings.LIMIT_ALL_PLACES:
-            messages.warning(request, 'Todos los lugares se han agotado.')
+            messages.warning(request, 'Todos los espacios se han agotado.')
             return redirect('places:main')
         if used_places == settings.LIMIT_PLACES:
-            messages.warning(request, 'Ya ha alcanzado el número límite de lugares (3) para sus Comercios.')
+            messages.warning(request, 'Ya ha alcanzado el número límite de espacios (3) para sus Comercios.')
             return redirect('places:main')
         return super().dispatch(request, *args, **kwargs)
     
@@ -81,7 +81,7 @@ class CreateRequest(UserPermissions, SuccessMessageMixin, CreateView):
         lookup = (Q(curp_txt=form.instance.curp_txt or '123') | Q(rfc_txt=form.instance.rfc_txt or '123'))
         dup = Solicitudes.objects.filter(lookup)
         if form.instance.cantidad_espacios > self.max_places:
-            messages.warning(self.request, 'Ha superado el número límite de lugares para sus Comercios.')
+            messages.warning(self.request, 'Ha superado el número límite de espacios para sus Comercios.')
             return redirect('places:main')
         if dup.exists():
             messages.warning(self.request, 'Ya existe una solicitud con ese RFC/CURP registrada')
