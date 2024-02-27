@@ -80,9 +80,11 @@
                             </tr>
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Documento de Cita</th>
-                                <td><a target="_blank" class="btn btn-sm btn-success shadow-0" href="#">Descargar
+                                {% if object.solicitudes.first %}
+                                <td><a class="btn btn-sm btn-success shadow-0" href="{% url 'admin:download_date' object.solicitudes.first.uuid date.uuid %}">Descargar
                                         cita</a>
                                 </td>
+                                {% endif %}
                             </tr>
                         </tbody>
                     </table>
