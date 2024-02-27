@@ -114,7 +114,7 @@
                     <input type="hidden" name="page" value="{{page_obj.number}}">
                 </form>
                 <span class="me-2 text-secondary">Filtrar por:</span>
-                <a href="?q={{q}}&page={{page_obj.number}}" class="badge rounded-pill badge-info me-1 {% if e == '' %}border border-2{% endif %}">Todos</a>
+                <a href="?q=&page=" class="badge rounded-pill badge-info me-1 {% if e == '' %}border border-2{% endif %}">Todos</a>
                 <a href="?q={{q}}&e=validated&page={{page_obj.number}}"
                     class="badge rounded-pill badge-success me-1 {% if e == 'validated' %}border border-2{% endif %}">Validados</a>
                 <a href="?q={{q}}&e=rejected&page={{page_obj.number}}"
