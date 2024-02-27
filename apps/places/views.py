@@ -29,30 +29,6 @@ class Main(UserPermissions, TemplateView):
         context['dates'] = self.request.user.citas.order_by('fecha', 'hora')
         return context
 
-class Dates(UserPermissions, TemplateView):
-    template_name = 'places/dates.html'
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        try:
-            self.request_ = Solicitudes.objects.get(uuid=self.kwargs['uuid'])
-        except Solicitudes.DoesNotExist:
-            raise Http404()
-        context['dates'] = self.request.user.citas.order_by('fecha', 'hora')
-        context['request_'] = self.request_
-        return context
-    
-    def post(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        date = request.POST.get('date')
-        time = request.POST.get('time')
-        scheduled = CitasAgendadas.objects.filter(fecha=date, hora=time)
-        if scheduled.count() < settings.ATTENTION_MODULES:
-            CitasAgendadas.objects.create(fecha=date, hora=time, usuario=request.user)
-            messages.success(request, 'Cita agendada exitosamente.')
-            return redirect('places:detail_request', self.request_.uuid)
-        return self.render_to_response(context)
-
 class CreateRequest(UserPermissions, SuccessMessageMixin, CreateView):
     template_name = 'places/create.html'
     model = Solicitudes

@@ -10,35 +10,15 @@
     <div class="row gx-xl-5">
         <div class="col-xl-3">
             <div class="shadow-4 p-4 bg-white rounded-5 mb-4">
-                <a href="{% url 'places:detail_request' request_.uuid %}" type="button"
-                    class="btn btn-primary btn-rounded btn-lg w-100"><i class="fas fa-angle-left me-3"></i>Volver a la
-                    solicitud</a>
-            </div>
-            <div class="shadow-4 bg-white rounded-5 overflow-hidden d-none d-xl-block">
-                <div class="bg-light p-4 text-center">
-                    <h5 class="mb-0">Mis Próximas Citas</h5>
-                </div>
-                <div class="p-4">
-                    {% for dt in dates %}
-                    <a href="#" role="button" class="btn btn-link btn-rounded w-100 text-start text-capitalize">
-                        {{dt.folio}} - {{dt.fecha}} - {{dt.hora}} horas
-                    </a>
-                    {% empty %}
-                    <div class="alert" role="alert" data-mdb-color="warning">
-                        No se han agendado Citas anteriormente
-                    </div>
-                    {% endfor %}
-                </div>
+                <a href="{% url 'admin:list_users' %}" type="button" class="btn btn-primary btn-rounded btn-lg w-100"><i
+                        class="fas fa-angle-left me-3"></i>Volver a Usuarios</a>
             </div>
         </div>
         <div class="col-xl-9 mb-4 mb-lg-0">
             <div
                 class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
-                <h4 class="mb-0 fw-bold"><i class="fas fa-plus me-3"></i>Agenda una Cita para la Solicitud
-                    {{request_.folio}}</h4>
-                <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block" href="{% url 'places:main' %}"
-                    role="button">Ver
-                    mis solicitudes<i class="fas fa-arrow-right ms-2"></i></a>
+                <h4 class="mb-0 fw-bold"><i class="fas fa-plus me-3"></i>Asignar cita para
+                    {{user.email}}</h4>
             </div>
             <div class="row gx-xl-5">
                 <div class="col-xl-6">
@@ -81,7 +61,7 @@
                 <input type="hidden" name="date">
                 <input type="hidden" name="time">
                 <div class="d-grid gap-2 col-6 mx-auto mt-5">
-                    <button class="btn btn-primary disabled" type="submit" id="save-date">Agendar Cita</button>
+                    <button class="btn btn-primary disabled" type="submit" id="save-date">Asignar Cita</button>
                 </div>
             </form>
         </div>

@@ -22,7 +22,7 @@
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
                             <div class="p-3 badge-info rounded-4">
-                                <i class="fas fa-user-group fa-2x fa-fw"></i>
+                                <i class="fas fa-calendar-day fa-2x fa-fw"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 ms-4">
@@ -38,14 +38,14 @@
             <div
                 class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
                 <h4 class="mb-0 fw-bold">
-                    <i class="fas fa-user-group me-3 green-text"></i>Usuarios &nbsp;({{object_list.count}})
+                    <i class="fas fa-calendar-day me-3 green-text"></i>Citas Agendadas &nbsp;({{object_list.count}})
                 </h4>
             </div>
             <div class="shadow-4 bg-white rounded-5 mb-4 p-4">
                 <form>
                     <div class="input-group">
                         <input name="q" value="{{q}}" type="search" class="form-control m-0 form-control-lg"
-                            placeholder="Buscar Usuario" />
+                            placeholder="Buscar Cita" />
                         <button class="btn btn-primary" type="submit">
                             <i class="fa fa-search"></i>
                         </button>
@@ -58,40 +58,26 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th class="th-sm">Nombre(s)</th>
-                                <th class="th-sm">Apellido(s)</th>
-                                <th class="th-sm">Correo electrónico</th>
-                                <th class="th-sm">Número de Teléfono</th>
-                                <th class="th-sm">Cita asignada</th>
+                                <th class="th-sm">Folio</th>
+                                <th class="th-sm">Fecha</th>
+                                <th class="th-sm">Hora</th>
+                                <th class="th-sm">Usuario</th>
                                 <th class="th-sm">Fecha de Registro</th>
-                                <th class="th-sm">Último Inicio de Sesión</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for user in object_list %}
+                            {% for date in object_list %}
                             <tr>
                                 <td>
-                                    <a href="{% url 'admin:update_user' user.pk %}" type="button"
-                                        class="btn btn-sm btn-link btn-rounded">
-                                        {{user.first_name}}
+                                    <a href="#" type="button" class="btn btn-sm btn-link btn-rounded">
+                                        {{date.folio}}
                                         <i class="fas fa-angle-right ms-2"></i>
                                     </a>
                                 </td>
-                                <td>{{user.last_name}}</td>
-                                <td>{{user.email}}</td>
-                                <td>{{user.phone_number}}</td>
-                                <td>
-                                    {% with date=user.citas.get %}
-                                    {% if date %}
-                                    {{date}}
-                                    {% else %}
-                                    <a class="btn btn-sm btn-warning shadow-0"
-                                        href="{% url 'admin:assing_user_date' user.pk %}">Asignar Cita</a>
-                                    {% endif %}
-                                    {% endwith %}
-                                </td>
-                                <td>{{user.date_joined}}</td>
-                                <td>{{user.last_login|default:'No especificado'}}</td>
+                                <td>{{date.fecha}}</td>
+                                <td>{{date.hora}}</td>
+                                <td>{{date.usuario.get_full_name}}</td>
+                                <td>{{date.fecha_reg}}</td>
                             </tr>
                             {% endfor %}
                         </tbody>

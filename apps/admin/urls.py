@@ -2,17 +2,19 @@
 from django.urls import path
 # admin
 from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, UpdateShop, DownloadDateDoc, 
-                              ListRequests, ListUsers, UnlockRequest, UpdateUser, set_place_temp, unset_place_temp, set_place)
+                              ListRequests, ListUsers, UnlockRequest, UpdateUser, UserDates, ListDates, set_place_temp, unset_place_temp, set_place)
 app_name = 'admin'
 
 urlpatterns = [
     path('main', Main.as_view(), name='main'),
     path('solicitudes', ListRequests.as_view(), name='list_requests'),
     path('usuarios', ListUsers.as_view(), name='list_users'),
+    path('citas', ListDates.as_view(), name='list_dates'),
     path('solicitud/<uuid:uuid>', Request.as_view(), name='request'),
     path('solicitud/<uuid:uuid>/editar', UpdateRequest.as_view(), name='update_request'),
     path('comercio/<uuid:uuid>/editar', UpdateShop.as_view(), name='update_shop'),
     path('usuario/<int:pk>/editar', UpdateUser.as_view(), name='update_user'),
+    path('usuario/<int:pk>/citas/', UserDates.as_view(), name='assing_user_date'),
     path('comercio/<uuid:uuid>', Shop.as_view(), name='shop'),
     path('solicitud/<uuid:uuid>/espacios', SetPlace.as_view(), name='set_place'),
     path('solicitud/<uuid:uuid>/cita/<uuid:uuid_date>/descargar', DownloadDateDoc.as_view(), name='download_date'),

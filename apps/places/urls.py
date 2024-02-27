@@ -13,5 +13,4 @@ urlpatterns = [
     path('comercio/<uuid:uuid>/observaciones', ObservationsShop.as_view(), name='observations_shop'),
     path('solicitud/<uuid:uuid>/comercio/crear', CreateShop.as_view(), name='create_shop'),
     path('solicitud/<uuid:uuid>/cita/<uuid:uuid_date>/descargar', DownloadDateDoc.as_view(), name='download_date'),
-    # path('solicitud/<uuid:uuid>/cita/crear', Dates.as_view(), name='create_date'),
 ]

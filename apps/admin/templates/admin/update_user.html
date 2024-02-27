@@ -14,11 +14,8 @@
             <div
                 class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
                 <h4 class="mb-0 fw-bold">
-                    <i class="fas fa-shop me-3 green-text"></i>Editar Usuario {{object.email}}
+                    <i class="fas fa-user me-3 green-text"></i>Editar Usuario {{object.email}}
                 </h4>
-                <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block" href="{% url 'admin:main' %}"
-                    role="button">Ver
-                    todo<i class="fas fa-arrow-right ms-2"></i></a>
             </div>
             <div class="shadow-4 bg-white rounded-5 p-4">
                 <form method="post">
@@ -54,6 +51,47 @@
                         <button class="btn btn-primary" type="submit">Editar registro</button>
                     </div>
                 </form>
+            </div>
+            <div id="citas"
+                class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold"><i class="fas fa-calendar-day me-3"></i>Cita Agendada</h4>
+            </div>
+            <div class="shadow-4 bg-white rounded-5 p-5 my-4">
+                {% with date=object.citas.get %}
+                {% if date %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Folio</th>
+                                <td>{{date.folio}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Fecha</th>
+                                <td>{{date.fecha}}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Hora</th>
+                                <td>{{date.hora}} horas</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Lugar</th>
+                                <td>Parque Tabasco Dora María</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Documento de Cita</th>
+                                <td><a target="_blank" class="btn btn-sm btn-success shadow-0" href="#">Descargar
+                                        cita</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <a href="{% url 'admin:assing_user_date' object.pk %}" type="button"
+                    class="btn btn-primary btn-rounded btn-lg w-100"><i class="fas fa-plus me-3"></i>Asignar Cita</a>
+                {% endif %}
+                {% endwith %}
             </div>
         </div>
     </div>

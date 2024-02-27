@@ -7,6 +7,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.http import Http404
 from rest_framework import status
+from django.conf import settings
 # DjangoRestFramework
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -83,6 +84,26 @@ class ListUsers(AdminPermissions, ListView):
         q = self.request.GET.get('q', None)
         if q:
             lookup = (Q(first_name__icontains=q)|Q(last_name__icontains=q)|Q(email__icontains=q)|Q(phone_number__icontains=q))
+            queryset = queryset.filter(lookup)
+        return queryset.order_by('pk')
+
+class ListDates(AdminPermissions, ListView):
+    model = CitasAgendadas
+    paginate_by = 30
+    template_name = 'admin/list_dates.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dates = CitasAgendadas.objects.all()
+        context['total'] = dates
+        context['q'] = self.request.GET.get('q', '')
+        return context
+    
+    def get_queryset(self):
+        queryset = self.model._default_manager.all()
+        q = self.request.GET.get('q', None)
+        if q:
+            lookup = (Q(folio__icontains=q)|Q(usuario__first_name__icontains=q)|Q(usuario__last_name__icontains=q)|Q(usuario__email__icontains=q))
             queryset = queryset.filter(lookup)
         return queryset.order_by('pk')
 
@@ -300,3 +321,26 @@ class UnlockRequest(AdminPermissions, RedirectView):
             return redirect('admin:request', request_.uuid)
         except (Solicitudes.DoesNotExist):
             raise Http404()
+
+class UserDates(AdminPermissions, TemplateView):
+    template_name = 'admin/user_dates.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            self.user = Usuarios.objects.get(pk__exact=self.kwargs['pk'])
+        except Usuarios.DoesNotExist:
+            raise Http404()
+        context['user'] = self.user
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        date = request.POST.get('date')
+        time = request.POST.get('time')
+        scheduled = CitasAgendadas.objects.filter(fecha=date, hora=time)
+        if scheduled.count() < settings.ATTENTION_MODULES:
+            CitasAgendadas.objects.create(fecha=date, hora=time, usuario=self.user)
+            messages.success(request, 'Cita agendada exitosamente.')
+            return redirect('admin:list_users')
+        return self.render_to_response(context)
