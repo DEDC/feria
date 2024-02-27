@@ -17,4 +17,4 @@ class CitasAgendadas(ControlInfo):
         unique_together = ('fecha', 'hora', 'usuario')
     
     def __str__(self):
-        return f'{self.fecha.strftime('%d/%m/%Y')}  {self.hora.strftime('%H:%M')} hrs.'
+        return '{}  {} hrs.'.format(self.fecha.strftime('%d/%m/%Y'), self.hora.strftime('%H:%M'))
