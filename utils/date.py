@@ -40,7 +40,7 @@ def get_date_constancy(request_, date):
     p.fontSize = 11
     p.leading = 20
     # fecha reg
-    pdf.drawString(237, 620, fecha)
+    # pdf.drawString(237, 620, fecha)
     # username
     pdf.drawString(247, 410, textwrap.wrap(request_.usuario.get_full_name(), 40)[0])
     # curp/rfc
