@@ -1,5 +1,5 @@
 import { getPlaces, setPlaceTemp, unsetPlaceTemp, setPlace, addTerraza, addAlcohol } from "../js/api/utilities.js";
-import { url_nave_1, url_nave_3, url_zone_a, url_zone_b } from '../js/api/endpoints.js'
+import { url_nave_1, url_nave_3, url_zone_a, url_zone_b, url_zone_c } from '../js/api/endpoints.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     const zone_a_btn = document.querySelector('#zone-a')
@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const n_1_btn = document.querySelector('#n-1')
     const n_3_btn = document.querySelector('#n-2')
     const zone_title = document.querySelector('#zone_title')
-    // const limit_places = document.querySelector('input[name="limit_places"]')
     const table_places = document.querySelector('.table-places')
     const reload_places = document.querySelector('#reload-places')
     const btn_preselect = document.querySelector('#preselection')
@@ -21,8 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const config_chks = document.querySelectorAll('.config-chk')
     const add_alcohol = document.querySelector('#add-alcohol')
     const add_terraza = document.querySelector('#add-terraza')
-    const list_extras = document.querySelector('#extra-products')
-    const total_price = document.querySelector('#total-price')
 
     if (add_alcohol) {
         add_alcohol.addEventListener('click', (e) => {
@@ -97,6 +94,13 @@ document.addEventListener('DOMContentLoaded', () => {
         zone_b_btn.addEventListener('click', (e) => {
             get_places_zone(url_zone_b)
             current_zone = 'z_b'
+        })
+    }
+
+    if (zone_c_btn) {
+        zone_c_btn.addEventListener('click', (e) => {
+            get_places_zone(url_zone_c)
+            current_zone = 'z_c'
         })
     }
 
@@ -221,13 +225,4 @@ document.addEventListener('DOMContentLoaded', () => {
             remove_temp_places()
         }
     });
-
-    function sum_prices() {
-        const prices = document.querySelectorAll('input[data-price]')
-        let sum = 0
-        prices.forEach(element => {
-            sum += parseInt(element.dataset.price)
-        });
-        return sum
-    }
 });

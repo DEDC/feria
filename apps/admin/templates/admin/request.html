@@ -551,15 +551,15 @@
                                 {% for sp in selected_places %}
                                 <tr>
                                     <td>
-                                        <input class="form-check-input config-chk" type="checkbox"
-                                            value="{{sp.uuid_bd}}" data-m2="{{sp.m2}}" data-folio="{{sp.folio_bd}}" />
+                                        <input class="form-check-input config-chk" type="checkbox" value="{{sp.uuid}}"
+                                            data-m2="{{sp.m2}}" data-folio="{{sp.folio}}" />
                                     </td>
-                                    <th scope="row">{{sp.folio_bd}}</th>
-                                    <td>{{sp.text}}</td>
-                                    <td>{{sp.section}}</td>
+                                    <th scope="row">{{sp.folio}}</th>
+                                    <td>{{sp.nombre}}</td>
+                                    <td>{{sp.get_zona_display}}</td>
                                     <td>{{sp.m2}}</td>
-                                    <td>${{sp.price}}</td>
-                                    <td>{{sp.date}}</td>
+                                    <td>${{sp.precio}}</td>
+                                    <td>{{sp.fecha_reg}}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -567,30 +567,36 @@
                         <ul class="list-group list-group-light" id="extra-products">
                             <li class="list-group-item d-flex justify-content-end">
                                 <h5 class="me-5 fw-bold m-0">Total por espacios:</h5>
-                                <h5 class="ms-5 m-0">${{places_price|intcomma}}</h5>
-                                <input type="hidden" data-price="{{places_price}}">
+                                <h5 class="ms-5 m-0">${{total_places|intcomma}}</h5>
                             </li>
-                            {% for px in extra_pdt %}
+                            {% for p in selected_places %}
+                            {% for px in p.extras.all %}
                             {% if px.tipo == 'terraza' %}
                             <li class="list-group-item d-flex justify-content-end">
-                                <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza para el espacio ({{px.lugar.folio}}):
+                                <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza para el espacio ({{px.to_places}}):
                                 </h5>
                                 <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
                                 <a class="ms-3 del-pdt" role="button"><i class="fas fa-xmark fa-lg text-danger"></i></a>
                             </li>
-                            {% elif px.tipo == 'alcohol' %}
+                            {% elif px.tipo == 'licencia_alcohol' %}
                             <li class="list-group-item d-flex justify-content-end">
-                                <h5 class="m-0 me-5 fw-bold">Total por (1) Licencia de Alcohol para el/los espacio(s)():
+                                <h5 class="m-0 me-5 fw-bold">Total por (1) Licencia de Alcohol para el/los espacio(s)
+                                    ({{px.to_places}}):
                                 </h5>
                                 <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
                                 <a class="ms-3 del-pdt" role="button"><i class="fas fa-xmark fa-lg text-danger"></i></a>
                             </li>
                             {% endif %}
                             {% endfor %}
+                            {% endfor %}
+                            <li class="list-group-item d-flex justify-content-end">
+                                <h5 class="me-5 fw-bold m-0">Total por conceptos adicionales:</h5>
+                                <h5 class="ms-5 m-0">${{total_extras|intcomma}}</h5>
+                            </li>
                         </ul>
                         <div class="d-flex justify-content-end">
                             <h2 class="me-5 m-0">Total:</h2>
-                            <h1 class="ms-5 m-0 text-primary" id="total-price">${{places_price|intcomma}}</h1>
+                            <h1 class="ms-5 m-0 text-primary" id="total-price">${{total|intcomma}}</h1>
                         </div>
                         {% if not object.solicitud_pagos.first %}
                         <div class="d-flex justify-content-center">

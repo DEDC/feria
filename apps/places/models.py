@@ -80,6 +80,8 @@ class ProductosExtras(ControlInfo):
     lugar = models.ForeignKey(Lugares, editable=False, on_delete=models.PROTECT, related_name='extras')
     tipo = models.CharField(max_length=20, null=True, choices=(('terraza', 'Terraza'), ('terraza_grande', 'Terraza Grande'), ('licencia_alcohol', 'Licencia de Alcohol')))
     precio = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    m2 = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    to_places = models.TextField(default='')
 
 class Pagos(ControlInfo):
     identifier='PAG'

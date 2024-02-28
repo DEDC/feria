@@ -18,7 +18,10 @@ def generate_physical_document(request_):
     f = open('static/docs/contrato_fisica.docx', 'rb')
     document = Document(f)
     buffer = io.BytesIO()
-    price_places = request_.solicitud_lugar.aggregate(price=Sum('precio'))['price']
+    places = request_.solicitud_lugar.all()
+    price_places = places.aggregate(price=Sum('precio'))['price']
+    price_alcohol = places.filter(extras__tipo='licencia_alcohol').aggregate(price=Sum('extras__precio'))['price'] or 0
+    alcohol_m2 = places.filter(extras__tipo='licencia_alcohol').aggregate(m2=Sum('extras__m2'))['m2'] or 0
     price_iva = round(price_places * Decimal(0.16))
     month = formats.date_format(date.today(), 'F')
     day = formats.date_format(date.today(), 'j')
@@ -29,33 +32,60 @@ def generate_physical_document(request_):
         '<town>': request_.municipio,
         '<estate>': request_.get_estado_display(),
         '<rfc>': request_.rfc_txt.upper() if request_.rfc_txt else '',
-        '<price_places>': intcomma(price_places),
-        '<price_places_text>': num2words(price_places, lang='es').upper(),
+        '<price_places>': intcomma(price_places-price_iva),
+        '<price_places_text>': num2words(price_places-price_iva, lang='es').upper(),
         '<price_iva>': intcomma(price_iva),
         '<price_iva_text>': num2words(price_iva, lang='es').upper(),
         '<price_places_iva>': intcomma(price_places + price_iva),
-        '<price_places_iva_text>': num2words(price_places + price_iva, lang='es').upper(),
+        '<price_places_iva_text>': num2words(price_places, lang='es').upper(),
         '<day>': day,
         '<month>': month,
-        '<name_user>': request_.usuario.get_full_name()
+        '<name_user>': request_.usuario.get_full_name(),
+        '<price_alcohol>': intcomma(price_alcohol),
+        '<price_alcohol_text>': num2words(price_alcohol, lang='es'),
+        '<m2_alcohol>': str(alcohol_m2)
     }
+    sum = 0
     for p in document.paragraphs:
         if '<table_places>' in p.text:
-            table = document.add_table(rows=1, cols=5, style="Table Grid")
+            table = document.add_table(rows=1, cols=7, style="Table Grid")
             heading_row = table.rows[0].cells
             # add headings
-            heading_row[0].text = "No."
-            heading_row[1].text = "Zona"
+            heading_row[0].text = "Folio"
+            heading_row[1].text = "Concepto"
             heading_row[2].text = "m2"
-            heading_row[3].text = "Licencia de Alcohol"
-            heading_row[4].text = "Terraza"
-            for place in request_.solicitud_lugar.all():
+            heading_row[3].text = "Zona"
+            heading_row[4].text = "No."
+            heading_row[5].text = "Aplica para"
+            heading_row[6].text = "Precio"
+            for place in places:
                 row = table.add_row().cells
-                row[0].text = place.nombre
-                row[1].text = place.get_zona_display()
+                row[0].text = place.folio
+                row[1].text = 'Stand'
                 row[2].text = str(place.m2)
-                row[3].text = "Sí" if place.extras.filter(tipo='alcohol').exists() else 'No'
-                row[4].text = "Sí" if place.extras.filter(tipo='terrazas').exists() else 'No'
+                row[3].text = place.get_zona_display()
+                row[4].text = place.nombre
+                row[6].text =  intcomma(place.precio)
+                sum += place.precio
+                for px in place.extras.all():
+                    row = table.add_row().cells
+                    row[0].text = px.folio
+                    row[1].text = px.get_tipo_display()
+                    row[2].text = str(px.m2)
+                    row[5].text = str(px.to_places)
+                    row[6].text =  intcomma(px.precio)
+                    sum += px.precio
+            row = table.add_row().cells
+            iva = sum * Decimal(0.16)
+            subtotal = sum - iva
+            row[5].text = 'Subtotal'
+            row[6].text =  str('${}'.format(intcomma(round(subtotal))))
+            row = table.add_row().cells
+            row[5].text = 'IVA'
+            row[6].text =  str('${}'.format(intcomma(round(iva))))
+            row = table.add_row().cells
+            row[5].text = 'Total'
+            row[6].text =  str('${}'.format(intcomma(price_places)))
             p._p.addnext(table._tbl)
             p.text = ''
         for k, v in data.items():
@@ -67,7 +97,6 @@ def generate_physical_document(request_):
     response = HttpResponse(buffer.getvalue(), content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
     response["Content-Disposition"] = 'attachment; filename = "CONTRATO_{}.docx"'.format(request_.folio)
     return response
-
 
 def paragraph_replace_text(paragraph, regex, replace_str):
     """Return `paragraph` after replacing all matches for `regex` with `replace_str`.

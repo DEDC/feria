@@ -23,10 +23,12 @@ from apps.users.forms import UserUpdateForm
 # dates
 from apps.dates.models import CitasAgendadas
 # utils
-from utils.naves import nave1, nave3, zona_a, zona_b
+from utils.naves import nave1, nave3, zona_a, zona_b, zona_c
 from utils.permissions import AdminPermissions
 from utils.date import get_date_constancy
 from utils.word_writer import generate_physical_document
+
+places_dict = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b, 'z_c': zona_c}
 
 class Main(AdminPermissions, TemplateView):
     template_name = 'admin/main.html'
@@ -195,28 +197,14 @@ class Request(AdminPermissions, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        selected_places = []
-        extra_pdt = []
-        places_price = 0
-        from utils.naves import nave1, nave3, zona_a, zona_b
-        n1 = nave1
-        places_ = {'n_1': n1, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b}
-        pls = self.object.solicitud_lugar.filter(fecha_reg__year=2024, estatus='assign')
-        for p in pls:
-            for p2 in places_[p.zona]['places']:
-                if p2['uuid'] == str(p.uuid_place):
-                    p2['uuid_bd'] = p.uuid
-                    p2['folio_bd'] = p.folio
-                    p2['date'] = p.fecha_reg
-                    p2['section'] = places_[p.zona]['title']
-                    places_price = places_price + p2['price']
-                    selected_places.append(p2)
-        for p in pls:
-            for p2 in p.extras.all():
-                extra_pdt.append(p2)
-        context['selected_places'] = selected_places
-        context['places_price'] = places_price
-        context['extra_pdt'] = extra_pdt
+        places = self.object.solicitud_lugar.filter(fecha_reg__year=2024, estatus='assign')
+        context['total_places'] = places.aggregate(price=Sum('precio'))['price']
+        context['total_extras'] = places.aggregate(price=Sum('extras__precio'))['price'] or 0
+        try:
+            context['total'] = context['total_extras'] + context['total_places']
+        except:
+            context['total'] = context['total_places']
+        context['selected_places'] = places
         return context
 
 class Shop(AdminPermissions, DetailView):
@@ -264,13 +252,12 @@ class SetPlace(AdminPermissions, TemplateView):
 @renderer_classes((JSONRenderer,))
 @permission_classes([IsAuthenticated,])
 def render_place(request, key):
-    places = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b}
-    for p in places[key]['places']:
+    for p in places_dict[key]['places']:
         if p['uuid']:
             p['status'] = 'available'
             if Lugares.objects.filter(uuid_place=p['uuid']).exists():
                 p['status'] = 'unavailable'
-    return JsonResponse(places[key])
+    return JsonResponse(places_dict[key])
 
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
@@ -279,10 +266,9 @@ def set_place_temp(request, uuid, zone):
     places = request.POST.getlist('places')
     request_ = Solicitudes.objects.get(uuid=uuid)
     objects = []
-    static_places = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b}
     if zone in ['z_a', 'z_b', 'z_c', 'z_d', 'n_1', 'n_3']:
         for p in places:
-            for p2 in static_places[zone]['places']:
+            for p2 in places_dict[zone]['places']:
                 if p2['uuid'] == str(p):
                     objects.append(Lugares(uuid_place=p, solicitud=request_, usuario=request_.usuario, estatus='temp', zona=zone, precio=p2['price'], m2=p2['m2'], nombre=p2['text']))
         try:
@@ -381,30 +367,30 @@ class UserDates(AdminPermissions, TemplateView):
 @permission_classes([IsAuthenticated,])
 def add_terraza(request, uuid, uuid_place):
     terraza_price = 4500
-    sum = 0
     try:
         request_ = Solicitudes.objects.get(uuid=uuid)
-        sum_all_places = Lugares.objects.filter(usuario=request_.usuario).aggregate(prices=Sum('precio'))['prices']
-        print(sum_all_places)
         place = Lugares.objects.get(uuid=request.POST.get('terraza'))
-        ProductosExtras.objects.create(lugar=place, tipo='terraza', precio=terraza_price)
+        ProductosExtras.objects.create(lugar=place, tipo='terraza', precio=terraza_price, m2=9, to_places=place.folio)
         return Response({})
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# delete items here
 
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([IsAuthenticated,])
 def add_alcohol(request, uuid, uuid_place):
-    print(request.POST.getlist('alcohol'))
     alcohol_price = 4500
-    sum = 0
     try:
         request_ = Solicitudes.objects.get(uuid=uuid)
-        sum_all_places = Lugares.objects.filter(usuario=request_.usuario).aggregate(prices=Sum('precio'))['prices']
-        print(sum_all_places)
-        place = Lugares.objects.get(uuid=request.POST.get('alcohol'))
-        ProductosExtras.objects.create(lugar=place, tipo='alcohol', precio=alcohol_price)
-        return Response({})
+        places = Lugares.objects.filter(uuid__in=request.POST.getlist('alcohol'))
+        if places:
+            to_places = ','.join(places.values_list('folio', flat=True))
+            ProductosExtras.objects.create(lugar=places[0], tipo='licencia_alcohol', precio=alcohol_price, m2=100, to_places=to_places)
+            return Response({})
+        else:
+            return Response({'message': 'not-places-existing'})
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
