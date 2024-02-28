@@ -22,6 +22,7 @@ urlpatterns = [
     path('solicitud/<uuid:uuid>/espacios', SetPlace.as_view(), name='set_place'),
     path('solicitud/<uuid:uuid>/cita/<uuid:uuid_date>/descargar', DownloadDateDoc.as_view(), name='download_date'),
     path('solicitud/<uuid:uuid>/validacion/desbloquear', UnlockRequest.as_view(), name='unlock_validation'),
+    # assign places
     path('solicitud/<uuid:uuid>/<str:zone>/lugar/temp', set_place_temp),
     path('solicitud/<uuid:uuid>/lugar/unset/temp', unset_place_temp),
     path('solicitud/<uuid:uuid>/lugar/set', set_place),

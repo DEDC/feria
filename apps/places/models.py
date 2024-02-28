@@ -71,6 +71,7 @@ class Lugares(ControlInfo):
     zona = models.CharField(max_length=20, choices=(('z_a', 'Zona A'), ('z_b', 'Zona B'), ('z_c', 'Zona C'), ('z_d', 'Zona D'), ('n_1', 'Nave 1'), ('n_3', 'Nave 3')), null=True)
     precio = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     m2 = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    nombre = models.CharField(max_length=10, default='')
     usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='usuario_lugar')
     solicitud = models.ForeignKey(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='solicitud_lugar')
 
