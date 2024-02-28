@@ -1,5 +1,5 @@
-import { getPlaces, setPlaceTemp, unsetPlaceTemp, setPlace } from "../js/api/utilities.js";
-import { url_nave_1, url_nave_3, url_zone_a } from '../js/api/endpoints.js'
+import { getPlaces, setPlaceTemp, unsetPlaceTemp, setPlace, addTerraza, addAlcohol } from "../js/api/utilities.js";
+import { url_nave_1, url_nave_3, url_zone_a, url_zone_b } from '../js/api/endpoints.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     const zone_a_btn = document.querySelector('#zone-a')
@@ -27,42 +27,30 @@ document.addEventListener('DOMContentLoaded', () => {
     if (add_alcohol) {
         add_alcohol.addEventListener('click', (e) => {
             let chks = document.querySelectorAll('.config-chk:checked')
-            let total_m2 = 0
+            const data = new FormData();
             chks.forEach(element => {
-                total_m2 += parseInt(element.dataset.m2)
+                data.append('alcohol', element.value);
             });
-            let alcohol_price = 0
-
-            switch (true) {
-                case total_m2 <= 50:
-                    alcohol_price = 34742.40
-                    break;
-                case total_m2 > 50 || total_m2 <= 100:
-                    alcohol_price = 69484.80
-                    break
-                case total_m2 > 100 || total_m2 <= 150:
-                    alcohol_price = 121598.40
-                    break
-                case total_m2 > 150:
-                    alcohol_price = 260568
-                    break;
-            }
-            console.log(alcohol_price)
-            let html_text = `<li class="list-group-item d-flex justify-content-end"><h5 class="m-0 me-5 fw-bold">Total por (${chks.length}) Licencias de Alcohol por ${total_m2}m2 por día:</h5><h5 class="m-0 ms-5">$${alcohol_price}</h5><input type="hidden" name="prices" value="${alcohol_price}"></li>`
-            list_extras.insertAdjacentHTML('beforeend', html_text)
-            total_price.textContent = `$${sum_prices()}`
+            addAlcohol(request_uuid.value, data.get('alcohol'), data).then((resp) => {
+                location.reload()
+            }).catch((error) => {
+                console.log(error);
+            });
         })
     }
 
     if (add_terraza) {
         add_terraza.addEventListener('click', (e) => {
-            const terraza_price = 4500
             let chks = document.querySelectorAll('.config-chk:checked')
-            let html_text = `<li class="list-group-item d-flex justify-content-end"><h5 class="m-0 me-5 fw-bold">Total por (1) Terraza:</h5><h5 class="m-0 ms-5">$${terraza_price}</h5><input type="hidden" name="prices" value="${terraza_price}"></li>`
             chks.forEach(element => {
-                list_extras.insertAdjacentHTML('beforeend', html_text)
+                const data = new FormData();
+                data.append('terraza', element.value);
+                addTerraza(request_uuid.value, element.value, data).then((resp) => {
+                    location.reload()
+                }).catch((error) => {
+                    console.log(error);
+                });
             });
-            total_price.textContent = `$${sum_prices()}`
         })
     }
 
@@ -102,6 +90,13 @@ document.addEventListener('DOMContentLoaded', () => {
         zone_a_btn.addEventListener('click', (e) => {
             get_places_zone(url_zone_a)
             current_zone = 'z_a'
+        })
+    }
+
+    if (zone_b_btn) {
+        zone_b_btn.addEventListener('click', (e) => {
+            get_places_zone(url_zone_b)
+            current_zone = 'z_b'
         })
     }
 
@@ -210,10 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         place.addEventListener('click', (e) => {
                             e.target.classList.toggle('selected')
                             let all_selected = document.querySelectorAll('.table-places td.selected')
-                            // if (all_selected.length > limit_places.value) {
-                                // e.target.classList.remove('selected')
-                                // all_selected = document.querySelectorAll('.table-places td.selected')
-                            // }
                             all_selected.length == 0 ? btn_preselect.disabled = true : btn_preselect.disabled = false
                         })
                     }
@@ -232,10 +223,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function sum_prices() {
-        const prices = document.querySelectorAll('input[name="prices"]')
+        const prices = document.querySelectorAll('input[data-price]')
         let sum = 0
         prices.forEach(element => {
-            sum += parseInt(element.value)
+            sum += parseInt(element.dataset.price)
         });
         return sum
     }

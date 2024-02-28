@@ -4,17 +4,18 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.http import Http404
 from rest_framework import status
 from django.conf import settings
+from django.http import JsonResponse
 # DjangoRestFramework
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 # places
-from apps.places.models import Solicitudes, Comercios, Validaciones, Lugares
+from apps.places.models import Solicitudes, Comercios, Validaciones, Lugares, ProductosExtras, Pagos
 from apps.places.forms import RequestForm, ShopForm
 # users
 from apps.users.models import Usuarios
@@ -22,9 +23,10 @@ from apps.users.forms import UserUpdateForm
 # dates
 from apps.dates.models import CitasAgendadas
 # utils
-from utils.naves import nave1, nave3, zona_a
+from utils.naves import nave1, nave3, zona_a, zona_b
 from utils.permissions import AdminPermissions
 from utils.date import get_date_constancy
+from utils.word_writer import generate_physical_document
 
 class Main(AdminPermissions, TemplateView):
     template_name = 'admin/main.html'
@@ -58,7 +60,10 @@ class ListRequests(AdminPermissions, ListView):
         q = self.request.GET.get('q', None)
         e = self.request.GET.get('e', None)
         if q:
-            lookup = (Q(pk__icontains=q)|Q(nombre__icontains=q)|Q(folio__icontains=q)|Q(comercio__nombre__icontains=q)|Q(usuario__first_name__icontains=q)|Q(usuario__last_name__icontains=q))
+            lookup = (Q(pk__icontains=q)|Q(nombre__icontains=q)|Q(folio__icontains=q)|
+                      Q(comercio__nombre__icontains=q)|Q(usuario__first_name__icontains=q)|
+                      Q(usuario__last_name__icontains=q)|Q(usuario__email__icontains=q)|
+                      Q(usuario__phone_number__icontains=q)|Q(usuario__citas__folio=q))
             queryset = queryset.filter(lookup)
         if e:
             if e == 'noassign':
@@ -146,6 +151,10 @@ class Request(AdminPermissions, DetailView):
 
     def post(self, request, *args, **kwargs):
         request_ = self.get_object()
+        if 'card-payment' in request.POST:
+            if request_.estatus == 'validated':
+                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='tarjeta')
+                messages.success(request, 'El Pago se definió con tarjeta')    
         if 'validated' in request.POST:
             request_.estatus = 'validated'
             request_.save()
@@ -187,18 +196,27 @@ class Request(AdminPermissions, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         selected_places = []
+        extra_pdt = []
         places_price = 0
-        places = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a}
-        for p in self.object.solicitud_lugar.filter(fecha_reg__year=2024, estatus='assign'):
-            for p2 in places[p.zona]['places']:
+        from utils.naves import nave1, nave3, zona_a, zona_b
+        n1 = nave1
+        places_ = {'n_1': n1, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b}
+        pls = self.object.solicitud_lugar.filter(fecha_reg__year=2024, estatus='assign')
+        for p in pls:
+            for p2 in places_[p.zona]['places']:
                 if p2['uuid'] == str(p.uuid_place):
+                    p2['uuid_bd'] = p.uuid
                     p2['folio_bd'] = p.folio
                     p2['date'] = p.fecha_reg
-                    p2['section'] = places[p.zona]['title']
+                    p2['section'] = places_[p.zona]['title']
                     places_price = places_price + p2['price']
                     selected_places.append(p2)
+        for p in pls:
+            for p2 in p.extras.all():
+                extra_pdt.append(p2)
         context['selected_places'] = selected_places
         context['places_price'] = places_price
+        context['extra_pdt'] = extra_pdt
         return context
 
 class Shop(AdminPermissions, DetailView):
@@ -246,13 +264,13 @@ class SetPlace(AdminPermissions, TemplateView):
 @renderer_classes((JSONRenderer,))
 @permission_classes([IsAuthenticated,])
 def render_place(request, key):
-    places = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a}
+    places = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b}
     for p in places[key]['places']:
         if p['uuid']:
             p['status'] = 'available'
             if Lugares.objects.filter(uuid_place=p['uuid']).exists():
                 p['status'] = 'unavailable'
-    return Response(places[key])
+    return JsonResponse(places[key])
 
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
@@ -261,15 +279,19 @@ def set_place_temp(request, uuid, zone):
     places = request.POST.getlist('places')
     request_ = Solicitudes.objects.get(uuid=uuid)
     objects = []
+    static_places = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b}
     if zone in ['z_a', 'z_b', 'z_c', 'z_d', 'n_1', 'n_3']:
         for p in places:
-            objects.append(Lugares(uuid_place=p, solicitud=request_, usuario=request.user, estatus='temp', zona=zone))
+            for p2 in static_places[zone]['places']:
+                if p2['uuid'] == str(p):
+                    objects.append(Lugares(uuid_place=p, solicitud=request_, usuario=request_.usuario, estatus='temp', zona=zone, precio=p2['price'], m2=p2['m2']))
         try:
             obj = Lugares.objects.bulk_create(objects)
             for o in obj:
                 o.save()
             return Response({'status_code': 'saved'}, status=status.HTTP_200_OK)
         except Exception as e:
+            print(e)
             return Response({'status_code': 'notsaved'}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
@@ -304,6 +326,15 @@ class DownloadDateDoc(AdminPermissions, RedirectView):
             doc = get_date_constancy(request_, date)
             return doc
         except (Solicitudes.DoesNotExist, CitasAgendadas.DoesNotExist):
+            raise Http404()
+
+class DownloadContract(AdminPermissions, RedirectView):
+    def get(self, request, *args, **kwargs):
+        try:
+            request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
+            doc = generate_physical_document(request_)
+            return doc
+        except (Solicitudes.DoesNotExist):
             raise Http404()
 
 class UnlockRequest(AdminPermissions, RedirectView):
@@ -344,3 +375,36 @@ class UserDates(AdminPermissions, TemplateView):
             messages.success(request, 'Cita agendada exitosamente.')
             return redirect('admin:list_users')
         return self.render_to_response(context)
+
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([IsAuthenticated,])
+def add_terraza(request, uuid, uuid_place):
+    terraza_price = 4500
+    sum = 0
+    try:
+        request_ = Solicitudes.objects.get(uuid=uuid)
+        sum_all_places = Lugares.objects.filter(usuario=request_.usuario).aggregate(prices=Sum('precio'))['prices']
+        print(sum_all_places)
+        place = Lugares.objects.get(uuid=request.POST.get('terraza'))
+        ProductosExtras.objects.create(lugar=place, tipo='terraza', precio=terraza_price)
+        return Response({})
+    except Exception as e:
+        return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([IsAuthenticated,])
+def add_alcohol(request, uuid, uuid_place):
+    print(request.POST.getlist('alcohol'))
+    alcohol_price = 4500
+    sum = 0
+    try:
+        request_ = Solicitudes.objects.get(uuid=uuid)
+        sum_all_places = Lugares.objects.filter(usuario=request_.usuario).aggregate(prices=Sum('precio'))['prices']
+        print(sum_all_places)
+        place = Lugares.objects.get(uuid=request.POST.get('alcohol'))
+        ProductosExtras.objects.create(lugar=place, tipo='alcohol', precio=alcohol_price)
+        return Response({})
+    except Exception as e:
+        return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)

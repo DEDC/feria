@@ -2,7 +2,10 @@
 from django.urls import path
 # admin
 from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, UpdateShop, DownloadDateDoc, 
-                              ListRequests, ListUsers, UnlockRequest, UpdateUser, UserDates, ListDates, set_place_temp, unset_place_temp, set_place)
+                              ListRequests, ListUsers, UnlockRequest, UpdateUser, UserDates, ListDates, 
+                              DownloadContract,
+                              set_place_temp, unset_place_temp, set_place,
+                              add_alcohol, add_terraza)
 app_name = 'admin'
 
 urlpatterns = [
@@ -21,5 +24,10 @@ urlpatterns = [
     path('solicitud/<uuid:uuid>/validacion/desbloquear', UnlockRequest.as_view(), name='unlock_validation'),
     path('solicitud/<uuid:uuid>/<str:zone>/lugar/temp', set_place_temp),
     path('solicitud/<uuid:uuid>/lugar/unset/temp', unset_place_temp),
-    path('solicitud/<uuid:uuid>/lugar/set', set_place)
+    path('solicitud/<uuid:uuid>/lugar/set', set_place),
+    # products
+    path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/alcohol/agregar', add_alcohol),
+    path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/terraza/agregar', add_terraza),
+    # downloads
+    path('solicitud/<uuid:uuid>/contrato/descargar', DownloadContract.as_view(), name='download_contract'),
 ]

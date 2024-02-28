@@ -460,7 +460,8 @@
                     </ul>
                 </div>
                 {% if object.estatus == 'validated' %}
-                {% if not selected_places %}
+
+                {% if not object.solicitud_pagos.first %}
                 <div data-mdb-alert-init="" class="alert fade alert-success alert-fixed" id="alert-success" role="alert"
                     data-mdb-color="success" data-mdb-position="top-center" data-mdb-stacking="true"
                     data-mdb-append-to-body="true" data-mdb-hidden="true" data-mdb-autohide="true" data-mdb-delay="1000"
@@ -513,7 +514,8 @@
                         class="btn btn-lg btn-rounded btn-primary shadow-0 w-100 mt-3"><i
                             class="fas fa-check me-2"></i>Preseleccionar espacios</button>
                 </div>
-                {% else %}
+                {% endif %}
+                {% if selected_places %}
                 <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
                     id="places">
                     <h4 class="mb-0 fw-bold">
@@ -522,6 +524,7 @@
                     </h4>
                 </div>
                 <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
+                    {% if not object.solicitud_pagos.first %}
                     <div class="d-flex justify-content-end">
                         <button id="add-terraza" disabled type="button"
                             class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
@@ -530,6 +533,7 @@
                             class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3"><i
                                 class="fas fa-plus me-2"></i>Agregar licencia de alcohol</button>
                     </div>
+                    {% endif %}
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -548,7 +552,7 @@
                                 <tr>
                                     <td>
                                         <input class="form-check-input config-chk" type="checkbox"
-                                            value="{{sp.uuid}}" data-m2="{{sp.m2}}" />
+                                            value="{{sp.uuid_bd}}" data-m2="{{sp.m2}}" data-folio="{{sp.folio_bd}}" />
                                     </td>
                                     <th scope="row">{{sp.folio_bd}}</th>
                                     <td>{{sp.text}}</td>
@@ -564,20 +568,76 @@
                             <li class="list-group-item d-flex justify-content-end">
                                 <h5 class="me-5 fw-bold m-0">Total por espacios:</h5>
                                 <h5 class="ms-5 m-0">${{places_price|intcomma}}</h5>
-                                <input type="hidden" name="prices" value="{{places_price}}">
+                                <input type="hidden" data-price="{{places_price}}">
                             </li>
+                            {% for px in extra_pdt %}
+                            {% if px.tipo == 'terraza' %}
+                            <li class="list-group-item d-flex justify-content-end">
+                                <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza para el espacio ({{px.lugar.folio}}):
+                                </h5>
+                                <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
+                                <a class="ms-3 del-pdt" role="button"><i class="fas fa-xmark fa-lg text-danger"></i></a>
+                            </li>
+                            {% elif px.tipo == 'alcohol' %}
+                            <li class="list-group-item d-flex justify-content-end">
+                                <h5 class="m-0 me-5 fw-bold">Total por (1) Licencia de Alcohol para el/los espacio(s)():
+                                </h5>
+                                <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
+                                <a class="ms-3 del-pdt" role="button"><i class="fas fa-xmark fa-lg text-danger"></i></a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
                         </ul>
                         <div class="d-flex justify-content-end">
                             <h2 class="me-5 m-0">Total:</h2>
                             <h1 class="ms-5 m-0 text-primary" id="total-price">${{places_price|intcomma}}</h1>
                         </div>
-                        <button type="button" class="btn btn-primary btn-lg btn-rounded shadow-0 w-100 mt-5">
-                            Configurar e ir a pagar
-                            <i class="fas fa-arrow-right-long ms-2"></i>
-                        </button>
+                        {% if not object.solicitud_pagos.first %}
+                        <div class="d-flex justify-content-center">
+                            <button name="card-payment" class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50">
+                                <i class="far fa-credit-card me-2"></i>
+                                Pagar con tarjeta
+                            </button>
+                            <button class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
+                                <i class="fas fa-money-bill-1 me-2"></i>
+                                Pagar con efectivo
+                            </button>
+                        </div>
+                        {% else %}
+                        <p class="note note-success mt-4">
+                            Se ha definido que el pago fue hecho con <b>tarjeta</b> el
+                            <b>{{object.solicitud_pagos.first.fecha_reg}} hrs.</b>
+                        </p>
+                        {% endif %}
                     </div>
                 </div>
                 {% endif %}
+                {% endif %}
+                {% if object.solicitud_pagos.first %}
+                <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
+                    id="places">
+                    <h4 class="mb-0 fw-bold">
+                        <i class="fas fa-download me-3 green-text"></i>Descarga de documentos
+                    </h4>
+                </div>
+                <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Contrato</th>
+                                    <td><a class="btn btn-sm btn-success shadow-0"
+                                            href="{% url 'admin:download_contract' object.uuid %}">Descargar
+                                            Contrato</a></td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Gafete</th>
+                                    <td><a class="btn btn-sm btn-success shadow-0" href="">Descargar Gafete</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 {% endif %}
             </div>
         </div>
@@ -668,5 +728,4 @@
         </div>
     </div>
 </div>
-
 {% endblock main %}

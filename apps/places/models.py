@@ -69,5 +69,19 @@ class Lugares(ControlInfo):
     uuid_place = models.UUIDField(editable=False, unique=True)
     estatus = models.CharField(max_length=20, choices=(('temp', 'Temporal'), ('assign', 'Asignado')), default='temp')
     zona = models.CharField(max_length=20, choices=(('z_a', 'Zona A'), ('z_b', 'Zona B'), ('z_c', 'Zona C'), ('z_d', 'Zona D'), ('n_1', 'Nave 1'), ('n_3', 'Nave 3')), null=True)
+    precio = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    m2 = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='usuario_lugar')
     solicitud = models.ForeignKey(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='solicitud_lugar')
+
+class ProductosExtras(ControlInfo):
+    identifier='PDX'
+    lugar = models.ForeignKey(Lugares, editable=False, on_delete=models.PROTECT, related_name='extras')
+    tipo = models.CharField(max_length=20, null=True, choices=(('terraza', 'Terraza'), ('terraza_grande', 'Terraza Grande'), ('licencia_alcohol', 'Licencia de Alcohol')))
+    precio = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+
+class Pagos(ControlInfo):
+    identifier='PAG'
+    solicitud = models.ForeignKey(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='solicitud_pagos')
+    usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='usuario_pagos')
+    tipo = models.CharField(max_length=20, null=True, choices=(('tarjeta', 'Tarjeta'), ('efectivo', 'Efectivo')))
