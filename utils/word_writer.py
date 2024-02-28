@@ -36,7 +36,7 @@ def generate_physical_document(request_):
         '<price_places_text>': num2words(price_places-price_iva, lang='es').upper(),
         '<price_iva>': intcomma(price_iva),
         '<price_iva_text>': num2words(price_iva, lang='es').upper(),
-        '<price_places_iva>': intcomma(price_places + price_iva),
+        '<price_places_iva>': intcomma(price_places),
         '<price_places_iva_text>': num2words(price_places, lang='es').upper(),
         '<day>': day,
         '<month>': month,
