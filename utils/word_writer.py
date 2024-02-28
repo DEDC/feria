@@ -85,7 +85,7 @@ def generate_physical_document(request_):
             row[6].text =  str('${}'.format(intcomma(round(iva))))
             row = table.add_row().cells
             row[5].text = 'Total'
-            row[6].text =  str('${}'.format(intcomma(price_places)))
+            row[6].text =  str('${}'.format(intcomma(sum)))
             p._p.addnext(table._tbl)
             p.text = ''
         for k, v in data.items():
