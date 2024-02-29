@@ -294,8 +294,7 @@ def set_place_temp(request, uuid, zone):
                 o.save()
             return Response({'status_code': 'saved'}, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
-            return Response({'status_code': 'notsaved'}, status=status.HTTP_200_OK)
+            return Response({'status_code': 'notsaved', 'error': str(e)}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
@@ -408,8 +407,9 @@ def add_terraza(request, uuid, uuid_place):
 def delete_item(request, uuid, uuid_place):
     try:
         request_ = Solicitudes.objects.get(uuid=uuid)
-        pdt = ProductosExtras.objects.get(uuid=request.POST.get('terraza'))
-        pdt.delete()
+        print(request.POST)
+        # pdt = ProductosExtras.objects.get(uuid=request.POST.get('terraza'))
+        # pdt.delete()
         return Response({})
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
