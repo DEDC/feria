@@ -33,7 +33,7 @@ def get_gafete(place):
     pdf.drawString(163, 162, place.nombre)
     pdf.drawString(82, 147, textwrap.wrap(place.solicitud.nombre.upper(), 24)[0])
     # QR
-    qr_text = str(place.uuid)
+    qr_text = str(place.folio)
     qr_code = qr.QrCodeWidget(qr_text)
     bounds = qr_code.getBounds()
     width = bounds[2] - bounds[0]
