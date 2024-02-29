@@ -1,4 +1,4 @@
-import { getPlaces, setPlaceTemp, unsetPlaceTemp, setPlace, addTerraza, addAlcohol } from "../js/api/utilities.js";
+import { getPlaces, setPlaceTemp, unsetPlaceTemp, setPlace, addTerraza, addAlcohol, addBigTerraza } from "../js/api/utilities.js";
 import { url_nave_1, url_nave_3, url_zone_a, url_zone_b, url_zone_c, url_zone_d } from '../js/api/endpoints.js'
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const config_chks = document.querySelectorAll('.config-chk')
     const add_alcohol = document.querySelector('#add-alcohol')
     const add_terraza = document.querySelector('#add-terraza')
+    const add_big_terraza = document.querySelector('#add-big-terraza')
 
     if (add_alcohol) {
         add_alcohol.addEventListener('click', (e) => {
@@ -51,6 +52,21 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     }
 
+    if (add_big_terraza) {
+        add_big_terraza.addEventListener('click', (e) => {
+            let chks = document.querySelectorAll('.config-chk:checked')
+            chks.forEach(element => {
+                const data = new FormData();
+                data.append('terraza_grande', element.value);
+                addBigTerraza(request_uuid.value, element.value, data).then((resp) => {
+                    location.reload()
+                }).catch((error) => {
+                    console.log(error);
+                });
+            });
+        })
+    }
+
     if (config_chks) {
         config_chks.forEach(element => {
             element.addEventListener('click', (e) => {
@@ -58,9 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (chks.length > 0) {
                     add_alcohol.disabled = false
                     add_terraza.disabled = false
+                    add_big_terraza.disabled = false
                 } else {
                     add_alcohol.disabled = true
                     add_terraza.disabled = true
+                    add_big_terraza.disabled = true
                 }
             })
         });

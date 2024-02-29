@@ -377,6 +377,18 @@ def add_terraza(request, uuid, uuid_place):
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([IsAuthenticated,])
+def add_big_terraza(request, uuid, uuid_place):
+    terraza_price = 8000
+    try:
+        request_ = Solicitudes.objects.get(uuid=uuid)
+        place = Lugares.objects.get(uuid=request.POST.get('terraza_grande'))
+        ProductosExtras.objects.create(lugar=place, tipo='terraza_grande', precio=terraza_price, m2=9, to_places=place.folio)
+        return Response({})
+    except Exception as e:
+        return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # delete items here
 
@@ -384,10 +396,19 @@ def add_terraza(request, uuid, uuid_place):
 @renderer_classes((JSONRenderer,))
 @permission_classes([IsAuthenticated,])
 def add_alcohol(request, uuid, uuid_place):
-    alcohol_price = 4500
+    alcohol_price = 0
     try:
         request_ = Solicitudes.objects.get(uuid=uuid)
         places = Lugares.objects.filter(uuid__in=request.POST.getlist('alcohol'))
+        mt2 = places.aggregate(m2=Sum('m2'))['m2'] or 0
+        if mt2<=50:
+            alcohol_price = 34742.40
+        elif mt2>50 and mt2<=100:
+            alcohol_price = 69484.80
+        elif mt2>100 and mt2<=150:
+            alcohol_price = 121598.40
+        elif mt2 > 150:
+            alcohol_price = 260568
         if places:
             to_places = ','.join(places.values_list('folio', flat=True))
             ProductosExtras.objects.create(lugar=places[0], tipo='licencia_alcohol', precio=alcohol_price, m2=100, to_places=to_places)

@@ -529,6 +529,9 @@
                         <button id="add-terraza" disabled type="button"
                             class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
                                 class="fas fa-plus me-2"></i>Agregar terraza</button>
+                        <button id="add-big-terraza" disabled type="button"
+                            class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
+                                class="fas fa-plus me-2"></i>Agregar terraza grande</button>
                         <button id="add-alcohol" disabled type="button"
                             class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3"><i
                                 class="fas fa-plus me-2"></i>Agregar licencia de alcohol</button>
@@ -574,6 +577,13 @@
                             {% if px.tipo == 'terraza' %}
                             <li class="list-group-item d-flex justify-content-end">
                                 <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza para el espacio ({{px.to_places}}):
+                                </h5>
+                                <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
+                                <a class="ms-3 del-pdt" role="button"><i class="fas fa-xmark fa-lg text-danger"></i></a>
+                            </li>
+                            {% elif px.tipo == 'terraza_grande' %}
+                            <li class="list-group-item d-flex justify-content-end">
+                                <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza Grande para el espacio ({{px.to_places}}):
                                 </h5>
                                 <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
                                 <a class="ms-3 del-pdt" role="button"><i class="fas fa-xmark fa-lg text-danger"></i></a>

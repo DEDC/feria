@@ -5,7 +5,7 @@ from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, Upda
                               ListRequests, ListUsers, UnlockRequest, UpdateUser, UserDates, ListDates, 
                               DownloadContract,
                               set_place_temp, unset_place_temp, set_place,
-                              add_alcohol, add_terraza)
+                              add_alcohol, add_terraza, add_big_terraza)
 app_name = 'admin'
 
 urlpatterns = [
@@ -29,6 +29,9 @@ urlpatterns = [
     # products
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/alcohol/agregar', add_alcohol),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/terraza/agregar', add_terraza),
+    path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/terraza_grande/agregar', add_big_terraza),
+    # path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/alcohol/eliminar', delete_alcohol),
+    # path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/terraza/eliminar', delete_terraza),
     # downloads
     path('solicitud/<uuid:uuid>/contrato/descargar', DownloadContract.as_view(), name='download_contract'),
 ]
