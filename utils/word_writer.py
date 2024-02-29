@@ -69,7 +69,7 @@ def generate_physical_document(request_):
             heading_row[1].text = "Concepto"
             heading_row[2].text = "m2"
             heading_row[3].text = "Zona"
-            heading_row[4].text = "No."
+            heading_row[4].text = "Local"
             heading_row[5].text = "Aplica para"
             heading_row[6].text = "Precio"
             for place in places:

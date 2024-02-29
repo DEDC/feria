@@ -26,6 +26,7 @@ from apps.dates.models import CitasAgendadas
 from utils.naves import nave1, nave3, zona_a, zona_b, zona_c, zona_d
 from utils.permissions import AdminPermissions
 from utils.date import get_date_constancy
+from utils.gafete import get_gafete
 from utils.word_writer import generate_physical_document
 
 places_dict = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b, 'z_c': zona_c, 'z_d': zona_d}
@@ -155,13 +156,18 @@ class Request(AdminPermissions, DetailView):
         request_ = self.get_object()
         if 'card-payment' in request.POST:
             if request_.estatus == 'validated':
-                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='tarjeta')
+                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='tarjeta', pagado=True)
                 messages.success(request, 'El Pago se definió con tarjeta')
         if 'cancel-pay' in request.POST:
             for place in request_.solicitud_lugar.all():
                 for px in place.extras.all():
                     px.delete()
                 place.delete()
+            messages.success(request, 'El proceso de pago ha sido cancelado exitosamente')
+        if 'cash-payment' in request.POST:
+            if request_.estatus == 'validated':
+                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='efectivo', pagado=False)
+                messages.success(request, 'El Pago se definió con efectivo. A la espera del comprobante del pago')
         if 'validated' in request.POST:
             request_.estatus = 'validated'
             request_.save()
@@ -207,6 +213,7 @@ class Request(AdminPermissions, DetailView):
         context['total_extras'] = places.aggregate(price=Sum('extras__precio'))['price'] or 0
         context['total'] = context['total_extras'] + context['total_places']
         context['selected_places'] = places
+        context['payment'] = self.object.solicitud_pagos.first()
         return context
 
 class Shop(AdminPermissions, DetailView):
@@ -323,6 +330,16 @@ class DownloadContract(AdminPermissions, RedirectView):
             doc = generate_physical_document(request_)
             return doc
         except (Solicitudes.DoesNotExist):
+            raise Http404()
+
+class DownloadGafate(AdminPermissions, RedirectView):
+    def get(self, request, *args, **kwargs):
+        try:
+            request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
+            place = Lugares.objects.get(uuid=kwargs['uuid_place'])
+            gafete = get_gafete(place)
+            return gafete
+        except (Solicitudes.DoesNotExist, Lugares.DoesNotExist):
             raise Http404()
 
 class UnlockRequest(AdminPermissions, RedirectView):

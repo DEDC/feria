@@ -461,7 +461,7 @@
                 </div>
                 {% if object.estatus == 'validated' %}
 
-                {% if not object.solicitud_pagos.first %}
+                {% if not payment %}
                 <div data-mdb-alert-init="" class="alert fade alert-success alert-fixed" id="alert-success" role="alert"
                     data-mdb-color="success" data-mdb-position="top-center" data-mdb-stacking="true"
                     data-mdb-append-to-body="true" data-mdb-hidden="true" data-mdb-autohide="true" data-mdb-delay="1000"
@@ -524,7 +524,7 @@
                     </h4>
                 </div>
                 <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
-                    {% if not object.solicitud_pagos.first %}
+                    {% if not payment %}
                     <div class="d-flex justify-content-end">
                         <button id="add-terraza" disabled type="button"
                             class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
@@ -583,7 +583,8 @@
                             </li>
                             {% elif px.tipo == 'terraza_grande' %}
                             <li class="list-group-item d-flex justify-content-end">
-                                <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza Grande para el espacio ({{px.to_places}}):
+                                <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza Grande para el espacio
+                                    ({{px.to_places}}):
                                 </h5>
                                 <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
                                 <a class="ms-3 del-pdt" role="button"><i class="fas fa-xmark fa-lg text-danger"></i></a>
@@ -608,13 +609,14 @@
                             <h2 class="me-5 m-0">Total:</h2>
                             <h1 class="ms-5 m-0 text-primary" id="total-price">${{total|intcomma}}</h1>
                         </div>
-                        {% if not object.solicitud_pagos.first %}
+                        {% if not payment %}
                         <div class="d-flex justify-content-center">
                             <button name="card-payment" class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50">
                                 <i class="far fa-credit-card me-2"></i>
                                 Pagar con tarjeta
                             </button>
-                            <button class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
+                            <button name="cash-payment"
+                                class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
                                 <i class="fas fa-money-bill-1 me-2"></i>
                                 Pagar con efectivo
                             </button>
@@ -625,15 +627,15 @@
                         </div>
                         {% else %}
                         <p class="note note-success mt-4">
-                            Se ha definido que el pago fue hecho con <b>tarjeta</b> el
-                            <b>{{object.solicitud_pagos.first.fecha_reg}} hrs.</b>
+                            Se ha definido que el pago fue seleccionado como tipo <b>{{payment.get_tipo_display}}</b> el
+                            <b>{{payment.fecha_reg}} hrs.</b>
                         </p>
                         {% endif %}
                     </div>
                 </div>
                 {% endif %}
                 {% endif %}
-                {% if object.solicitud_pagos.first %}
+                {% if payment %}
                 <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
                     id="places">
                     <h4 class="mb-0 fw-bold">
@@ -641,6 +643,7 @@
                     </h4>
                 </div>
                 <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
+                    {% if payment.pagado %}
                     <div class="table-responsive">
                         <table class="table">
                             <tbody>
@@ -650,13 +653,20 @@
                                             href="{% url 'admin:download_contract' object.uuid %}">Descargar
                                             Contrato</a></td>
                                 </tr>
+                                {% for place in selected_places %}
                                 <tr>
-                                    <th class="bg-light" style="width: 40%;">Gafete</th>
-                                    <td><a class="btn btn-sm btn-success shadow-0" href="">Descargar Gafete</a></td>
+                                    <th class="bg-light" style="width: 40%;">{{place.get_zona_display}}&nbsp;&nbsp;{{place.nombre}} ({{place.folio}})</th>
+                                    <td><a class="btn btn-sm btn-success shadow-0" href="{% url 'admin:download_gafete' object.uuid place.uuid %}">Descargar Gafete</a></td>
                                 </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
+                    {% else %}
+                    <p class="note note-warning mt-4">
+                        A la espera del comprobante de pago en efectivo para liberar los documentos de descarga
+                    </p>
+                    {% endif %}
                 </div>
                 {% endif %}
             </div>

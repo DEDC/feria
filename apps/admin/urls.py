@@ -3,7 +3,7 @@ from django.urls import path
 # admin
 from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, UpdateShop, DownloadDateDoc, 
                               ListRequests, ListUsers, UnlockRequest, UpdateUser, UserDates, ListDates, 
-                              DownloadContract,
+                              DownloadContract, DownloadGafate,
                               set_place_temp, unset_place_temp, set_place,
                               add_alcohol, add_terraza, add_big_terraza)
 app_name = 'admin'
@@ -34,4 +34,5 @@ urlpatterns = [
     # path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/terraza/eliminar', delete_terraza),
     # downloads
     path('solicitud/<uuid:uuid>/contrato/descargar', DownloadContract.as_view(), name='download_contract'),
+    path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/gafete/descargar', DownloadGafate.as_view(), name='download_gafete'),
 ]
