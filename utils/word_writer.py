@@ -33,13 +33,18 @@ def generate_physical_document(request_):
 
     month = formats.date_format(date.today(), 'F')
     day = formats.date_format(date.today(), 'j')
+    rfc = ''
+    if request_.regimen_fiscal == 'moral' or request_.regimen_fiscal == 'fisica':
+        rfc = request_.rfc_txt.upper() if request_.rfc_txt else 'NO ESPECIFICADO'
+    else:
+        rfc = 'NO APLICA'
     data = {
         '<request_folio>': request_.folio,
         '<razon_social>': request_.nombre.upper(),
         '<address>': '{} {} {} {}'.format(request_.calle, request_.no_calle, request_.codigo_postal, request_.colonia),
         '<town>': request_.municipio,
         '<estate>': request_.get_estado_display(),
-        '<rfc>': request_.rfc_txt.upper() or 'NO ESPECIFICADO' if request_.regimen_fiscal == 'fisica' or request_.regimen_fiscal == 'moral' else 'NO APLICA',
+        '<rfc>': rfc,
         '<price_no_iva>': intcomma(total_prices-price_iva),
         '<price_no_iva_text>': num2words(total_prices-price_iva, lang='es').upper(),
         '<price_iva>': intcomma(price_iva),
@@ -52,8 +57,8 @@ def generate_physical_document(request_):
         '<price_alcohol>': intcomma(price_alcohol),
         '<price_alcohol_text>': num2words(price_alcohol, lang='es'),
         '<m2_alcohol>': str(alcohol_m2),
-        '<nombre_replegal>': request_.nombre_replegal.upper() or 'NO ESPECIFICADO',
-        '<regimen_fiscal>': request_.get_regimen_fiscal_display().upper() or 'NO ESPECIFICADO',
+        '<nombre_replegal>': request_.nombre_replegal.upper() if request_.nombre_replegal else 'NO ESPECIFICADO',
+        '<regimen_fiscal>': request_.get_regimen_fiscal_display().upper() if request_.regimen_fiscal else 'NO ESPECIFICADO',
     }
     for p in document.paragraphs:
         if '<table_places>' in p.text:
