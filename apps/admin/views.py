@@ -23,12 +23,12 @@ from apps.users.forms import UserUpdateForm
 # dates
 from apps.dates.models import CitasAgendadas
 # utils
-from utils.naves import nave1, nave3, zona_a, zona_b, zona_c
+from utils.naves import nave1, nave3, zona_a, zona_b, zona_c, zona_d
 from utils.permissions import AdminPermissions
 from utils.date import get_date_constancy
 from utils.word_writer import generate_physical_document
 
-places_dict = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b, 'z_c': zona_c}
+places_dict = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b, 'z_c': zona_c, 'z_d': zona_d}
 
 class Main(AdminPermissions, TemplateView):
     template_name = 'admin/main.html'
@@ -198,12 +198,9 @@ class Request(AdminPermissions, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         places = self.object.solicitud_lugar.filter(fecha_reg__year=2024, estatus='assign')
-        context['total_places'] = places.aggregate(price=Sum('precio'))['price']
+        context['total_places'] = places.aggregate(price=Sum('precio'))['price'] or 0
         context['total_extras'] = places.aggregate(price=Sum('extras__precio'))['price'] or 0
-        try:
-            context['total'] = context['total_extras'] + context['total_places']
-        except:
-            context['total'] = context['total_places']
+        context['total'] = context['total_extras'] + context['total_places']
         context['selected_places'] = places
         return context
 

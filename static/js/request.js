@@ -1,5 +1,5 @@
 import { getPlaces, setPlaceTemp, unsetPlaceTemp, setPlace, addTerraza, addAlcohol } from "../js/api/utilities.js";
-import { url_nave_1, url_nave_3, url_zone_a, url_zone_b, url_zone_c } from '../js/api/endpoints.js'
+import { url_nave_1, url_nave_3, url_zone_a, url_zone_b, url_zone_c, url_zone_d } from '../js/api/endpoints.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     const zone_a_btn = document.querySelector('#zone-a')
@@ -101,6 +101,13 @@ document.addEventListener('DOMContentLoaded', () => {
         zone_c_btn.addEventListener('click', (e) => {
             get_places_zone(url_zone_c)
             current_zone = 'z_c'
+        })
+    }
+
+    if (zone_d_btn) {
+        zone_d_btn.addEventListener('click', (e) => {
+            get_places_zone(url_zone_d)
+            current_zone = 'z_d'
         })
     }
 

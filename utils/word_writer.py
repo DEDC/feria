@@ -15,37 +15,46 @@ from django.utils import formats
 from num2words import num2words
 
 def generate_physical_document(request_):
-    f = open('static/docs/contrato_fisica.docx', 'rb')
+    if request_.regimen_fiscal == 'moral':
+        f = open('static/docs/contrato_moral.docx', 'rb')
+    else:
+        f = open('static/docs/contrato_fisica.docx', 'rb')
+
     document = Document(f)
     buffer = io.BytesIO()
-    places = request_.solicitud_lugar.all()
-    price_places = places.aggregate(price=Sum('precio'))['price']
+    places = request_.solicitud_lugar.filter(fecha_reg__year=2024, estatus='assign')
+    
+    price_places = places.aggregate(price=Sum('precio'))['price'] or 0
+    price_extras = places.aggregate(price=Sum('extras__precio'))['price'] or 0
+    total_prices = price_places + price_extras
     price_alcohol = places.filter(extras__tipo='licencia_alcohol').aggregate(price=Sum('extras__precio'))['price'] or 0
     alcohol_m2 = places.filter(extras__tipo='licencia_alcohol').aggregate(m2=Sum('extras__m2'))['m2'] or 0
-    price_iva = round(price_places * Decimal(0.16))
+    price_iva = round(total_prices * Decimal(0.16))
+
     month = formats.date_format(date.today(), 'F')
     day = formats.date_format(date.today(), 'j')
     data = {
-        '<razon_social>': request_.nombre,
-        '<address>': '{} {} {}'.format(request_.calle, request_.no_calle, request_.codigo_postal),
-        '<colony>': request_.colonia,
+        '<request_folio>': request_.folio,
+        '<razon_social>': request_.nombre.upper(),
+        '<address>': '{} {} {} {}'.format(request_.calle, request_.no_calle, request_.codigo_postal, request_.colonia),
         '<town>': request_.municipio,
         '<estate>': request_.get_estado_display(),
-        '<rfc>': request_.rfc_txt.upper() if request_.rfc_txt else '',
-        '<price_places>': intcomma(price_places-price_iva),
-        '<price_places_text>': num2words(price_places-price_iva, lang='es').upper(),
+        '<rfc>': request_.rfc_txt.upper() or 'NO ESPECIFICADO' if request_.regimen_fiscal == 'fisica' or request_.regimen_fiscal == 'moral' else 'NO APLICA',
+        '<price_no_iva>': intcomma(total_prices-price_iva),
+        '<price_no_iva_text>': num2words(total_prices-price_iva, lang='es').upper(),
         '<price_iva>': intcomma(price_iva),
         '<price_iva_text>': num2words(price_iva, lang='es').upper(),
-        '<price_places_iva>': intcomma(price_places),
-        '<price_places_iva_text>': num2words(price_places, lang='es').upper(),
+        '<total_iva>': intcomma(total_prices),
+        '<total_iva_text>': num2words(total_prices, lang='es').upper(),
         '<day>': day,
         '<month>': month,
-        '<name_user>': request_.usuario.get_full_name(),
+        '<name_user>': request_.usuario.get_full_name().upper(),
         '<price_alcohol>': intcomma(price_alcohol),
         '<price_alcohol_text>': num2words(price_alcohol, lang='es'),
-        '<m2_alcohol>': str(alcohol_m2)
+        '<m2_alcohol>': str(alcohol_m2),
+        '<nombre_replegal>': request_.nombre_replegal.upper() or 'NO ESPECIFICADO',
+        '<regimen_fiscal>': request_.get_regimen_fiscal_display().upper() or 'NO ESPECIFICADO',
     }
-    sum = 0
     for p in document.paragraphs:
         if '<table_places>' in p.text:
             table = document.add_table(rows=1, cols=7, style="Table Grid")
@@ -66,7 +75,6 @@ def generate_physical_document(request_):
                 row[3].text = place.get_zona_display()
                 row[4].text = place.nombre
                 row[6].text =  intcomma(place.precio)
-                sum += place.precio
                 for px in place.extras.all():
                     row = table.add_row().cells
                     row[0].text = px.folio
@@ -74,18 +82,15 @@ def generate_physical_document(request_):
                     row[2].text = str(px.m2)
                     row[5].text = str(px.to_places)
                     row[6].text =  intcomma(px.precio)
-                    sum += px.precio
             row = table.add_row().cells
-            iva = sum * Decimal(0.16)
-            subtotal = sum - iva
             row[5].text = 'Subtotal'
-            row[6].text =  str('${}'.format(intcomma(round(subtotal))))
+            row[6].text =  str('${}'.format(intcomma(total_prices-price_iva)))
             row = table.add_row().cells
             row[5].text = 'IVA'
-            row[6].text =  str('${}'.format(intcomma(round(iva))))
+            row[6].text =  str('${}'.format(intcomma(price_iva)))
             row = table.add_row().cells
             row[5].text = 'Total'
-            row[6].text =  str('${}'.format(intcomma(sum)))
+            row[6].text =  str('${}'.format(intcomma(total_prices)))
             p._p.addnext(table._tbl)
             p.text = ''
         for k, v in data.items():
