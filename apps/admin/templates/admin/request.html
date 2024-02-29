@@ -561,7 +561,7 @@
                                     <td>{{sp.nombre}}</td>
                                     <td>{{sp.get_zona_display}}</td>
                                     <td>{{sp.m2}}</td>
-                                    <td>${{sp.precio}}</td>
+                                    <td>${{sp.precio|intcomma}}</td>
                                     <td>{{sp.fecha_reg}}</td>
                                 </tr>
                                 {% endfor %}
@@ -579,7 +579,8 @@
                                 <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza para el espacio ({{px.to_places}}):
                                 </h5>
                                 <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
-                                <a class="ms-3 del-pdt" role="button"><i class="fas fa-xmark fa-lg text-danger"></i></a>
+                                <a class="ms-3 del-pdt" data-type="terraza" role="button"><i
+                                        class="fas fa-xmark fa-lg text-danger"></i></a>
                             </li>
                             {% elif px.tipo == 'terraza_grande' %}
                             <li class="list-group-item d-flex justify-content-end">
@@ -587,7 +588,8 @@
                                     ({{px.to_places}}):
                                 </h5>
                                 <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
-                                <a class="ms-3 del-pdt" role="button"><i class="fas fa-xmark fa-lg text-danger"></i></a>
+                                <a class="ms-3 del-pdt" data-type="terraza_grande" role="button"><i
+                                        class="fas fa-xmark fa-lg text-danger"></i></a>
                             </li>
                             {% elif px.tipo == 'licencia_alcohol' %}
                             <li class="list-group-item d-flex justify-content-end">
@@ -595,7 +597,8 @@
                                     ({{px.to_places}}):
                                 </h5>
                                 <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
-                                <a class="ms-3 del-pdt" role="button"><i class="fas fa-xmark fa-lg text-danger"></i></a>
+                                <a class="ms-3 del-pdt" data-type="licencia_alcohol" role="button"><i
+                                        class="fas fa-xmark fa-lg text-danger"></i></a>
                             </li>
                             {% endif %}
                             {% endfor %}
@@ -655,8 +658,11 @@
                                 </tr>
                                 {% for place in selected_places %}
                                 <tr>
-                                    <th class="bg-light" style="width: 40%;">{{place.get_zona_display}}&nbsp;&nbsp;{{place.nombre}} ({{place.folio}})</th>
-                                    <td><a class="btn btn-sm btn-success shadow-0" href="{% url 'admin:download_gafete' object.uuid place.uuid %}">Descargar Gafete</a></td>
+                                    <th class="bg-light" style="width: 40%;">
+                                        {{place.get_zona_display}}&nbsp;&nbsp;{{place.nombre}} ({{place.folio}})</th>
+                                    <td><a class="btn btn-sm btn-success shadow-0"
+                                            href="{% url 'admin:download_gafete' object.uuid place.uuid %}">Descargar
+                                            Gafete</a></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -666,6 +672,13 @@
                     <p class="note note-warning mt-4">
                         A la espera del comprobante de pago en efectivo para liberar los documentos de descarga
                     </p>
+                    <div class="d-flex justify-content-center">
+                        <button name="cash-paid"
+                                class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
+                                <i class="fas fa-money-bill-1 me-2"></i>
+                                Pagado con efectivo
+                        </button>
+                    </div>
                     {% endif %}
                 </div>
                 {% endif %}

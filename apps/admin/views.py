@@ -158,16 +158,24 @@ class Request(AdminPermissions, DetailView):
             if request_.estatus == 'validated':
                 Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='tarjeta', pagado=True)
                 messages.success(request, 'El Pago se definió con tarjeta')
-        if 'cancel-pay' in request.POST:
+        elif 'cancel-pay' in request.POST:
             for place in request_.solicitud_lugar.all():
                 for px in place.extras.all():
                     px.delete()
                 place.delete()
             messages.success(request, 'El proceso de pago ha sido cancelado exitosamente')
-        if 'cash-payment' in request.POST:
+        elif 'cash-payment' in request.POST:
             if request_.estatus == 'validated':
                 Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='efectivo', pagado=False)
                 messages.success(request, 'El Pago se definió con efectivo. A la espera del comprobante del pago')
+        elif 'cash-paid' in request.POST:
+            if request_.estatus == 'validated':
+                payment = request_.solicitud_pagos.first()
+                if payment:
+                    payment.pagado = True
+                    payment.save()
+                    messages.success(request, 'Se confirma el pago en efectivo')
+
         if 'validated' in request.POST:
             request_.estatus = 'validated'
             request_.save()
@@ -390,6 +398,18 @@ def add_terraza(request, uuid, uuid_place):
         request_ = Solicitudes.objects.get(uuid=uuid)
         place = Lugares.objects.get(uuid=request.POST.get('terraza'))
         ProductosExtras.objects.create(lugar=place, tipo='terraza', precio=terraza_price, m2=9, to_places=place.folio)
+        return Response({})
+    except Exception as e:
+        return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([IsAuthenticated,])
+def delete_item(request, uuid, uuid_place):
+    try:
+        request_ = Solicitudes.objects.get(uuid=uuid)
+        pdt = ProductosExtras.objects.get(uuid=request.POST.get('terraza'))
+        pdt.delete()
         return Response({})
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
