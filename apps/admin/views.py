@@ -156,7 +156,12 @@ class Request(AdminPermissions, DetailView):
         if 'card-payment' in request.POST:
             if request_.estatus == 'validated':
                 Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='tarjeta')
-                messages.success(request, 'El Pago se definió con tarjeta')    
+                messages.success(request, 'El Pago se definió con tarjeta')
+        if 'cancel-pay' in request.POST:
+            for place in request_.solicitud_lugar.all():
+                for px in place.extras.all():
+                    px.delete()
+                place.delete()
         if 'validated' in request.POST:
             request_.estatus = 'validated'
             request_.save()
