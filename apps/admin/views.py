@@ -175,7 +175,14 @@ class Request(AdminPermissions, DetailView):
                     payment.pagado = True
                     payment.save()
                     messages.success(request, 'Se confirma el pago en efectivo')
-
+        elif 'transfer-paid' in request.POST:
+            if request_.estatus == 'validated':
+                payment = request_.solicitud_pagos.first()
+                if payment:
+                    payment.pagado = True
+                    payment.tipo = 'transferencia'
+                    payment.save()
+                    messages.success(request, 'Se confirma el pago con transferencia')
         if 'validated' in request.POST:
             request_.estatus = 'validated'
             request_.save()
