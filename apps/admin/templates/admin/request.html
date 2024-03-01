@@ -520,7 +520,7 @@
                     id="places">
                     <h4 class="mb-0 fw-bold">
                         <i class="fas fa-list-check me-3 green-text"></i>Configuración adicional de los espacios
-                        seleccionados
+                        seleccionados ({{selected_places.count}})
                     </h4>
                 </div>
                 <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
@@ -579,7 +579,7 @@
                                 <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza para el espacio ({{px.to_places}}):
                                 </h5>
                                 <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
-                                <a class="ms-3 del-pdt" data-type="terraza" role="button"><i
+                                <a class="ms-3 del-pdt" data-uuid="{{px.uuid}}" data-type="terraza" role="button"><i
                                         class="fas fa-xmark fa-lg text-danger"></i></a>
                             </li>
                             {% elif px.tipo == 'terraza_grande' %}
@@ -588,7 +588,7 @@
                                     ({{px.to_places}}):
                                 </h5>
                                 <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
-                                <a class="ms-3 del-pdt" data-type="terraza_grande" role="button"><i
+                                <a class="ms-3 del-pdt" data-uuid="{{px.uuid}}" data-type="terraza_grande" role="button"><i
                                         class="fas fa-xmark fa-lg text-danger"></i></a>
                             </li>
                             {% elif px.tipo == 'licencia_alcohol' %}
@@ -597,7 +597,7 @@
                                     ({{px.to_places}}):
                                 </h5>
                                 <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
-                                <a class="ms-3 del-pdt" data-type="licencia_alcohol" role="button"><i
+                                <a class="ms-3 del-pdt" data-uuid="{{px.uuid}}" data-type="licencia_alcohol" role="button"><i
                                         class="fas fa-xmark fa-lg text-danger"></i></a>
                             </li>
                             {% endif %}
