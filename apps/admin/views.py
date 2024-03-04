@@ -441,7 +441,7 @@ def add_alcohol(request, uuid, uuid_place):
         if mt2<=50:
             alcohol_price = 34742.40
         elif mt2>50 and mt2<=100:
-            alcohol_price = 69484.80
+            alcohol_price = 69478.40
         elif mt2>100 and mt2<=150:
             alcohol_price = 121598.40
         elif mt2 > 150:
