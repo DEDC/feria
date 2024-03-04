@@ -154,19 +154,27 @@ class Request(AdminPermissions, DetailView):
 
     def post(self, request, *args, **kwargs):
         request_ = self.get_object()
+        if 'reverse-pay' in request.POST:
+            if request_.estatus == 'validated':
+                payment = request_.solicitud_pagos.first()
+                if payment:
+                    payment.delete()
+                    Validaciones.objects.create(solicitud=request_, estatus=request_.estatus, atendido=True, comentarios='El validador revirtió la compra', validador=request.user.get_full_name())
+                    messages.success(request, 'El pago se ha revertido exitosamente')
         if 'card-payment' in request.POST:
             if request_.estatus == 'validated':
-                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='tarjeta', pagado=True)
+                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='tarjeta', pagado=True, validador=request.user.get_full_name())
                 messages.success(request, 'El Pago se definió con tarjeta')
         elif 'cancel-pay' in request.POST:
             for place in request_.solicitud_lugar.all():
                 for px in place.extras.all():
                     px.delete()
                 place.delete()
+            Validaciones.objects.create(solicitud=request_, estatus=request_.estatus, atendido=True, comentarios='El validador canceló la compra', validador=request.user.get_full_name())
             messages.success(request, 'El proceso de pago ha sido cancelado exitosamente')
         elif 'cash-payment' in request.POST:
             if request_.estatus == 'validated':
-                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='efectivo', pagado=False)
+                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='efectivo', pagado=False, validador=request.user.get_full_name())
                 messages.success(request, 'El Pago se definió con efectivo. A la espera del comprobante del pago')
         elif 'cash-paid' in request.POST:
             if request_.estatus == 'validated':

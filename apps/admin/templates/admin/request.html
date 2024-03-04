@@ -583,33 +583,27 @@
                             </li>
                             {% for p in selected_places %}
                             {% for px in p.extras.all %}
-                            {% if px.tipo == 'terraza' %}
                             <li class="list-group-item d-flex justify-content-end">
+                                {% if px.tipo == 'terraza' %}
                                 <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza para el espacio ({{px.to_places}}):
                                 </h5>
                                 <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
-                                <a class="ms-3 del-pdt" data-uuid="{{px.uuid}}" data-type="terraza" role="button"><i
-                                        class="fas fa-xmark fa-lg text-danger"></i></a>
-                            </li>
-                            {% elif px.tipo == 'terraza_grande' %}
-                            <li class="list-group-item d-flex justify-content-end">
+                                {% elif px.tipo == 'terraza_grande' %}
                                 <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza Grande para el espacio
                                     ({{px.to_places}}):
                                 </h5>
                                 <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
-                                <a class="ms-3 del-pdt" data-uuid="{{px.uuid}}" data-type="terraza_grande" role="button"><i
-                                        class="fas fa-xmark fa-lg text-danger"></i></a>
-                            </li>
-                            {% elif px.tipo == 'licencia_alcohol' %}
-                            <li class="list-group-item d-flex justify-content-end">
+                                {% elif px.tipo == 'licencia_alcohol' %}
                                 <h5 class="m-0 me-5 fw-bold">Total por (1) Licencia de Alcohol para el/los espacio(s)
                                     ({{px.to_places}}):
                                 </h5>
                                 <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
-                                <a class="ms-3 del-pdt" data-uuid="{{px.uuid}}" data-type="licencia_alcohol" role="button"><i
-                                        class="fas fa-xmark fa-lg text-danger"></i></a>
+                                {% endif %}
+                                {% if not payment %}
+                                <a class="ms-3 del-pdt" data-uuid="{{px.uuid}}" data-type="{{px.tipo}}" role="button"><i
+                                    class="fas fa-xmark fa-lg text-danger"></i></a>
+                                {% endif %}
                             </li>
-                            {% endif %}
                             {% endfor %}
                             {% endfor %}
                             <li class="list-group-item d-flex justify-content-end">
@@ -640,8 +634,14 @@
                         {% else %}
                         <p class="note note-success mt-4">
                             Se ha definido que el pago fue seleccionado como tipo <b>{{payment.get_tipo_display}}</b> el
-                            <b>{{payment.fecha_reg}} hrs.</b>
+                            <b>{{payment.fecha_reg}} hrs</b>. {% if payment.validador %}Efectuado por <b>{{payment.validador}}</b>{% endif %}.
                         </p>
+                        <div class="d-flex justify-content-end">
+                            <button name="reverse-pay" class="btn btn-danger btn-sm btn-rounded shadow-0">
+                                <i class="fas fa-close me-2"></i>
+                                Revertir compra
+                            </button>
+                        </div>
                         {% endif %}
                     </div>
                 </div>
