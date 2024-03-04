@@ -419,19 +419,6 @@ def add_terraza(request, uuid, uuid_place):
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([IsAuthenticated,])
-def delete_item(request, uuid, uuid_place):
-    try:
-        request_ = Solicitudes.objects.get(uuid=uuid)
-        print(request.POST)
-        # pdt = ProductosExtras.objects.get(uuid=request.POST.get('terraza'))
-        # pdt.delete()
-        return Response({})
-    except Exception as e:
-        return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-@api_view(['POST'])
-@renderer_classes((JSONRenderer,))
-@permission_classes([IsAuthenticated,])
 def add_big_terraza(request, uuid, uuid_place):
     terraza_price = 8000
     try:
@@ -441,8 +428,6 @@ def add_big_terraza(request, uuid, uuid_place):
         return Response({})
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-# delete items here
 
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
@@ -467,5 +452,18 @@ def add_alcohol(request, uuid, uuid_place):
             return Response({})
         else:
             return Response({'message': 'not-places-existing'})
+    except Exception as e:
+        return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([IsAuthenticated,])
+def delete_item(request, uuid, uuid_pdt):
+    try:
+        request_ = Solicitudes.objects.get(uuid=uuid)
+        pdt = ProductosExtras.objects.get(uuid=request.POST.get('item'))
+        pdt.delete()
+        Validaciones.objects.create(solicitud=request_, estatus=request_.estatus, atendido=True, comentarios='El validador eliminó un producto de la compra', validador=request.user.get_full_name())
+        return Response({})
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)

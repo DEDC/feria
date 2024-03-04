@@ -45,3 +45,8 @@ export const addAlcohol = async (uuid, uuid_place, data) => {
     const response = await postAPICall(`/admin/solicitud/${uuid}/lugar/${uuid_place}/alcohol/agregar`, data);
     return response;
 }
+
+export const deleteItem = async (uuid, uuid_place, data) => {
+    const response = await postAPICall(`/admin/solicitud/${uuid}/item/${uuid_place}/eliminar`, data);
+    return response;
+}

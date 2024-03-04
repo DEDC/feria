@@ -5,7 +5,7 @@ from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, Upda
                               ListRequests, ListUsers, UnlockRequest, UpdateUser, UserDates, ListDates, 
                               DownloadContract, DownloadGafate,
                               set_place_temp, unset_place_temp, set_place,
-                              add_alcohol, add_terraza, add_big_terraza)
+                              add_alcohol, add_terraza, add_big_terraza, delete_item)
 app_name = 'admin'
 
 urlpatterns = [
@@ -30,8 +30,7 @@ urlpatterns = [
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/alcohol/agregar', add_alcohol),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/terraza/agregar', add_terraza),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/terraza_grande/agregar', add_big_terraza),
-    # path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/alcohol/eliminar', delete_alcohol),
-    # path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/terraza/eliminar', delete_terraza),
+    path('solicitud/<uuid:uuid>/item/<uuid:uuid_pdt>/eliminar', delete_item),
     # downloads
     path('solicitud/<uuid:uuid>/contrato/descargar', DownloadContract.as_view(), name='download_contract'),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/gafete/descargar', DownloadGafate.as_view(), name='download_gafete'),

@@ -1,4 +1,4 @@
-import { getPlaces, setPlaceTemp, unsetPlaceTemp, setPlace, addTerraza, addAlcohol, addBigTerraza } from "../js/api/utilities.js";
+import { getPlaces, setPlaceTemp, unsetPlaceTemp, setPlace, addTerraza, addAlcohol, addBigTerraza, deleteItem } from "../js/api/utilities.js";
 import { url_nave_1, url_nave_3, url_zone_a, url_zone_b, url_zone_c, url_zone_d } from '../js/api/endpoints.js'
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,6 +21,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const add_alcohol = document.querySelector('#add-alcohol')
     const add_terraza = document.querySelector('#add-terraza')
     const add_big_terraza = document.querySelector('#add-big-terraza')
+    const delete_pdt = document.querySelectorAll('.del-pdt')
+
+    delete_pdt.forEach(element => {
+        element.addEventListener('click', (e) => {
+            const data = new FormData();
+            data.append('item', element.dataset.uuid);
+            deleteItem(request_uuid.value, element.dataset.uuid, data).then((resp) => {
+                location.reload()
+            }).catch((error) => {
+                console.log(error);
+            });
+        })
+    });
 
     if (add_alcohol) {
         add_alcohol.addEventListener('click', (e) => {
