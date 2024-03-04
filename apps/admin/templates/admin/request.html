@@ -557,6 +557,9 @@
                                     <th scope="col">M2</th>
                                     <th scope="col">Precio</th>
                                     <th scope="col">Fecha de asignación</th>
+                                    {% if not payment %}
+                                    <th></th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -572,6 +575,10 @@
                                     <td>{{sp.m2}}</td>
                                     <td>${{sp.precio|intcomma}}</td>
                                     <td>{{sp.fecha_reg}}</td>
+                                    {% if not payment %}
+                                    <td><a class="ms-3 del-place" data-uuid="{{sp.uuid}}" data-type="place" role="button"><i
+                                        class="fas fa-xmark fa-lg text-danger"></i></a></td>
+                                    {% endif %}
                                 </tr>
                                 {% endfor %}
                             </tbody>

@@ -467,3 +467,16 @@ def delete_item(request, uuid, uuid_pdt):
         return Response({})
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([IsAuthenticated,])
+def delete_place(request, uuid, uuid_place):
+    try:
+        request_ = Solicitudes.objects.get(uuid=uuid)
+        place = Lugares.objects.get(uuid=request.POST.get('place'))
+        place.delete()
+        Validaciones.objects.create(solicitud=request_, estatus=request_.estatus, atendido=True, comentarios='El validador eliminó un espacio de la compra', validador=request.user.get_full_name())
+        return Response({})
+    except Exception as e:
+        return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
