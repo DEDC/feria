@@ -28,6 +28,7 @@ from utils.permissions import AdminPermissions
 from utils.date import get_date_constancy
 from utils.gafete import get_gafete
 from utils.word_writer import generate_physical_document
+from utils.reports import get_report
 
 places_dict = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b, 'z_c': zona_c, 'z_d': zona_d}
 
@@ -364,6 +365,15 @@ class DownloadGafate(AdminPermissions, RedirectView):
         except (Solicitudes.DoesNotExist, Lugares.DoesNotExist):
             raise Http404()
 
+class DownloadReport(AdminPermissions, RedirectView):
+    def get(self, request, *args, **kwargs):
+        try:
+            report = get_report()
+            return report
+        except Exception as e:
+            print(e)
+            return redirect('admin:main')
+
 class UnlockRequest(AdminPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
         try:
@@ -448,7 +458,7 @@ def add_alcohol(request, uuid, uuid_place):
             alcohol_price = 260568
         if places:
             to_places = ','.join(places.values_list('folio', flat=True))
-            ProductosExtras.objects.create(lugar=places[0], tipo='licencia_alcohol', precio=alcohol_price, m2=100, to_places=to_places)
+            ProductosExtras.objects.create(lugar=places[0], tipo='licencia_alcohol', precio=alcohol_price, m2=mt2, to_places=to_places)
             return Response({})
         else:
             return Response({'message': 'not-places-existing'})
