@@ -678,7 +678,9 @@
                                         {{place.get_zona_display}}&nbsp;&nbsp;{{place.nombre}} ({{place.folio}})</th>
                                     <td><a class="btn btn-sm btn-success shadow-0"
                                             href="{% url 'admin:download_gafete' object.uuid place.uuid %}">Descargar
-                                            Gafete</a></td>
+                                            Gafete</a>
+                                            <a class="btn btn-sm btn-primary shadow-0 ms-2"
+                                            href="{% url 'admin:download_suministros' object.uuid place.uuid %}">Descargar Suministros</a></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

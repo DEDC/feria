@@ -27,6 +27,7 @@ from utils.naves import nave1, nave3, zona_a, zona_b, zona_c, zona_d
 from utils.permissions import AdminPermissions
 from utils.date import get_date_constancy
 from utils.gafete import get_gafete
+from utils.suministros import get_suministros
 from utils.word_writer import generate_physical_document
 from utils.reports import get_report
 
@@ -361,6 +362,16 @@ class DownloadGafate(AdminPermissions, RedirectView):
             request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
             place = Lugares.objects.get(uuid=kwargs['uuid_place'])
             gafete = get_gafete(place)
+            return gafete
+        except (Solicitudes.DoesNotExist, Lugares.DoesNotExist):
+            raise Http404()
+
+class DownloadSuministros(AdminPermissions, RedirectView):
+    def get(self, request, *args, **kwargs):
+        try:
+            request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
+            place = Lugares.objects.get(uuid=kwargs['uuid_place'])
+            gafete = get_suministros(place)
             return gafete
         except (Solicitudes.DoesNotExist, Lugares.DoesNotExist):
             raise Http404()

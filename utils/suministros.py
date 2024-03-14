@@ -9,28 +9,35 @@ from reportlab.graphics.barcode import qr
 from reportlab.graphics.shapes import Drawing
 from reportlab.graphics import renderPDF
 from reportlab.pdfgen.canvas import Canvas
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import letter, landscape, TABLOID
 
-def get_gafete(place):
+def get_suministros(place):
     output = PdfWriter()
-    inputw = PdfReader(open('static/docs/gafete.pdf', 'rb'))
+    inputw = PdfReader(open('static/docs/suministros.pdf', 'rb'))
     buffer = io.BytesIO()
     pdf = Canvas(buffer)
-    width, height = letter
+    pdf.setPageSize(landscape(TABLOID))
+    width, height = landscape(TABLOID)
     # username
-    pdf.setFont("Helvetica", 8)
-    pdf.drawString(107, 162, place.get_zona_display())
-    pdf.drawString(163, 162, place.nombre)
-    pdf.drawString(82, 147, textwrap.wrap(place.solicitud.nombre.upper(), 24)[0])
+    pdf.setFont("Helvetica-Bold", 33)
+    pdf.drawString(568, 510, place.get_zona_display())
+    pdf.drawString(880, 510, place.nombre)
+    pdf.setFont("Helvetica-Bold", 35)
+    name = ''
+    if hasattr(place.solicitud, 'comercio'):
+        name = place.solicitud.comercio.nombre.upper()
+    else:
+        name = place.solicitud.nombre.upper()
+    pdf.drawString(90, 400, textwrap.wrap(name, 28)[0])
     # QR
     qr_text = str(place.folio)
     qr_code = qr.QrCodeWidget(qr_text)
     bounds = qr_code.getBounds()
     width = bounds[2] - bounds[0]
     height = bounds[3] - bounds[1]
-    d = Drawing(100, 100, transform=[130./width, 0, 0, 130./height, 0, 0])
+    d = Drawing(100, 100, transform=[180./width, 0, 0, 180./height, 0, 0])
     d.add(qr_code)
-    renderPDF.draw(d, pdf, 71, 20)
+    renderPDF.draw(d, pdf, 813, 19)
     # Creación del pdf final
     pdf.save()
     watermark = PdfReader(buffer)
@@ -38,7 +45,7 @@ def get_gafete(place):
     page1.merge_page(watermark.pages[0])
     output.add_page(page1)
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename=GAFETE_{}.pdf'.format(place.folio)
+    response['Content-Disposition'] = 'attachment; filename=SUMINISTROS_{}.pdf'.format(place.folio)
     outputStream = response
     output.write(response)
     outputStream.close()
