@@ -18,17 +18,23 @@ def get_suministros(place):
     pdf = Canvas(buffer)
     pdf.setPageSize(landscape(TABLOID))
     width, height = landscape(TABLOID)
-    # username
+    # ubication
     pdf.setFont("Helvetica-Bold", 33)
     pdf.drawString(568, 510, place.get_zona_display())
     pdf.drawString(880, 510, place.nombre)
+    # names
     pdf.setFont("Helvetica-Bold", 35)
     name = ''
     if hasattr(place.solicitud, 'comercio'):
         name = place.solicitud.comercio.nombre.upper()
     else:
         name = place.solicitud.nombre.upper()
-    pdf.drawString(90, 400, textwrap.wrap(name, 28)[0])
+    pdf.drawString(90, 410, textwrap.wrap(place.solicitud.nombre.upper(), 28)[0])
+    pdf.drawString(90, 350, textwrap.wrap(name, 28)[0])
+    # lables
+    pdf.setFont("Helvetica", 17)
+    pdf.drawString(90, 445, 'Nombre o Razón Social')
+    pdf.drawString(90, 385, 'Nombre Comercial')
     # QR
     qr_text = str(place.folio)
     qr_code = qr.QrCodeWidget(qr_text)
