@@ -63,14 +63,13 @@
                     <table class="table">
                         <thead>
                             <tr>
+                                <th class="th-sm">Folio</th>
                                 <th class="th-sm">Placa</th>
+                                <th>Tarjetón</th>
                                 <th class="th-sm">Tipo</th>
                                 <th class="th-sm">Marca</th>
                                 <th class="th-sm">Color</th>
                                 <th class="th-sm">Nombre o Razón Social</th>
-                                <th class="th-sm">Nombre Comercial</th>
-                                <th class="th-sm">Local</th>
-                                <th class="th-sm">Zona</th>
                                 <th class="th-sm">Puerta de Acceso</th>
                                 <th class="th-sm">No. de Estacionamiento</th>
                                 <th class="th-sm">Ubicación</th>
@@ -81,17 +80,16 @@
                             <tr>
                                 <td>
                                     <a href="#" type="button" class="btn btn-sm btn-link btn-rounded">
-                                        {{tes.placa|upper}}
+                                        {{tes.folio}}
                                         <i class="fas fa-angle-right ms-2"></i>
                                     </a>
                                 </td>
+                                <td>{{tes.placa|upper}}</td>
+                                <td><a class="btn btn-sm btn-success shadow-0" href="{% url 'admin:download_tarjeton' tes.uuid %}">Descargar Tarjetón</a></td>
                                 <td>{{tes.tipo}}</td>
                                 <td>{{tes.marca}}</td>
                                 <td>{{tes.color}}</td>
                                 <td>{{tes.nombre}}</td>
-                                <td>{{tes.nombre_comercial}}</td>
-                                <td>{{tes.local}}</td>
-                                <td>{{tes.get_zona_display}}</td>
                                 <td>{{tes.get_acceso_display}}</td>
                                 <td>{{tes.get_no_estacionamiento_display}}</td>
                                 <td>{{tes.get_ubicacion_display}}</td>
@@ -123,22 +121,6 @@
                                 {{form.nombre}}
                                 <label class="form-label">{{form.nombre.label}}</label>
                             </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-outline">
-                                {{form.nombre_comercial}}
-                                <label class="form-label">{{form.nombre_comercial.label}}</label>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-outline">
-                                {{form.local}}
-                                <label class="form-label">{{form.local.label}}</label>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            {{form.zona}}
-                            <label class="form-label select-label">{{form.zona.label}}</label>
                         </div>
                         <div class="col-4">
                             {{form.acceso}}

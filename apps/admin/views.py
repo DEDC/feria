@@ -28,6 +28,7 @@ from utils.permissions import AdminPermissions
 from utils.date import get_date_constancy
 from utils.gafete import get_gafete
 from utils.suministros import get_suministros
+from utils.tarjeton import get_tarjeton
 from utils.word_writer import generate_physical_document
 from utils.reports import get_report
 
@@ -405,6 +406,15 @@ class DownloadSuministros(AdminPermissions, RedirectView):
             gafete = get_suministros(place)
             return gafete
         except (Solicitudes.DoesNotExist, Lugares.DoesNotExist):
+            raise Http404()
+
+class DownloadTarjeton(AdminPermissions, RedirectView):
+    def get(self, request, *args, **kwargs):
+        try:
+            tarjeton = Estacionamiento.objects.get(uuid=kwargs['uuid'])
+            doc = get_tarjeton(tarjeton)
+            return doc
+        except (Estacionamiento.DoesNotExist):
             raise Http404()
 
 class DownloadReport(AdminPermissions, RedirectView):
