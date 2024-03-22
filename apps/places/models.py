@@ -90,3 +90,20 @@ class Pagos(ControlInfo):
     tipo = models.CharField(max_length=20, null=True, choices=(('tarjeta', 'Tarjeta'), ('efectivo', 'Efectivo'), ('transferencia', 'Transferencia')))
     pagado = models.BooleanField(default=False)
     validador = models.CharField(max_length=200, editable=False, null=True)
+
+class Estacionamiento(ControlInfo):
+    identifier = 'TES'
+    nombre = models.CharField('Nombre o Razón Social', max_length=100)
+    nombre_comercial = models.CharField('Nombre Comercial', max_length=100)
+    local = models.CharField('Local', max_length=10)
+    zona = models.CharField('Zona', max_length=20, choices=(('z_a', 'Zona A'), ('z_b', 'Zona B'), ('z_c', 'Zona C'), ('z_d', 'Zona D'), ('n_1', 'Nave 1'), ('n_3', 'Nave 3')))
+    acceso = models.CharField('Puerta de Acceso', max_length=20, choices=(('puerta_1', 'Puerta 1'), ('puerta_2', 'Puerta 2'), ('puerta_3', 'Puerta 3'), ('puerta_herradura', 'Puerta Herradura')))
+    no_estacionamiento = models.CharField('No. de Estacionamiento', max_length=2, choices=(('2', '2'), ('3', '3'), ('4', '4'), ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9')))
+    ubicacion = models.CharField('Ubicación', max_length=30, choices=(('n_1', 'Nave 1'), ('n_2', 'Nave 2'), ('n_3', 'Nave 3'), ('plaza_infantil', 'Plaza Infantil'), ('zona_extrema', 'Zona Extrema'), ('antojeria', 'Antojería'), ('circo', 'Atrás del Circo')))
+    tipo = models.CharField('Tipo', max_length=100)
+    marca = models.CharField('Marca', max_length=100)
+    color = models.CharField('Color', max_length=100)
+    placa = models.CharField('Placa', max_length=100)
+
+    class Meta:
+        unique_together = ('local', 'zona')

@@ -1,0 +1,190 @@
+{% extends 'places/base.html' %}
+{% load static %}
+{% block head %}
+{{block.super}}
+<style>
+    th,
+    td {
+        white-space: nowrap;
+    }
+</style>
+{% endblock head %}
+{% block main %}
+<div class="container-fluid p-5">
+    <div class="row gx-xl-5">
+        <div class="col-xl-3">
+            <div class="shadow-4 p-4 bg-white rounded-5 mb-4">
+                <a href="{% url 'admin:main' %}" type="button" class="btn btn-primary btn-rounded btn-lg w-100"><i
+                        class="fas fa-angle-left me-3"></i>Volver al inicio</a>
+            </div>
+            <div class="card shadow-3 mb-3">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="p-3 badge-info rounded-4">
+                                <i class="fas fa-car fa-2x fa-fw"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-4">
+                            <p class="text-muted mb-1">Total</p>
+                            <h2 class="mb-0">{{total.count}}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-9 mb-4 mb-lg-0">
+            {% include 'base/validations.html' %}
+            <div
+                class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold">
+                    <i class="fas fa-car me-3 green-text"></i>Tarjetones de Estacionamiento
+                    &nbsp;({{object_list.count}})
+                </h4>
+                <button type="button" class="btn btn-lg btn-secondary btn-rounded d-none d-sm-block"
+                    data-mdb-toggle="modal" data-mdb-target="#modal-tarjeton">
+                    <i class="fas fa-add me-2"></i>Crear Tarjetón
+                </button>
+            </div>
+            <div class="shadow-4 bg-white rounded-5 mb-4 p-4">
+                <form>
+                    <div class="input-group">
+                        <input name="q" value="{{q}}" type="search" class="form-control m-0 form-control-lg"
+                            placeholder="Buscar Tarjetón" />
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                    <input type="hidden" name="page" value="{{page_obj.number}}">
+                </form>
+            </div>
+            <div class="shadow-4 bg-white rounded-5 p-4">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="th-sm">Placa</th>
+                                <th class="th-sm">Tipo</th>
+                                <th class="th-sm">Marca</th>
+                                <th class="th-sm">Color</th>
+                                <th class="th-sm">Nombre o Razón Social</th>
+                                <th class="th-sm">Nombre Comercial</th>
+                                <th class="th-sm">Local</th>
+                                <th class="th-sm">Zona</th>
+                                <th class="th-sm">Puerta de Acceso</th>
+                                <th class="th-sm">No. de Estacionamiento</th>
+                                <th class="th-sm">Ubicación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tes in object_list %}
+                            <tr>
+                                <td>
+                                    <a href="#" type="button" class="btn btn-sm btn-link btn-rounded">
+                                        {{tes.placa|upper}}
+                                        <i class="fas fa-angle-right ms-2"></i>
+                                    </a>
+                                </td>
+                                <td>{{tes.tipo}}</td>
+                                <td>{{tes.marca}}</td>
+                                <td>{{tes.color}}</td>
+                                <td>{{tes.nombre}}</td>
+                                <td>{{tes.nombre_comercial}}</td>
+                                <td>{{tes.local}}</td>
+                                <td>{{tes.get_zona_display}}</td>
+                                <td>{{tes.get_acceso_display}}</td>
+                                <td>{{tes.get_no_estacionamiento_display}}</td>
+                                <td>{{tes.get_ubicacion_display}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% include 'base/pagination.html' %}
+        </div>
+    </div>
+</div>
+<!-- Modal Validations -->
+<form method="post">
+    {% csrf_token %}
+    <div class="modal fade" id="modal-tarjeton" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Crear Tarjetón</h5>
+                    <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-outline">
+                                {{form.nombre}}
+                                <label class="form-label">{{form.nombre.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-outline">
+                                {{form.nombre_comercial}}
+                                <label class="form-label">{{form.nombre_comercial.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.local}}
+                                <label class="form-label">{{form.local.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            {{form.zona}}
+                            <label class="form-label select-label">{{form.zona.label}}</label>
+                        </div>
+                        <div class="col-4">
+                            {{form.acceso}}
+                            <label class="form-label select-label">{{form.acceso.label}}</label>
+                        </div>
+                        <div class="col-4">
+                            {{form.no_estacionamiento}}
+                            <label class="form-label select-label">{{form.no_estacionamiento.label}}</label>
+                        </div>
+                        <div class="col-4">
+                            {{form.ubicacion}}
+                            <label class="form-label select-label">{{form.ubicacion.label}}</label>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.tipo}}
+                                <label class="form-label">{{form.tipo.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.marca}}
+                                <label class="form-label">{{form.marca.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.color}}
+                                <label class="form-label">{{form.color.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.placa}}
+                                <label class="form-label">{{form.placa.label}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary shadow-0">Crear</button>
+                    <button type="button" class="btn btn-secondary" data-mdb-ripple-init
+                        data-mdb-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock main %}

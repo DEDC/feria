@@ -1,8 +1,25 @@
 # Django
 from django import forms
 from django.forms.fields import FileField
+from django.core.exceptions import NON_FIELD_ERRORS
 # places
-from apps.places.models import Solicitudes, Comercios
+from apps.places.models import Solicitudes, Comercios, Estacionamiento
+
+class ParkingForm(forms.ModelForm):
+    class Meta:
+        model = Estacionamiento
+        fields = '__all__'
+        widgets = {
+            'zona': forms.Select(attrs={'class': 'select'}),
+            'acceso': forms.Select(attrs={'class': 'select'}),
+            'no_estacionamiento': forms.Select(attrs={'class': 'select'}),
+            'ubicacion': forms.Select(attrs={'class': 'select'})
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super(ParkingForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs.setdefault('class', 'form-control')
 
 class RequestForm(forms.ModelForm):
     class Meta:

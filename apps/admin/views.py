@@ -15,8 +15,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 # places
-from apps.places.models import Solicitudes, Comercios, Validaciones, Lugares, ProductosExtras, Pagos
-from apps.places.forms import RequestForm, ShopForm
+from apps.places.models import Solicitudes, Comercios, Validaciones, Lugares, ProductosExtras, Pagos, Estacionamiento
+from apps.places.forms import RequestForm, ShopForm, ParkingForm
 # users
 from apps.users.models import Usuarios
 from apps.users.forms import UserUpdateForm
@@ -97,6 +97,37 @@ class ListUsers(AdminPermissions, ListView):
             queryset = queryset.filter(lookup)
         return queryset.order_by('pk')
 
+class ListParking(AdminPermissions, ListView):
+    model = Estacionamiento
+    paginate_by = 30
+    template_name = 'admin/list_parking.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tarjetones = Estacionamiento.objects.all()
+        context['total'] = tarjetones
+        context['q'] = self.request.GET.get('q', '')
+        context['form'] = ParkingForm()
+        return context
+    
+    def get_queryset(self):
+        queryset = self.model._default_manager.all()
+        q = self.request.GET.get('q', None)
+        if q:
+            lookup = (Q(nombre__icontains=q)|Q(nombre_comercial__icontains=q)|Q(local__icontains=q)|Q(placa__icontains=q))
+            queryset = queryset.filter(lookup)
+        return queryset.order_by('pk')
+    
+    def post(self, request, *args, **kwargs):
+        form = ParkingForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Tarjetón creado exitosamente')
+        else:
+            messages.error(request, 'Ha ocurrido un error al crear el Tarjetón')
+            messages.error(request, form.errors)
+        return redirect('admin:list_parking')
+    
 class ListDates(AdminPermissions, ListView):
     model = CitasAgendadas
     paginate_by = 30
