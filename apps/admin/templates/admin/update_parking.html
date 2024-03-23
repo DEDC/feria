@@ -1,0 +1,90 @@
+{% extends 'places/base.html' %}
+{% load static %}
+{% block main %}
+<div class="container-fluid p-5">
+    <div class="row gx-xl-5">
+        <div class="col-xl-3">
+            <div class="shadow-4 p-4 bg-white rounded-5 mb-4">
+                <a href="{% url 'admin:list_parking' %}" type="button"
+                    class="btn btn-primary btn-rounded btn-lg w-100"><i class="fas fa-angle-left me-3"></i>Volver a
+                    Tarjetones</a>
+            </div>
+        </div>
+        <div class="col-xl-9 mb-4 mb-lg-0">
+            {% include 'base/validations.html' %}
+            <div
+                class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold">
+                    <i class="fas fa-car me-3 green-text"></i>Editar Tarjetón {{object.folio}}
+                </h4>
+            </div>
+            <div class="shadow-4 bg-white rounded-5 p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-outline">
+                                {{form.nombre}}
+                                <label class="form-label">{{form.nombre.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            {{form.acceso}}
+                            <label class="form-label select-label">{{form.acceso.label}}</label>
+                        </div>
+                        <div class="col-4">
+                            {{form.no_estacionamiento}}
+                            <label class="form-label select-label">{{form.no_estacionamiento.label}}</label>
+                        </div>
+                        <div class="col-4">
+                            {{form.ubicacion}}
+                            <label class="form-label select-label">{{form.ubicacion.label}}</label>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.tipo}}
+                                <label class="form-label">{{form.tipo.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.marca}}
+                                <label class="form-label">{{form.marca.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.color}}
+                                <label class="form-label">{{form.color.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form.placa}}
+                                <label class="form-label">{{form.placa.label}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 col-6 mx-auto mt-3">
+                        <button class="btn btn-primary" type="submit">Editar registro</button>
+                    </div>
+                </form>
+            </div>
+            <div class="shadow-4 bg-white rounded-5 p-5 my-4">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Tarjetón</th>
+                                <td><a class="btn btn-sm btn-success shadow-0"
+                                        href="{% url 'admin:download_tarjeton' object.uuid %}">Descargar Tarjetón</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main %}

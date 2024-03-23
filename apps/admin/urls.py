@@ -4,7 +4,7 @@ from django.urls import path
 from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, UpdateShop, DownloadDateDoc, 
                               ListRequests, ListUsers, UnlockRequest, UpdateUser, UserDates, ListDates, 
                               DownloadContract, DownloadGafate, DownloadSuministros, DownloadReport, ListParking,
-                              DownloadTarjeton,
+                              DownloadTarjeton, UpdateParking,
                               set_place_temp, unset_place_temp, set_place,
                               add_alcohol, add_terraza, add_big_terraza, delete_item, delete_place)
 app_name = 'admin'
@@ -19,6 +19,7 @@ urlpatterns = [
     path('solicitud/<uuid:uuid>/editar', UpdateRequest.as_view(), name='update_request'),
     path('comercio/<uuid:uuid>/editar', UpdateShop.as_view(), name='update_shop'),
     path('usuario/<int:pk>/editar', UpdateUser.as_view(), name='update_user'),
+    path('tarjeton/<int:pk>/editar', UpdateParking.as_view(), name='update_parking'),
     path('usuario/<int:pk>/citas/', UserDates.as_view(), name='assing_user_date'),
     path('comercio/<uuid:uuid>', Shop.as_view(), name='shop'),
     path('solicitud/<uuid:uuid>/espacios', SetPlace.as_view(), name='set_place'),

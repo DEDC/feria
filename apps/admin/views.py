@@ -115,7 +115,7 @@ class ListParking(AdminPermissions, ListView):
         queryset = self.model._default_manager.all()
         q = self.request.GET.get('q', None)
         if q:
-            lookup = (Q(nombre__icontains=q)|Q(nombre_comercial__icontains=q)|Q(local__icontains=q)|Q(placa__icontains=q))
+            lookup = (Q(nombre__icontains=q)|Q(folio__icontains=q)|Q(placa__icontains=q))
             queryset = queryset.filter(lookup)
         return queryset.order_by('pk')
     
@@ -179,6 +179,15 @@ class UpdateUser(AdminPermissions, SuccessMessageMixin, UpdateView):
 
     def get_success_url(self, *args, **kwargs):
         return reverse_lazy('admin:update_user', kwargs={'pk':self.object.pk})
+
+class UpdateParking(AdminPermissions, SuccessMessageMixin, UpdateView):
+    template_name = 'admin/update_parking.html'
+    model = Estacionamiento
+    form_class = ParkingForm
+    success_message = 'Tarjetón actualizado exitosamente'
+
+    def get_success_url(self, *args, **kwargs):
+        return reverse_lazy('admin:update_parking', kwargs={'pk':self.object.pk})
 
 class Request(AdminPermissions, DetailView):
     template_name = 'admin/request.html'

@@ -20,9 +20,9 @@ def get_tarjeton(tarjeton):
     width, height = landscape(TABLOID)
     # ubication
     pdf.setFont("Helvetica-Bold", 20)
-    pdf.drawString(160, 460, tarjeton.get_acceso_display())
-    pdf.drawString(610, 460, tarjeton.get_no_estacionamiento_display())
-    pdf.drawString(783, 460, tarjeton.get_ubicacion_display())
+    pdf.drawString(160, 462, tarjeton.get_acceso_display())
+    pdf.drawString(610, 462, tarjeton.get_no_estacionamiento_display())
+    pdf.drawString(783, 462, tarjeton.get_ubicacion_display())
     # names
     pdf.setFont("Helvetica-Bold", 35)
     pdf.drawString(78, 355, textwrap.wrap(tarjeton.nombre.upper(), 28)[0])
@@ -31,10 +31,10 @@ def get_tarjeton(tarjeton):
     pdf.drawString(78, 390, 'Nombre o Razón Social')
     # car
     pdf.setFont("Helvetica-Bold", 20)
-    pdf.drawString(124, 302, textwrap.wrap(tarjeton.tipo.upper(), 13)[0])
-    pdf.drawString(352, 302, textwrap.wrap(tarjeton.marca.upper(), 13)[0])
-    pdf.drawString(568, 302, textwrap.wrap(tarjeton.color.upper(), 13)[0])
-    pdf.drawString(787, 302, textwrap.wrap(tarjeton.placa.upper(), 13)[0])
+    pdf.drawString(124, 304, textwrap.wrap(tarjeton.tipo.upper(), 12)[0])
+    pdf.drawString(352, 304, textwrap.wrap(tarjeton.marca.upper(), 12)[0])
+    pdf.drawString(568, 304, textwrap.wrap(tarjeton.color.upper(), 12)[0])
+    pdf.drawString(787, 304, textwrap.wrap(tarjeton.placa.upper(), 12)[0])
     # QR
     qr_text = str(tarjeton.folio)
     qr_code = qr.QrCodeWidget(qr_text)

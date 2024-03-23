@@ -79,7 +79,7 @@
                             {% for tes in object_list %}
                             <tr>
                                 <td>
-                                    <a href="#" type="button" class="btn btn-sm btn-link btn-rounded">
+                                    <a href="{% url 'admin:update_parking' tes.pk %}" type="button" class="btn btn-sm btn-link btn-rounded">
                                         {{tes.folio}}
                                         <i class="fas fa-angle-right ms-2"></i>
                                     </a>
