@@ -4059,6 +4059,12 @@ zona_c = {'rows': 17,
    'coords': '1:42',
    'uuid': '53a31251-073d-4eed-a065-78e78545bc35'},
 
+   {'text': '107',
+   'm2': 9,
+   'price': 0,
+   'coords': '1:43',
+   'uuid': 'ce5f584f-e6f5-44d4-8d47-eda3cfc9ea06'},
+
   {'text': '1',
    'm2': 9,
    'price': 13000.0,
