@@ -2898,7 +2898,17 @@ zona_a = {'rows': 27,
    'm2': 9,
    'price': 13000.0,
    'coords': '1:72',
-   'uuid': '64820662-f8e3-4c5f-923f-4630aa6da64a'}]}
+   'uuid': '64820662-f8e3-4c5f-923f-4630aa6da64a'},
+   {'text': '176',
+   'm2': 18,
+   'price': 26000.0,
+   'coords': '15:40',
+   'uuid': 'c657ecbb-cae0-4650-a400-6760bebeb1d2'},
+   {'text': '177',
+   'm2': 18,
+   'price': 26000.0,
+   'coords': '16:40',
+   'uuid': 'a556d76c-e437-4751-8c3e-470a521abe4f'}]}
 
 zona_b = {'rows': 32,
  'columns': 46,
@@ -3507,7 +3517,12 @@ zona_b = {'rows': 32,
    'm2': 30,
    'price': 15600.0,
    'coords': '9:46',
-   'uuid': 'a2c4c070-ef5c-43c6-8a17-f73fcf16e68c'}]}
+   'uuid': 'a2c4c070-ef5c-43c6-8a17-f73fcf16e68c'},
+   {'text': '122',
+   'm2': 18,
+   'price': 26000.0,
+   'coords': '5:38',
+   'uuid': 'cb9d61fc-4dd5-4aa4-ad27-65ec6664d139'}]}
 
 zona_c = {'rows': 17,
  'columns': 56,
