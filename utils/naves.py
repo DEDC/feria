@@ -2908,7 +2908,12 @@ zona_a = {'rows': 27,
    'm2': 18,
    'price': 26000.0,
    'coords': '16:40',
-   'uuid': 'a556d76c-e437-4751-8c3e-470a521abe4f'}]}
+   'uuid': 'a556d76c-e437-4751-8c3e-470a521abe4f'},
+   {'text': '178',
+   'm2': 2.25,
+   'price': 0.0,
+   'coords': '17:40',
+   'uuid': '94a516d1-0dcb-4707-92f1-3c30c06ec246'}]}
 
 zona_b = {'rows': 32,
  'columns': 46,
@@ -3522,7 +3527,12 @@ zona_b = {'rows': 32,
    'm2': 18,
    'price': 26000.0,
    'coords': '5:38',
-   'uuid': 'cb9d61fc-4dd5-4aa4-ad27-65ec6664d139'}]}
+   'uuid': 'cb9d61fc-4dd5-4aa4-ad27-65ec6664d139'},
+   {'text': '123',
+   'm2': 2.25,
+   'price': 0.0,
+   'coords': '5:37',
+   'uuid': '6f66541f-f7e4-4582-a99a-c700b5a1b913'}]}
 
 zona_c = {'rows': 17,
  'columns': 56,
@@ -4083,13 +4093,16 @@ zona_c = {'rows': 17,
    'price': 92567.79,
    'coords': '1:42',
    'uuid': '53a31251-073d-4eed-a065-78e78545bc35'},
-
    {'text': '107',
    'm2': 9,
    'price': 0,
    'coords': '1:43',
    'uuid': 'ce5f584f-e6f5-44d4-8d47-eda3cfc9ea06'},
-
+   {'text': '108',
+   'm2': 2.25,
+   'price': 0,
+   'coords': '1:44',
+   'uuid': 'c1c76295-54e9-49d1-8b02-73feaca0dd97'},
   {'text': '1',
    'm2': 9,
    'price': 13000.0,
@@ -4553,7 +4566,12 @@ zona_d = {'rows': 10,
    'm2': 9,
    'price': 13000.0,
    'coords': '10:60',
-   'uuid': '4de19dd4-ddb9-4968-82fe-fbbbc1230d4d'}]}
+   'uuid': '4de19dd4-ddb9-4968-82fe-fbbbc1230d4d'},
+   {'text': '102',
+   'm2': 2.25,
+   'price': 0.0,
+   'coords': '10:30',
+   'uuid': '9cb0a4ac-940a-4ef3-bc88-787389e7c336'}]}
 
 estadosmexico = (
     ('1', "AGUASCALIENTES"),
