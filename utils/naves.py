@@ -3632,7 +3632,12 @@ zona_b = {'rows': 32,
    'm2': 4,
    'price': 5000.0,
    'coords': '7:9',
-   'uuid': '42af3685-017e-4466-94c6-715f0c13b1eb'}]}
+   'uuid': '42af3685-017e-4466-94c6-715f0c13b1eb'},
+   {'text': '124',
+   'm2': 9,
+   'price': 0.0,
+   'coords': '5:36',
+   'uuid': '3ed508c0-39c3-40de-b238-064e1741c51e'}]}
 
 zona_c = {'rows': 17,
  'columns': 56,
