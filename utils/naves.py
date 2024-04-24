@@ -2983,7 +2983,12 @@ zona_a = {'rows': 27,
    'm2': 4,
    'price': 5000.0,
    'coords': '12:15',
-   'uuid': 'd916e041-2bfa-47b0-bfe3-6e0bc84594e1'}]}
+   'uuid': 'd916e041-2bfa-47b0-bfe3-6e0bc84594e1'},
+   {'text': 'ADA',
+   'm2': 1.5,
+   'price': 0.0,
+   'coords': '23:35',
+   'uuid': 'c273892b-3d69-4da0-98b0-ff277eec4d1c'}]}
 
 zona_b = {'rows': 32,
  'columns': 46,
