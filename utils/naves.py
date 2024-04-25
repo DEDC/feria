@@ -2039,7 +2039,12 @@ nave3 = {'rows': 18,
    'm2': 9,
    'price': 22500.0,
    'coords': '18:6',
-   'uuid': '484a260a-2251-45cf-ab98-3b1852504439'}]}
+   'uuid': '484a260a-2251-45cf-ab98-3b1852504439'},
+   {'text': '234',
+   'm2': 9,
+   'price': 0.0,
+   'coords': '18:7',
+   'uuid': '00a4ee0f-3dc0-4d7c-a01b-d887ea9c4a7f'}]}
 
 zona_a = {'rows': 27,
  'columns': 72,
