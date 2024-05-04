@@ -871,7 +871,12 @@ nave1 = {'rows': 16,
    'm2': 9,
    'price': 22500.0,
    'coords': '1:8',
-   'uuid': '4ef4de4e-e052-4d25-bab3-7117ff0d7119'}]}
+   'uuid': '4ef4de4e-e052-4d25-bab3-7117ff0d7119'},
+   {'text': '175',
+   'm2': 9,
+   'price': 22500.0,
+   'coords': '2:5',
+   'uuid': '036fcafd-ddc2-4384-9952-e3b42539ccdc'}]}
 
 nave3 = {'rows': 18,
  'columns': 34,
