@@ -1,10 +1,54 @@
 # Django
 from django.http import HttpResponse
 from django.db.models import Q, Sum, Count
+import zipfile
+import os
 # places
-from apps.places.models import Lugares, Pagos, ProductosExtras
+from apps.places.models import Lugares, Pagos, ProductosExtras, Solicitudes
 # openpyxl
 from openpyxl import load_workbook
+
+def get_docs():
+    zf = zipfile.ZipFile(os.path.join('', 'SISCOMFERIA_DOCUMENTACION.zip'), 'w')
+    counter = 1
+    for sl in Solicitudes.objects.filter(solicitud_pagos__pagado=True):
+        print(counter)
+        if sl.identificacion:
+            try:
+                zf.write(sl.identificacion.path, f'{sl.folio}_{sl.nombre}/{os.path.basename(sl.identificacion.name)}')
+            except Exception as e:
+                pass
+                print(e)
+        
+        if sl.acta_constitutiva:
+            try:
+                zf.write(sl.acta_constitutiva.path, f'{sl.folio}_{sl.nombre}/{os.path.basename(sl.acta_constitutiva.name)}')
+            except Exception as e:
+                pass
+                print(e)
+        
+        if sl.comprobante_domicilio:
+            try:
+                zf.write(sl.comprobante_domicilio.path, f'{sl.folio}_{sl.nombre}/{os.path.basename(sl.comprobante_domicilio.name)}')
+            except Exception as e:
+                pass
+                print(e)
+        
+        if sl.constancia_fiscal:
+            try:
+                zf.write(sl.constancia_fiscal.path, f'{sl.folio}_{sl.nombre}/{os.path.basename(sl.constancia_fiscal.name)}')
+            except Exception as e:
+                pass
+                print(e)
+        
+        if sl.curp:
+            try:
+                zf.write(sl.curp.path, f'{sl.folio}_{sl.nombre}/{os.path.basename(sl.curp.name)}')
+            except Exception as e:
+                pass
+                print(e)
+        counter+=1
+    zf.close()
 
 def get_report():
     wb = load_workbook('static/docs/layout_feria.xlsx')
