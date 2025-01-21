@@ -39,8 +39,8 @@ class CreateRequest(UserPermissions, SuccessMessageMixin, CreateView):
     def dispatch(self, request, *args, **kwargs):
         if self.request.user.is_anonymous:
             return redirect('users:logout')
-        all_used_places = Solicitudes.objects.filter(fecha_reg__year=2024).aggregate(places=Sum('cantidad_espacios'))['places']
-        used_places = self.request.user.solicitudes.filter(fecha_reg__year=2024).aggregate(places=Sum('cantidad_espacios'))['places']
+        all_used_places = Solicitudes.objects.filter(fecha_reg__year=2025).aggregate(places=Sum('cantidad_espacios'))['places']
+        used_places = self.request.user.solicitudes.filter(fecha_reg__year=2025).aggregate(places=Sum('cantidad_espacios'))['places']
         self.max_places = settings.LIMIT_PLACES - (used_places or 0)
         if all_used_places == settings.LIMIT_ALL_PLACES:
             messages.warning(request, 'Todos los espacios se han agotado.')

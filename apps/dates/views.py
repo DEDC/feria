@@ -10,14 +10,14 @@ from django.conf import settings
 from apps.dates.tools import get_dates_from_range, get_times_from_range
 from apps.dates.models import CitasAgendadas
 
-all_dates = get_dates_from_range('2024-02-29', settings.END_DATES)
+all_dates = get_dates_from_range('2025-02-28', settings.END_DATES)
 all_hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([IsAuthenticated])
 def get_available_dates(request):
-    scheduled = CitasAgendadas.objects.filter(fecha__year=2024).values('fecha', 'hora')
+    scheduled = CitasAgendadas.objects.filter(fecha__year=2025).values('fecha', 'hora')
     exclude_dates = []
     for sch in scheduled:
         if sch['fecha'].strftime('%Y-%m-%d') in all_dates:

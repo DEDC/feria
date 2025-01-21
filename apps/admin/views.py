@@ -274,7 +274,8 @@ class Request(AdminPermissions, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        places = self.object.solicitud_lugar.filter(fecha_reg__year=2024, estatus='assign')
+        # places = self.object.solicitud_lugar.filter(fecha_reg__year=2024, estatus='assign')
+        places = self.object.solicitud_lugar.filter(estatus='assign')
         context['total_places'] = places.aggregate(price=Sum('precio'))['price'] or 0
         context['total_extras'] = places.aggregate(price=Sum('extras__precio'))['price'] or 0
         context['total'] = context['total_extras'] + context['total_places']
