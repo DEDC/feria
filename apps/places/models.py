@@ -10,6 +10,7 @@ from utils.models import ControlInfo, UploadTo
 from utils.validators import validate_pdf_file
 from utils.naves import estadosmexico
 
+
 class Solicitudes(ControlInfo):
     identifier = 'SLC'
     estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Observado'), ('validated', 'Validado'), ('rejected', 'Rechazado'), ('resolved', 'Solventado'),))
@@ -40,6 +41,7 @@ class Solicitudes(ControlInfo):
     def get_last_unattended_validation(self):
         return self.validaciones.filter(atendido=False, estatus='pending').last()
 
+
 class Comercios(ControlInfo):
     identifier = 'COM'
     estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Observado'), ('validated', 'Validado'), ('rejected', 'Rechazado'), ('resolved', 'Solventado'),), default='')
@@ -54,6 +56,7 @@ class Comercios(ControlInfo):
     def get_last_unattended_validation(self):
         return self.validaciones_com.filter(atendido=False, estatus='pending').last()
 
+
 class Validaciones(ControlInfo):
     identifier = 'VAL'
     estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Observado'), ('validated', 'Validado'), ('rejected', 'Rechazado'), ('resolved', 'Solventado'),), null=True)
@@ -63,6 +66,7 @@ class Validaciones(ControlInfo):
     comentarios = models.TextField(null=True)
     atendido = models.BooleanField(default=False, editable=False)
     validador = models.CharField(max_length=200, editable=False, null=True)
+
 
 class Lugares(ControlInfo):
     identifier='PLC'
@@ -75,6 +79,7 @@ class Lugares(ControlInfo):
     usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='usuario_lugar')
     solicitud = models.ForeignKey(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='solicitud_lugar')
 
+
 class ProductosExtras(ControlInfo):
     identifier='PDX'
     lugar = models.ForeignKey(Lugares, editable=False, on_delete=models.PROTECT, related_name='extras')
@@ -83,6 +88,7 @@ class ProductosExtras(ControlInfo):
     m2 = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     to_places = models.TextField(default='')
 
+
 class Pagos(ControlInfo):
     identifier='PAG'
     solicitud = models.ForeignKey(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='solicitud_pagos')
@@ -90,6 +96,7 @@ class Pagos(ControlInfo):
     tipo = models.CharField(max_length=20, null=True, choices=(('tarjeta', 'Tarjeta'), ('efectivo', 'Efectivo'), ('transferencia', 'Transferencia')))
     pagado = models.BooleanField(default=False)
     validador = models.CharField(max_length=200, editable=False, null=True)
+
 
 class Estacionamiento(ControlInfo):
     identifier = 'TES'

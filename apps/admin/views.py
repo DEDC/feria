@@ -189,6 +189,7 @@ class UpdateParking(AdminPermissions, SuccessMessageMixin, UpdateView):
     def get_success_url(self, *args, **kwargs):
         return reverse_lazy('admin:update_parking', kwargs={'pk':self.object.pk})
 
+
 class Request(AdminPermissions, DetailView):
     template_name = 'admin/request.html'
     model = Solicitudes

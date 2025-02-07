@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from django.db.models import Sum, Q
 from django.conf import settings
 # places
-from apps.places.models import Solicitudes, Comercios, Validaciones
+from apps.places.models import Solicitudes, Comercios, Validaciones, Pagos
 from apps.places.forms import RequestForm, ShopForm
 # dates
 from apps.dates.models import CitasAgendadas
@@ -20,6 +20,7 @@ from utils.date import get_date_constancy
 dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
 
+
 class Main(UserPermissions, TemplateView):
     template_name = 'places/main.html'
     
@@ -28,6 +29,7 @@ class Main(UserPermissions, TemplateView):
         context['requests'] = self.request.user.solicitudes.all()
         context['dates'] = self.request.user.citas.order_by('fecha', 'hora')
         return context
+
 
 class CreateRequest(UserPermissions, SuccessMessageMixin, CreateView):
     template_name = 'places/create.html'
@@ -75,17 +77,102 @@ class CreateRequest(UserPermissions, SuccessMessageMixin, CreateView):
     def get_success_url(self, *args, **kwargs):
         return reverse('places:detail_request', kwargs={'uuid':self.uuid})
 
+
 class Request(UserPermissions, DetailView):
     template_name = 'places/request.html'
     model = Solicitudes
     slug_field = 'uuid'
     slug_url_kwarg = 'uuid'
+
+    def post(self, request, *args, **kwargs):
+        request_ = self.get_object()
+        if 'reverse-pay' in request.POST:
+            if request_.estatus == 'validated':
+                payment = request_.solicitud_pagos.first()
+                if payment:
+                    payment.delete()
+                    Validaciones.objects.create(solicitud=request_, estatus=request_.estatus, atendido=True, comentarios='El validador revirtió la compra', validador=request.user.get_full_name())
+                    messages.success(request, 'El pago se ha revertido exitosamente')
+        if 'card-payment' in request.POST:
+            if request_.estatus == 'validated':
+                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='tarjeta', pagado=True, validador=request.user.get_full_name())
+                messages.success(request, 'El Pago se definió con tarjeta')
+        elif 'cancel-pay' in request.POST:
+            for place in request_.solicitud_lugar.all():
+                for px in place.extras.all():
+                    px.delete()
+                place.delete()
+            Validaciones.objects.create(solicitud=request_, estatus=request_.estatus, atendido=True, comentarios='El validador canceló la compra', validador=request.user.get_full_name())
+            messages.success(request, 'El proceso de pago ha sido cancelado exitosamente')
+        elif 'cash-payment' in request.POST:
+            if request_.estatus == 'validated':
+                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='efectivo', pagado=False, validador=request.user.get_full_name())
+                messages.success(request, 'El Pago se definió con efectivo. A la espera del comprobante del pago')
+        elif 'cash-paid' in request.POST:
+            if request_.estatus == 'validated':
+                payment = request_.solicitud_pagos.first()
+                if payment:
+                    payment.pagado = True
+                    payment.save()
+                    messages.success(request, 'Se confirma el pago en efectivo')
+        elif 'transfer-paid' in request.POST:
+            if request_.estatus == 'validated':
+                payment = request_.solicitud_pagos.first()
+                if payment:
+                    payment.pagado = True
+                    payment.tipo = 'transferencia'
+                    payment.save()
+                    messages.success(request, 'Se confirma el pago con transferencia')
+        if 'validated' in request.POST:
+            request_.estatus = 'validated'
+            request_.save()
+            Validaciones.objects.create(solicitud=request_, estatus='validated', validador=request.user.get_full_name())
+            messages.success(request, 'Estatus asignado exitosamente.')
+        elif 'rejected' in request.POST:
+            request_.estatus = 'rejected'
+            lookup = (~Q(estatus='rejected'))
+            sib_req = Solicitudes.objects.filter(lookup, usuario=request_.usuario).exclude(uuid=request_.uuid)
+            if not sib_req.exists():
+                # quitar cita
+                date = request_.usuario.citas.first()
+                if date:
+                    messages.warning(request, 'La Cita {} - {} fue liberada.'.format(date.fecha, date.hora))
+                    date.delete()
+            request_.save()
+            Validaciones.objects.create(solicitud=request_, estatus='rejected', validador=request.user.get_full_name())
+            messages.success(request, 'Estatus asignado exitosamente.')
+        elif 'pending' in request.POST:
+            validation_fields = ['factura', 'regimen_fiscal', 'nombre', 'nombre_replegal', 'rfc_txt', 'curp_txt', 'calle', 'no_calle', 'colonia', 'codigo_postal', 'estado', 'municipio', 'constancia_fiscal', 'comprobante_domicilio', 'acta_constitutiva', 'identificacion', 'curp']
+            data = {
+                'just_fields': [],
+                'field_comments': {}
+            }
+            for f in request.POST:
+                if f in validation_fields:
+                    if not request.POST.get(f).strip() == '':
+                        data['just_fields'].append(f)
+                        data['field_comments'][f] = request.POST.get(f).strip()
+            if data['just_fields']:
+                request_.estatus = 'pending'
+                request_.save()
+                Validaciones.objects.create(solicitud=request_, estatus='pending', validador=request.user.get_full_name(), campos=data)
+                messages.success(request, 'Estatus asignado exitosamente.')
+            else:
+                messages.warning(request, 'No se realizó ninguna acción. No se detectaron campos validados.')
+        return redirect('admin:request', request_.uuid)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        places = self.object.solicitud_lugar.filter(estatus='assign')
+        context['total_places'] = places.aggregate(price=Sum('precio'))['price'] or 0
+        context['total_extras'] = places.aggregate(price=Sum('extras__precio'))['price'] or 0
+        context['total'] = context['total_extras'] + context['total_places']
+        context['selected_places'] = places
+        context['payment'] = self.object.solicitud_pagos.first()
         context['requests'] = self.request.user.solicitudes.all()
         context['dates'] = self.request.user.citas.order_by('fecha', 'hora')
         return context
+
 
 class ObservationsRequest(UserPermissions, DetailView):
     template_name = 'places/observations.html'
@@ -123,6 +210,7 @@ class ObservationsRequest(UserPermissions, DetailView):
                 return redirect('places:observations_request', request_.uuid)
         return redirect('places:detail_request', request_.uuid)
 
+
 class ObservationsShop(UserPermissions, DetailView):
     template_name = 'places/observations_shop.html'
     model = Comercios
@@ -159,6 +247,7 @@ class ObservationsShop(UserPermissions, DetailView):
                 return redirect('places:observations_shop', shop_.uuid)
         return redirect('places:detail_request', shop_.solicitud.uuid)
 
+
 class CreateShop(UserPermissions, SuccessMessageMixin, CreateView):
     template_name = 'places/create_shop.html'
     model = Comercios
@@ -178,18 +267,18 @@ class CreateShop(UserPermissions, SuccessMessageMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.solicitud = self.request_
-        if not self.request.user.citas.exists() and not self.request_.estatus == 'rejected':
-            # assing date
-            assign = False
-            for d in dates:
-                if assign: break
-                for h in hours:
-                    assigned_dates = CitasAgendadas.objects.filter(fecha=d, hora=h)
-                    if assigned_dates.count() < settings.ATTENTION_MODULES:
-                        CitasAgendadas.objects.create(fecha=d, hora=h, usuario=self.request.user)
-                        assign = True
-                        messages.success(self.request, 'Cita asignada exitosamente.')
-                        break
+        # if not self.request.user.citas.exists() and not self.request_.estatus == 'rejected':
+        #     # assing date
+        #     assign = False
+        #     for d in dates:
+        #         if assign: break
+        #         for h in hours:
+        #             assigned_dates = CitasAgendadas.objects.filter(fecha=d, hora=h)
+        #             if assigned_dates.count() < settings.ATTENTION_MODULES:
+        #                 CitasAgendadas.objects.create(fecha=d, hora=h, usuario=self.request.user)
+        #                 assign = True
+        #                 messages.success(self.request, 'Cita asignada exitosamente.')
+        #                 break
         return super().form_valid(form)
     
     def get_initial(self):
@@ -201,6 +290,7 @@ class CreateShop(UserPermissions, SuccessMessageMixin, CreateView):
 
     def get_success_url(self, *args, **kwargs):
         return reverse_lazy('places:detail_request', kwargs={'uuid':self.request_.uuid})
+
 
 class DownloadDateDoc(UserPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
