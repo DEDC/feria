@@ -73,9 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return regexCURP.test(curp.toUpperCase());
     }
 
-    curp.addEventListener('change', (e) => {
+    curp.addEventListener('change', async (e) => {
         if(validarCURP(curp.value)){
-            const data = validateCURPService(curp.value);
+            const data = await validateCURPService(curp.value);
             if(data.codigo == "00"){
                 nombre.value = `${data.datos.nombres} ${data.datos.apellido1} ${data.datos.apellido2}`;
             }
