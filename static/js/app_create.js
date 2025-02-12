@@ -81,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 nombre.value = `${data.data.datos.nombres} ${data.data.datos.apellido1} ${data.data.datos.apellido2}`;
             }
             else{
+                nombre.value = "";
                 Swal.fire({
                   title: 'Error!',
                   text: data.data.mensaje,
@@ -90,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }else{
             curp.value = "";
+            nombre.value = "";
             Swal.fire({
               title: 'Error!',
               text: 'El formato de la curp es invalido',
