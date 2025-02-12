@@ -76,13 +76,14 @@ document.addEventListener('DOMContentLoaded', () => {
     curp.addEventListener('change', async (e) => {
         if(validarCURP(curp.value)){
             const data = await validateCURPService(curp.value);
-            if(data.codigo == "00"){
-                nombre.value = `${data.datos.nombres} ${data.datos.apellido1} ${data.datos.apellido2}`;
+            console.log(data)
+            if(data.data.codigo == "00"){
+                nombre.value = `${data.data.datos.nombres} ${data.data.datos.apellido1} ${data.data.datos.apellido2}`;
             }
             else{
                 Swal.fire({
                   title: 'Error!',
-                  text: data.mensaje,
+                  text: data.data.mensaje,
                   icon: 'error',
                   confirmButtonText: 'Aceptar'
                 });
