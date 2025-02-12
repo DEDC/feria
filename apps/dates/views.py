@@ -60,7 +60,7 @@ def get_curp_service(request, curp):
         'curp': curp
     }
     print(headersAuth)
-    resp = requests.post(f"{settings.URL_CURP}consulta-curp", data=data, headers=headersAuth, verify=False, stream=False)
+    resp = requests.post(f"{settings.URL_CURP}consulta-curp", json=data, headers=headersAuth, verify=False, stream=False)
     if resp.status_code == 200:
         response = resp.json()
     return Response(response)
