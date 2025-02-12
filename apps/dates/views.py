@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
+from rest_framework.views import APIView
+import requests
 # dates
 from apps.dates.tools import get_dates_from_range, get_times_from_range
 from apps.dates.models import CitasAgendadas
@@ -31,6 +33,7 @@ def get_available_dates(request):
     fdates = [{'short_format': d.strftime('%Y-%m-%d'), 'text_format': formats.date_format(d, "j \d\e F \d\e Y")} for d in all_dates if d.strftime('%Y-%m-%d') not in exclude_dates]
     return Response(fdates)
 
+
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([IsAuthenticated])
@@ -42,3 +45,21 @@ def get_available_times(request, date):
             exclude_hours.append(hr)
     fhours = [{'short_format': t} for t in all_hours if t not in exclude_hours]
     return Response(fhours)
+
+
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([IsAuthenticated])
+def get_curp_service(request, curp):
+    response = []
+    headersAuth = {
+        'Authorization': f'Bearer {settings.TOKEN_CURP}',
+    }
+
+    data = {
+        'curp': curp
+    }
+    resp = requests.post(f"{settings.URL_CURP}consulta-curp", data=data, headers=headersAuth)
+    if resp.status_code == 200:
+        response = resp.json()
+    return Response(response)

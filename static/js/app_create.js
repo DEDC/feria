@@ -1,3 +1,5 @@
+import { validateCURPService } from "../js/api/utilities.js"
+
 document.addEventListener('DOMContentLoaded', () => {
     var event = new Event('change');
     const taxes = document.querySelectorAll('input[name="factura"]');
@@ -7,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('#form-request')
     const element = document.querySelector('#exampleModal');
     const save_btn = document.querySelector('#save-form');
+    const curp = document.querySelector('#id_curp_txt');
+    const nombre = document.querySelector('#id_nombre');
     // if (element) {
     const instance = new mdb.Modal(element)
     // }
@@ -61,6 +65,38 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
     });
+
+    function validarCURP(curp) {
+        // Expresión regular para validar CURP
+        const regexCURP = /^[A-Z]{1}[AEIOU]{1}[A-Z]{2}\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])[HM]{1}(AS|BC|BS|CC|CL|CM|CS|CH|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE){1}[B-DF-HJ-NP-TV-Z]{3}[0-9A-Z]{1}\d{1}$/;
+
+        return regexCURP.test(curp.toUpperCase());
+    }
+
+    curp.addEventListener('change', (e) => {
+        if(validarCURP(curp.value)){
+            const data = validateCURPService(curp.value);
+            if(data.codigo == "00"){
+                nombre.value = `${data.datos.nombres} ${data.datos.apellido1} ${data.datos.apellido2}`;
+            }
+            else{
+                Swal.fire({
+                  title: 'Error!',
+                  text: data.mensaje,
+                  icon: 'error',
+                  confirmButtonText: 'Aceptar'
+                });
+            }
+        }else{
+            curp.value = "";
+            Swal.fire({
+              title: 'Error!',
+              text: 'El formato de la curp es invalido',
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            })
+        }
+    })
 
     function show_hide_fields(fields, exclude) {
         for (const f of fields) {

@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 # users
 from apps.users.forms import UsersForm
 
+
 class LoginUser(LoginView):
     template_name = 'usuarios/login.html'
     redirect_authenticated_user = True
@@ -17,9 +18,11 @@ class LoginUser(LoginView):
         else:
             return reverse_lazy('places:main')
 
+
 class LogoutUser(LogoutView):
     next_page = '/'
-    
+
+
 class CreateUser(CreateView):
     template_name = 'usuarios/registro.html'
     form_class = UsersForm

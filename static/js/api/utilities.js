@@ -55,3 +55,9 @@ export const deletePlace = async (uuid, uuid_place, data) => {
     const response = await postAPICall(`/admin/solicitud/${uuid}/lugar/${uuid_place}/eliminar`, data);
     return response;
 }
+
+
+export const validateCURPService = async (curp) => {
+    const response = await getAPICall(`/api/get-curp-service/${curp}`);
+    return response;
+}

@@ -277,7 +277,7 @@
                 </div>
                 {% endif %}
             </div>
-            {% if object.comercio %}
+            {% if object.estatus == "validated" %}
                 <input type="hidden" id="request-uuid" value="{{object.uuid}}">
             	<div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
                     id="places">
