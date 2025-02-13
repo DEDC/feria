@@ -7,6 +7,10 @@
         background-color: #1c3e95 !important;
         color: white;
     }
+
+    .form-sol{
+        display: none;
+    }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="
@@ -55,9 +59,27 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css
             <div class="shadow-4 bg-white rounded-5 p-5">
                 <form method="post" enctype="multipart/form-data" id="form-request">
                     {% csrf_token %}
-                    <h6><b>Información General</b></h6>
+                    <h6><b>Validar CURP</b></h6>
                     <hr>
                     <div class="row">
+                        <div class="col-12">
+                            <div class="form-outline">
+                                {{form.curp_txt}}
+                                <label class="form-label">{{form.curp_txt.label}}</label>
+                            </div>
+                        </div>
+                        <div class="d-grid gap-4 col-3 mx-auto mt-1">
+                            <button class="btn btn-success" style="margin-bottom: 10px;" type="button" id="btnCURP">Validar CURP</button>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="alert" role="alert" data-mdb-color="info">
+                            Las solicitudes que ingreses seran vinculados a tu CURP, Tienes para seleccionar 3 locales por solicitud
+                        </div>
+                    </div>
+                    <h6 class="form-sol"><b>Información General</b></h6>
+                    <hr class="form-sol">
+                    <div class="row form-sol">
                         <div class="col-12 mb-4">
                             <label class="form-check-label ms-2 me-3 fw-bold">¿Desea facturar la compra de su
                                 Stand?:</label>
@@ -87,12 +109,6 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css
                         </div>
                         <div class="col-6">
                             <div class="form-outline">
-                                {{form.curp_txt}}
-                                <label class="form-label">{{form.curp_txt.label}}</label>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-outline">
                                 {{form.nombre}}
                                 <label class="form-label">{{form.nombre.label}}</label>
                             </div>
@@ -118,9 +134,9 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css
                             </div>
                         </div>
                     </div>
-                    <h6><b>Datos de la Dirección</b></h6>
-                    <hr>
-                    <div class="row">
+                    <h6 class="form-sol"><b>Datos de la Dirección</b></h6>
+                    <hr class="form-sol">
+                    <div class="row form-sol">
                         <div class="col-6">
                             <div class="form-outline">
                                 {{form.calle}}
@@ -156,9 +172,9 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css
                             </div>
                         </div>
                     </div>
-                    <h6><b>Documentos en formato PDF</b></h6>
-                    <hr>
-                    <div class="row">
+                    <h6 class="form-sol"><b>Documentos en formato PDF</b></h6>
+                    <hr class="form-sol">
+                    <div class="row form-sol">
                         <div class="col-12">
                             <label class="form-label">{{form.identificacion.label}}</label><br>
                             {{form.identificacion}}
@@ -181,7 +197,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css
                         </div>
                     </div>
                     <div class="d-grid gap-2 col-6 mx-auto mt-3">
-                        <button class="btn btn-primary" type="submit">Guardar registro</button>
+                        <button class="btn btn-primary form-sol" type="submit">Guardar registro</button>
                     </div>
                 </form>
             </div>

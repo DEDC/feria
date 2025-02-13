@@ -10,7 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const element = document.querySelector('#exampleModal');
     const save_btn = document.querySelector('#save-form');
     const curp = document.querySelector('#id_curp_txt');
+    const curpBtn = document.querySelector('#btnCURP');
     const nombre = document.querySelector('#id_nombre');
+    const nombre_legal = document.querySelector('#id_nombre_replegal');
+    var forms_list = document.querySelectorAll(".form-sol");
+
     // if (element) {
     const instance = new mdb.Modal(element)
     // }
@@ -73,15 +77,23 @@ document.addEventListener('DOMContentLoaded', () => {
         return regexCURP.test(curp.toUpperCase());
     }
 
-    curp.addEventListener('change', async (e) => {
+    curpBtn.addEventListener('click', async (e) => {
         if(validarCURP(curp.value)){
             const data = await validateCURPService(curp.value);
             console.log(data)
             if(data.data.codigo == "00"){
                 nombre.value = `${data.data.datos.nombres} ${data.data.datos.apellido1} ${data.data.datos.apellido2}`;
+                nombre_legal.value = `${data.data.datos.nombres} ${data.data.datos.apellido1} ${data.data.datos.apellido2}`;
+                forms_list.forEach(element => {
+                    element.style.display = "block";
+                });
             }
             else{
                 nombre.value = "";
+                nombre_legal.value = "";
+                forms_list.forEach(element => {
+                    element.style.display = "none";
+                });
                 Swal.fire({
                   title: 'Error!',
                   text: data.data.mensaje,
@@ -92,6 +104,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }else{
             curp.value = "";
             nombre.value = "";
+            forms_list.forEach(element => {
+                element.style.display = "none";
+            });
             Swal.fire({
               title: 'Error!',
               text: 'El formato de la curp es invalido',
