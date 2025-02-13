@@ -103,8 +103,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         forms_list.forEach(element => {
                             element.style.display = "block";
                         });
-                        nombre.dispatchEvent(eventoTecla);
-                        nombre_legal.dispatchEvent(eventoTecla);
+                        nombre.focus();
+
+                        // Forzar el blur (cuando pierde el foco)
+                        setTimeout(() => nombre.blur(), 300);
+
+                        nombre_legal.focus();
+
+                        // Forzar el blur (cuando pierde el foco)
+                        setTimeout(() => nombre_legal.blur(), 300);
+
                     } else {
                         nombre.value = "";
                         nombre_legal.value = "";
