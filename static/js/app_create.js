@@ -1,4 +1,4 @@
-import { validateCURPService } from "../js/api/utilities.js"
+import {validateCURPService} from "../js/api/utilities.js"
 
 document.addEventListener('DOMContentLoaded', () => {
     var event = new Event('change');
@@ -18,6 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // if (element) {
     const instance = new mdb.Modal(element)
     // }
+
+    let eventoTecla = new KeyboardEvent("keydown", {
+        key: "Enter",
+        code: "Enter",
+        keyCode: 13, // Código de la tecla Enter
+        bubbles: true
+    });
+
 
     if (form) {
         form.addEventListener('submit', (e) => {
@@ -52,8 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         element.addEventListener('change', (e) => {
             if (e.target.value === 'False') {
                 show_hide_fields(general_person.fields, general_person.exclude)
-            }
-            else {
+            } else {
                 show_hide_fields(general_person.exclude, [])
             }
         })
@@ -63,8 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         element.addEventListener('change', (e) => {
             if (e.target.value === 'fisica') {
                 show_hide_fields(physical_person.fields, physical_person.exclude)
-            }
-            else if (e.target.value === 'moral') {
+            } else if (e.target.value === 'moral') {
                 show_hide_fields(moral_person.fields, moral_person.exclude)
             }
         })
@@ -78,40 +84,59 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     curpBtn.addEventListener('click', async (e) => {
-        if(validarCURP(curp.value)){
-            const data = await validateCURPService(curp.value);
-            console.log(data)
-            if(data.data.codigo == "00"){
-                nombre.value = `${data.data.datos.nombres} ${data.data.datos.apellido1} ${data.data.datos.apellido2}`;
-                nombre_legal.value = `${data.data.datos.nombres} ${data.data.datos.apellido1} ${data.data.datos.apellido2}`;
-                forms_list.forEach(element => {
-                    element.style.display = "block";
-                });
-            }
-            else{
-                nombre.value = "";
-                nombre_legal.value = "";
-                forms_list.forEach(element => {
-                    element.style.display = "none";
-                });
-                Swal.fire({
-                  title: 'Error!',
-                  text: data.data.mensaje,
-                  icon: 'error',
-                  confirmButtonText: 'Aceptar'
-                });
-            }
-        }else{
+        if (validarCURP(curp.value)) {
+            var data = []
+            let timerInterval;
+            Swal.fire({
+                title: "Bucando CURP...",
+                html: "Esta ventana se cerra al finalizar la busqueda.",
+                howLoaderOnConfirm: true,
+                timer: 20000,
+                timerProgressBar: true,
+                didOpen: async () => {
+                    Swal.showLoading();
+                    data = await validateCURPService(curp.value);
+                    console.log(data)
+                    if (data.data.codigo == "00") {
+                        nombre.value = `${data.data.datos.nombres} ${data.data.datos.apellido1} ${data.data.datos.apellido2}`;
+                        nombre_legal.value = `${data.data.datos.nombres} ${data.data.datos.apellido1} ${data.data.datos.apellido2}`;
+                        forms_list.forEach(element => {
+                            element.style.display = "block";
+                        });
+                        nombre.dispatchEvent(eventoTecla);
+                        nombre_legal.dispatchEvent(eventoTecla);
+                    } else {
+                        nombre.value = "";
+                        nombre_legal.value = "";
+                        forms_list.forEach(element => {
+                            element.style.display = "none";
+                        });
+                        Swal.fire({
+                            title: 'Error!',
+                            text: data.data.mensaje,
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                    Swal.close()
+                },
+                willClose: () => {
+                }
+            }).then((result) => {
+                /* Read more about handling dismissals below */
+            });
+
+        } else {
             curp.value = "";
             nombre.value = "";
             forms_list.forEach(element => {
                 element.style.display = "none";
             });
             Swal.fire({
-              title: 'Error!',
-              text: 'El formato de la curp es invalido',
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
+                title: 'Error!',
+                text: 'El formato de la curp es invalido',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
             })
         }
     })
@@ -128,8 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
             field.required = false
             if (f === 'reg1' || f === 'reg2') {
                 field.checked = false
-            }
-            else {
+            } else {
                 field.value = ''
             }
             field.closest('[class^="col"]').classList.add('d-none')
