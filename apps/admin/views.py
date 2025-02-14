@@ -17,6 +17,8 @@ from rest_framework.permissions import IsAuthenticated
 # places
 from apps.places.models import Solicitudes, Comercios, Validaciones, Lugares, ProductosExtras, Pagos, Estacionamiento
 from apps.places.forms import RequestForm, ShopForm, ParkingForm
+from apps.tpay.tools import sendEmail
+from apps.tpay.views import return_html_accept, return_html_rejected
 # users
 from apps.users.models import Usuarios
 from apps.users.forms import UserUpdateForm
@@ -236,11 +238,20 @@ class Request(AdminPermissions, DetailView):
                     payment.save()
                     messages.success(request, 'Se confirma el pago con transferencia')
         if 'validated' in request.POST:
+            subject = "Solicitud Aprobada ✅"
+            html = return_html_accept(request_.nombre)
+            try:
+                sendEmail(request_.usuario.email, html, subject)
+            except Exception as e:
+                print(e)
             request_.estatus = 'validated'
             request_.save()
             Validaciones.objects.create(solicitud=request_, estatus='validated', validador=request.user.get_full_name())
             messages.success(request, 'Estatus asignado exitosamente.')
         elif 'rejected' in request.POST:
+            subject = "Solicitud No Aprobada ❌"
+            html = return_html_rejected(request_.nombre)
+            sendEmail(request_.usuario.email, html, subject)
             request_.estatus = 'rejected'
             lookup = (~Q(estatus='rejected'))
             sib_req = Solicitudes.objects.filter(lookup, usuario=request_.usuario).exclude(uuid=request_.uuid)

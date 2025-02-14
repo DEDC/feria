@@ -90,12 +90,19 @@ class ProductosExtras(ControlInfo):
 
 
 class Pagos(ControlInfo):
+    estatus = (
+        (1, "En proceso"),
+        (2, "Aceptado"),
+        (3, "Cancelado"),
+    )
     identifier='PAG'
     solicitud = models.ForeignKey(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='solicitud_pagos')
     usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='usuario_pagos')
     tipo = models.CharField(max_length=20, null=True, choices=(('tarjeta', 'Tarjeta'), ('efectivo', 'Efectivo'), ('transferencia', 'Transferencia')))
     pagado = models.BooleanField(default=False)
+    data_tpay = models.JSONField(null=True, blank=True)
     validador = models.CharField(max_length=200, editable=False, null=True)
+    estatus = models.PositiveSmallIntegerField(choices=estatus, default=1)
 
 
 class Estacionamiento(ControlInfo):

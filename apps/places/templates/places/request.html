@@ -2,485 +2,509 @@
 {% load static %}
 {% load humanize %}
 {% block head %}
-{{block.super}}
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="{% static 'js/request_user.js' %}" type="module" defer></script>
-<script src="{% static 'js/easytimer.min.js' %}" defer></script>
-<style>
-    input[type="file"]::file-selector-button {
-        background-color: #1c3e95 !important;
-        color: white;
-    }
-    .table-places {
-        display: inline-table;
-        border-collapse: separate;
-        border-spacing: 4px;
-        text-align: center;
-    }
+    {{ block.super }}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="{% static 'js/request_user.js' %}" type="module" defer></script>
+    <script src="{% static 'js/easytimer.min.js' %}" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script type="text/JavaScript" src="https://momentJS.com/downloads/moment.js"></script>
+    <style>
+        input[type="file"]::file-selector-button {
+            background-color: #1c3e95 !important;
+            color: white;
+        }
 
-    .table-places td {
-        text-align: center;
-        padding: .3rem .7rem !important;
-        color: white !important;
-        margin: 2px !important;
-    }
+        .table-places {
+            display: inline-table;
+            border-collapse: separate;
+            border-spacing: 4px;
+            text-align: center;
+        }
 
-    .table-places tr {
-        border: 0 transparent !important;
-    }
+        .table-places td {
+            text-align: center;
+            padding: .3rem .7rem !important;
+            color: white !important;
+            margin: 2px !important;
+        }
 
-    td[data-status="available"] {
-        cursor: pointer;
-    }
+        .table-places tr {
+            border: 0 transparent !important;
+        }
 
-    td.selected {
-        outline: 3px solid #332D2D;
-    }
+        td[data-status="available"] {
+            cursor: pointer;
+        }
 
-    td[data-status="unavailable"] {
-        background-color: #9FA6B2 !important;
-    }
-</style>
+        td.selected {
+            outline: 3px solid #332D2D;
+        }
+
+        td[data-status="unavailable"] {
+            background-color: #9FA6B2 !important;
+        }
+    </style>
+    <script>
+    </script>
 {% endblock head %}
 {% block main %}
-<div class="container-fluid p-5">
-    <div class="row gx-xl-5">
-        <div class="col-xl-3">
-            <div class="shadow-4 p-4 bg-white rounded-5 mb-4">
-                <a href="#" type="button"
-                    class="btn btn-secondary btn-rounded btn-lg w-100"><i class="fas fa-plus me-3"></i>No disponible</a>
-            </div>
-            <div class="shadow-4 bg-white rounded-5 overflow-hidden d-none d-xl-block">
-                <div class="bg-light p-4 text-center">
-                    <h5 class="mb-0">Solicitudes</h5>
+    <div class="container-fluid p-5">
+        <div class="row gx-xl-5">
+            <div class="col-xl-3">
+                <div class="shadow-4 p-4 bg-white rounded-5 mb-4">
+                    <a href="#" type="button"
+                       class="btn btn-secondary btn-rounded btn-lg w-100"><i class="fas fa-plus me-3"></i>No disponible</a>
                 </div>
-                <div class="p-4">
-                    {% for rq in requests %}
-                    <a href="{% url 'places:detail_request' rq.uuid %}" role="button"
-                        class="btn btn-link btn-rounded w-100 text-start text-capitalize">
-                        {{rq.folio}} - {{rq.nombre}}
-                    </a>
-                    {% endfor %}
-                </div>
-                <div class="bg-light p-4 text-center">
-                    <h5 class="mb-0">Citas Agendadas</h5>
-                </div>
-                <div class="p-4">
-                    {% for dt in dates %}
-                    <a href="#" role="button" class="btn btn-link btn-rounded w-100 text-start text-capitalize">
-                        {{dt.folio}} - {{dt.fecha}} - {{dt.hora}} horas
-                    </a>
-                    {% empty %}
-                    <div class="alert" role="alert" data-mdb-color="warning">
-                        No se han agendado Citas anteriormente
+                <div class="shadow-4 bg-white rounded-5 overflow-hidden d-none d-xl-block">
+                    <div class="bg-light p-4 text-center">
+                        <h5 class="mb-0">Solicitudes</h5>
                     </div>
-                    {% endfor %}
+                    <div class="p-4">
+                        {% for rq in requests %}
+                            <a href="{% url 'places:detail_request' rq.uuid %}" role="button"
+                               class="btn btn-link btn-rounded w-100 text-start text-capitalize">
+                                {{ rq.folio }} - {{ rq.nombre }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                    <div class="bg-light p-4 text-center">
+                        <h5 class="mb-0">Citas Agendadas</h5>
+                    </div>
+                    <div class="p-4">
+                        {% for dt in dates %}
+                            <a href="#" role="button" class="btn btn-link btn-rounded w-100 text-start text-capitalize">
+                                {{ dt.folio }} - {{ dt.fecha }} - {{ dt.hora }} horas
+                            </a>
+                        {% empty %}
+                            <div class="alert" role="alert" data-mdb-color="warning">
+                                No se han agendado Citas anteriormente
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-xl-9 mb-4 mb-lg-0">
-            {% include 'base/validations.html' %}
-            {% if not object.comercio %}
-            <div class="alert" role="alert" data-mdb-color="warning">
-                <i class="fas fa-exclamation-triangle me-3"></i>Para continuar con el proceso de la Solicitud <a
-                    href="{% url 'places:create_shop' object.uuid %}"
-                    class="btn btn-sm btn-warning shadow-0 ms-2">Agrega un comercio</a>
-            </div>
-            {% else %}
-            {% if object.comercio.get_last_unattended_validation %}
-            <div class="alert" role="alert" data-mdb-color="warning">
-                <i class="fas fa-exclamation-triangle me-3"></i>Tiene una observación en su <b>Comercio</b> <a
-                    href="{% url 'places:observations_shop' object.comercio.uuid %}"
-                    class="btn btn-sm btn-warning shadow-0 ms-2">Atender observación</a>
-            </div>
-            {% endif %}
-            {% endif %}
-            {% if object.get_last_unattended_validation %}
-            <div class="alert" role="alert" data-mdb-color="warning">
-                <i class="fas fa-exclamation-triangle me-3"></i>Tiene una observación en su <b>Solicitud</b> <a
-                    href="{% url 'places:observations_request' object.uuid %}"
-                    class="btn btn-sm btn-warning shadow-0 ms-2">Atender observación</a>
-            </div>
-            {% endif %}
-            <div
-                class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
-                <h4 style="cursor: pointer;" data-mdb-toggle="collapse" data-mdb-target="#collapseRequest"
-                    aria-expanded="true" class="mb-0 fw-bold"><i class="fas fa-clipboard-list me-3"></i>Solicitud
-                    {{object.nombre}} <i class="fas fa-angle-down ms-3"></i></h4>
-                <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block" href="{% url 'places:main' %}"
-                    role="button">Ver
-                    mis solicitudes<i class="fas fa-arrow-right ms-2"></i></a>
-            </div>
-            <div class="shadow-4 bg-white rounded-5 p-5 collapse" id="collapseRequest">
-                <div class="table-responsive">
-                    <table class="table">
-                        <tbody>
+            <div class="col-xl-9 mb-4 mb-lg-0">
+                {% include 'base/validations.html' %}
+                {% if not object.comercio %}
+                    <div class="alert" role="alert" data-mdb-color="warning">
+                        <i class="fas fa-exclamation-triangle me-3"></i>Para continuar con el proceso de la Solicitud <a
+                            href="{% url 'places:create_shop' object.uuid %}"
+                            class="btn btn-sm btn-warning shadow-0 ms-2">Agrega un comercio</a>
+                    </div>
+                {% else %}
+                    {% if object.comercio.get_last_unattended_validation %}
+                        <div class="alert" role="alert" data-mdb-color="warning">
+                            <i class="fas fa-exclamation-triangle me-3"></i>Tiene una observación en su <b>Comercio</b>
+                            <a
+                                    href="{% url 'places:observations_shop' object.comercio.uuid %}"
+                                    class="btn btn-sm btn-warning shadow-0 ms-2">Atender observación</a>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                {% if object.get_last_unattended_validation %}
+                    <div class="alert" role="alert" data-mdb-color="warning">
+                        <i class="fas fa-exclamation-triangle me-3"></i>Tiene una observación en su <b>Solicitud</b> <a
+                            href="{% url 'places:observations_request' object.uuid %}"
+                            class="btn btn-sm btn-warning shadow-0 ms-2">Atender observación</a>
+                    </div>
+                {% endif %}
+                <div
+                        class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                    <h4 style="cursor: pointer;" data-mdb-toggle="collapse" data-mdb-target="#collapseRequest"
+                        aria-expanded="true" class="mb-0 fw-bold"><i class="fas fa-clipboard-list me-3"></i>Solicitud
+                        {{ object.nombre }} <i class="fas fa-angle-down ms-3"></i></h4>
+                    <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block" href="{% url 'places:main' %}"
+                       role="button">Ver
+                        mis solicitudes<i class="fas fa-arrow-right ms-2"></i></a>
+                </div>
+                <div class="shadow-4 bg-white rounded-5 p-5 collapse" id="collapseRequest">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody>
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Fecha de registro</th>
-                                <td>{{object.fecha_reg}}</td>
+                                <td>{{ object.fecha_reg }}</td>
                             </tr>
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Folio</th>
-                                <td>{{object.folio}}</td>
+                                <td>{{ object.folio }}</td>
                             </tr>
                             <tr>
                                 <th class="bg-light" style="width: 40%;">¿Requiere Factura?</th>
-                                <td>{{object.get_factura_display}}</td>
+                                <td>{{ object.get_factura_display }}</td>
                             </tr>
                             {% if object.regimen_fiscal %}
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Régimen Fiscal</th>
-                                <td>{{object.get_regimen_fiscal_display}}</td>
-                            </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Régimen Fiscal</th>
+                                    <td>{{ object.get_regimen_fiscal_display }}</td>
+                                </tr>
                             {% endif %}
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Nombre o Razón Social</th>
-                                <td>{{object.nombre}}</td>
+                                <td>{{ object.nombre }}</td>
                             </tr>
                             {% if object.nombre_replegal %}
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Nombre del Representante Legal</th>
-                                <td>{{object.nombre_replegal|default:'No especificado'}}</td>
-                            </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Nombre del Representante Legal</th>
+                                    <td>{{ object.nombre_replegal|default:'No especificado' }}</td>
+                                </tr>
                             {% endif %}
                             {% if object.rfc_txt %}
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">RFC</th>
-                                <td>{{object.rfc_txt|upper}}</td>
-                            </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">RFC</th>
+                                    <td>{{ object.rfc_txt|upper }}</td>
+                                </tr>
                             {% endif %}
                             {% if object.curp_txt %}
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">CURP</th>
-                                <td>{{object.curp_txt|upper}}</td>
-                            </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">CURP</th>
+                                    <td>{{ object.curp_txt|upper }}</td>
+                                </tr>
                             {% endif %}
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Espacios seleccionados</th>
-                                <td>{{object.cantidad_espacios}}</td>
+                                <td>{{ object.cantidad_espacios }}</td>
                             </tr>
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Calle</th>
-                                <td>{{object.calle}}</td>
+                                <td>{{ object.calle }}</td>
                             </tr>
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Número de Calle</th>
-                                <td>{{object.no_calle}}</td>
+                                <td>{{ object.no_calle }}</td>
                             </tr>
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Colonia</th>
-                                <td>{{object.colonia}}</td>
+                                <td>{{ object.colonia }}</td>
                             </tr>
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Código Postal</th>
-                                <td>{{object.codigo_postal}}</td>
+                                <td>{{ object.codigo_postal }}</td>
                             </tr>
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Estado</th>
-                                <td>{{object.get_estado_display}}</td>
+                                <td>{{ object.get_estado_display }}</td>
                             </tr>
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Municipio</th>
-                                <td>{{object.municipio}}</td>
+                                <td>{{ object.municipio }}</td>
                             </tr>
                             {% if object.constancia_fiscal %}
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Constancia de Situación Fiscal</th>
-                                <td><a href="{{object.constancia_fiscal.url}}" target="_blank" type="button"
-                                        class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Constancia de Situación Fiscal</th>
+                                    <td><a href="{{ object.constancia_fiscal.url }}" target="_blank" type="button"
+                                           class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
+                                    </td>
+                                </tr>
                             {% endif %}
                             {% if object.comprobante_domicilio %}
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Comprobante de Domicilio</th>
-                                <td><a href="{{object.comprobante_domicilio.url}}" target="_blank" type="button"
-                                        class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Comprobante de Domicilio</th>
+                                    <td><a href="{{ object.comprobante_domicilio.url }}" target="_blank" type="button"
+                                           class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
+                                    </td>
+                                </tr>
                             {% endif %}
                             {% if object.acta_constitutiva %}
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Acta Constitutiva</th>
-                                <td><a href="{{object.acta_constitutiva.url}}" target="_blank" type="button"
-                                        class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Acta Constitutiva</th>
+                                    <td><a href="{{ object.acta_constitutiva.url }}" target="_blank" type="button"
+                                           class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
+                                    </td>
+                                </tr>
                             {% endif %}
                             {% if object.identificacion %}
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Identificación Oficial</th>
-                                <td><a href="{{object.identificacion.url}}" target="_blank" type="button"
-                                        class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Identificación Oficial</th>
+                                    <td><a href="{{ object.identificacion.url }}" target="_blank" type="button"
+                                           class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
+                                    </td>
+                                </tr>
                             {% endif %}
                             {% if object.curp %}
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">CURP</th>
-                                <td><a href="{{object.curp.url}}" target="_blank" type="button"
-                                        class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
-                                </td>
-                            </tr>
-                            {% endif %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div id="comercio" data-mdb-toggle="collapse" data-mdb-target="#collapseShop" aria-expanded="true"
-                class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
-                <h4 style="cursor: pointer;" class="mb-0 fw-bold"><i class="fas fa-shop me-3"></i>Comercio
-                    {{object.comercio.nombre}} <i class="fas fa-angle-down ms-3"></i></h4>
-            </div>
-            <div class="shadow-4 bg-white rounded-5 p-5 my-4 collapse {% if not object.comercio %}show{% endif %}"
-                id="collapseShop">
-                {% if not object.comercio %}
-                <a href="{% url 'places:create_shop' object.uuid %}" type="button"
-                    class="btn btn-primary btn-rounded btn-lg w-100"><i class="fas fa-plus me-3"></i>Agregar
-                    Comercio</a>
-                {% else %}
-                <div class="table-responsive">
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Folio</th>
-                                <td>{{object.comercio.folio}}</td>
-                            </tr>
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Nombre del Comercio</th>
-                                <td>{{object.comercio.nombre}}</td>
-                            </tr>
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Descripción del comercio</th>
-                                <td>{{object.comercio.descripcion|upper}}</td>
-                            </tr>
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Vende alcohol</th>
-                                <td>{{object.comercio.get_vende_alcohol_display}}</td>
-                            </tr>
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Voltaje</th>
-                                <td>{{object.comercio.get_voltaje_display}}</td>
-                            </tr>
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Equipos a utilizar</th>
-                                <td>{{object.comercio.equipos}}</td>
-                            </tr>
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Cómo será el local</th>
-                                <td><a href="{{object.comercio.imagen.url}}" target="_blank" type="button"
-                                        class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                {% endif %}
-            </div>
-            {% if object.estatus == "validated" %}
-                <input type="hidden" id="request-uuid" value="{{object.uuid}}">
-            	<div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
-                    id="places">
-                    <h4 class="mb-0 fw-bold">
-                        <i class="fas fa-map-pin me-3 green-text"></i>Selección de Espacios
-                    </h4>
-                    <button type="button" id="reload-places" class="btn btn-lg btn-link btn-rounded"><i
-                            class="fas fa-arrows-rotate fa-lg"></i></button>
-                </div>
-                <p class="note note-info mb-4">
-                    Al <b>Preseleccionar</b> los espacios se bloquearán por <b>30 minutos</b> y no serán visibles
-                    para otros módulos.
-                    Si no se confirma la selección, los espacios volverán a estar disponibles después de ese tiempo.
-                </p>
-                <div
-                    class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
-                    <button id="zone-a" type="button" class="btn btn-light">Zona A</button>
-                    <button id="zone-b" type="button" class="btn btn-light">Zona B</button>
-                    <button id="zone-c" type="button" class="btn btn-light">Zona C</button>
-                    <button id="zone-d" type="button" class="btn btn-light">Zona D</button>
-                    <button id="n-1" type="button" class="btn btn-light">Nave 1</button>
-                    <button id="n-2" type="button" class="btn btn-light">Nave 3</button>
-                </div>
-                <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
-                    <input type="hidden" name="limit_places" value="{{object.cantidad_espacios}}">
-                    <h3 class="text-center mb-3"><span id="zone_title" class="badge badge-info">Selecciona una de las
-                            zonas de arriba</span></h3>
-                    <div class="table-responsive">
-                        <table class="table table-places m-0"></table>
-                    </div>
-                    <button type="button" id="preselection" disabled
-                        class="btn btn-lg btn-rounded btn-primary shadow-0 w-100 mt-3"><i
-                            class="fas fa-check me-2"></i>Preseleccionar espacios</button>
-                </div>
-                {% if selected_places %}
-                <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
-                    id="places">
-                    <h4 class="mb-0 fw-bold">
-                        <i class="fas fa-list-check me-3 green-text"></i>Configuración adicional de los espacios
-                        seleccionados ({{selected_places.count}})
-                    </h4>
-                </div>
-                <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
-                    {% if not payment %}
-                    <div class="d-flex justify-content-end">
-                        <button id="add-terraza" disabled type="button"
-                            class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
-                                class="fas fa-plus me-2"></i>Agregar terraza</button>
-                        <button id="add-big-terraza" disabled type="button"
-                            class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
-                                class="fas fa-plus me-2"></i>Agregar terraza grande</button>
-                        <button id="add-alcohol" disabled type="button"
-                            class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3"><i
-                                class="fas fa-plus me-2"></i>Agregar licencia de alcohol</button>
-                    </div>
-                    {% endif %}
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
                                 <tr>
-                                    <th></th>
-                                    <th scope="col">Folio</th>
-                                    <th scope="col">Número del lugar</th>
-                                    <th scope="col">Sección</th>
-                                    <th scope="col">M2</th>
-                                    <th scope="col">Precio</th>
-                                    <th scope="col">Fecha de asignación</th>
-                                    {% if not payment %}
-                                    <th></th>
-                                    {% endif %}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for sp in selected_places %}
-                                <tr>
-                                    <td>
-                                        <input class="form-check-input config-chk" type="checkbox" value="{{sp.uuid}}"
-                                            data-m2="{{sp.m2}}" data-folio="{{sp.folio}}" />
+                                    <th class="bg-light" style="width: 40%;">CURP</th>
+                                    <td><a href="{{ object.curp.url }}" target="_blank" type="button"
+                                           class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
                                     </td>
-                                    <th scope="row">{{sp.folio}}</th>
-                                    <td>{{sp.nombre}}</td>
-                                    <td>{{sp.get_zona_display}}</td>
-                                    <td>{{sp.m2}}</td>
-                                    <td>${{sp.precio|intcomma}}</td>
-                                    <td>{{sp.fecha_reg}}</td>
-                                    {% if not payment %}
-                                    <td><a class="ms-3 del-place" data-uuid="{{sp.uuid}}" data-type="place" role="button"><i
-                                        class="fas fa-xmark fa-lg text-danger"></i></a></td>
-                                    {% endif %}
                                 </tr>
-                                {% endfor %}
+                            {% endif %}
                             </tbody>
                         </table>
-                        <ul class="list-group list-group-light" id="extra-products">
-                            <li class="list-group-item d-flex justify-content-end">
-                                <h5 class="me-5 fw-bold m-0">Total por espacios:</h5>
-                                <h5 class="ms-5 m-0">${{total_places|intcomma}}</h5>
-                            </li>
-                            {% for p in selected_places %}
-                            {% for px in p.extras.all %}
-                            <li class="list-group-item d-flex justify-content-end">
-                                {% if px.tipo == 'terraza' %}
-                                <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza para el espacio ({{px.to_places}}):
-                                </h5>
-                                <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
-                                {% elif px.tipo == 'terraza_grande' %}
-                                <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza Grande para el espacio
-                                    ({{px.to_places}}):
-                                </h5>
-                                <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
-                                {% elif px.tipo == 'licencia_alcohol' %}
-                                <h5 class="m-0 me-5 fw-bold">Total por (1) Licencia de Alcohol para el/los espacio(s)
-                                    ({{px.to_places}}):
-                                </h5>
-                                <h5 class="m-0 ms-5">${{px.precio|intcomma}}</h5>
-                                {% endif %}
-                                {% if not payment %}
-                                <a class="ms-3 del-pdt" data-uuid="{{px.uuid}}" data-type="{{px.tipo}}" role="button"><i
-                                    class="fas fa-xmark fa-lg text-danger"></i></a>
-                                {% endif %}
-                            </li>
-                            {% endfor %}
-                            {% endfor %}
-                            <li class="list-group-item d-flex justify-content-end">
-                                <h5 class="me-5 fw-bold m-0">Total por conceptos adicionales:</h5>
-                                <h5 class="ms-5 m-0">${{total_extras|intcomma}}</h5>
-                            </li>
-                        </ul>
-                        <div class="d-flex justify-content-end">
-                            <h2 class="me-5 m-0">Total:</h2>
-                            <h1 class="ms-5 m-0 text-primary" id="total-price">${{total|intcomma}}</h1>
-                        </div>
-                        {% if not payment %}
-                        <div class="d-flex justify-content-center">
-                            <button name="card-payment" class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50">
-                                <i class="far fa-credit-card me-2"></i>
-                                Pagar con tarjeta
-                            </button>
-                            <button name="cash-payment"
-                                class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
-                                <i class="fas fa-money-bill-1 me-2"></i>
-                                Pagar con efectivo
-                            </button>
-                            <button name="cancel-pay" class="btn btn-danger btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
-                                <i class="fas fa-close me-2"></i>
-                                Cancelar compra
-                            </button>
-                        </div>
-                        {% else %}
-                        <p class="note note-success mt-4">
-                            Se ha definido que el pago fue seleccionado como tipo <b>{{payment.get_tipo_display}}</b> el
-                            <b>{{payment.fecha_reg}} hrs</b>. {% if payment.validador %}Efectuado por <b>{{payment.validador}}</b>{% endif %}.
-                        </p>
-                        <div class="d-flex justify-content-end">
-                            <button name="reverse-pay" class="btn btn-danger btn-sm btn-rounded shadow-0">
-                                <i class="fas fa-close me-2"></i>
-                                Revertir compra
-                            </button>
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
-                {% endif %}
-            {% endif %}
-            {% if user.citas.first %}
-            <div id="citas"
-                class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
-                <h4 class="mb-0 fw-bold"><i class="fas fa-calendar-day me-3"></i>Cita Agendada</h4>
-            </div>
-            <div class="shadow-4 bg-white rounded-5 p-5 my-4">
-                {% with date=user.citas.first %}
-                <div class="table-responsive">
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Folio</th>
-                                <td>{{date.folio}}</td>
-                            </tr>
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Fecha</th>
-                                <td>{{date.fecha}}</td>
-                            </tr>
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Hora</th>
-                                <td>{{date.hora}} horas</td>
-                            </tr>
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Lugar</th>
-                                <td>Parque Tabasco Dora María</td>
-                            </tr>
-                            <tr>
-                                <th class="bg-light" style="width: 40%;">Documento de Cita</th>
-                                <td><a target="_blank" class="btn btn-sm btn-success shadow-0"
-                                        href="{% url 'places:download_date' object.uuid date.uuid %}">Descargar cita</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div id="comercio" data-mdb-toggle="collapse" data-mdb-target="#collapseShop" aria-expanded="true"
+                     class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                    <h4 style="cursor: pointer;" class="mb-0 fw-bold"><i class="fas fa-shop me-3"></i>Comercio
+                        {{ object.comercio.nombre }} <i class="fas fa-angle-down ms-3"></i></h4>
                 </div>
-                {% endwith %}
+                <div class="shadow-4 bg-white rounded-5 p-5 my-4 collapse {% if not object.comercio %}show{% endif %}"
+                     id="collapseShop">
+                    {% if not object.comercio %}
+                        <a href="{% url 'places:create_shop' object.uuid %}" type="button"
+                           class="btn btn-primary btn-rounded btn-lg w-100"><i class="fas fa-plus me-3"></i>Agregar
+                            Comercio</a>
+                    {% else %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Folio</th>
+                                    <td>{{ object.comercio.folio }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Nombre del Comercio</th>
+                                    <td>{{ object.comercio.nombre }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Descripción del comercio</th>
+                                    <td>{{ object.comercio.descripcion|upper }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Vende alcohol</th>
+                                    <td>{{ object.comercio.get_vende_alcohol_display }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Voltaje</th>
+                                    <td>{{ object.comercio.get_voltaje_display }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Equipos a utilizar</th>
+                                    <td>{{ object.comercio.equipos }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Cómo será el local</th>
+                                    <td><a href="{{ object.comercio.imagen.url }}" target="_blank" type="button"
+                                           class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+                {% if object.estatus == "validated" %}
+                    <input type="hidden" id="request-uuid" value="{{ object.uuid }}">
+                    <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
+                         id="places">
+                        <h4 class="mb-0 fw-bold">
+                            <i class="fas fa-map-pin me-3 green-text"></i>Selección de Espacios
+                        </h4>
+                        <button type="button" id="reload-places" class="btn btn-lg btn-link btn-rounded"><i
+                                class="fas fa-arrows-rotate fa-lg"></i></button>
+                    </div>
+                    <p class="note note-info mb-4">
+                        Al <b>Preseleccionar</b> los espacios se bloquearán por <b>30 minutos</b> y no serán visibles
+                        para otros módulos.
+                        Si no se confirma la selección, los espacios volverán a estar disponibles después de ese tiempo.
+                    </p>
+                    <div
+                            class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                        <button id="zone-a" type="button" class="btn btn-light">Zona A</button>
+                        <button id="zone-b" type="button" class="btn btn-light">Zona B</button>
+                        <button id="zone-c" type="button" class="btn btn-light">Zona C</button>
+                        <button id="zone-d" type="button" class="btn btn-light">Zona D</button>
+                        <button id="n-1" type="button" class="btn btn-light">Nave 1</button>
+                        <button id="n-2" type="button" class="btn btn-light">Nave 3</button>
+                    </div>
+                    <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
+                        <input type="hidden" name="limit_places" value="{{ object.cantidad_espacios }}">
+                        <h3 class="text-center mb-3"><span id="zone_title" class="badge badge-info">Selecciona una de las
+                            zonas de arriba</span></h3>
+                        <div class="table-responsive">
+                            <table class="table table-places m-0"></table>
+                        </div>
+                        <button type="button" id="preselection" disabled
+                                class="btn btn-lg btn-rounded btn-primary shadow-0 w-100 mt-3"><i
+                                class="fas fa-check me-2"></i>Preseleccionar espacios
+                        </button>
+                    </div>
+                    {% if selected_places %}
+                        <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
+                             id="places">
+                            <h4 class="mb-0 fw-bold">
+                                <i class="fas fa-list-check me-3 green-text"></i>Configuración adicional de los espacios
+                                seleccionados ({{ selected_places.count }})
+                            </h4>
+                        </div>
+                        <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
+                            {% if not payment %}
+                                <div class="d-flex justify-content-end">
+                                    <button id="add-terraza" disabled type="button"
+                                            class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
+                                            class="fas fa-plus me-2"></i>Agregar terraza
+                                    </button>
+                                    <button id="add-big-terraza" disabled type="button"
+                                            class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
+                                            class="fas fa-plus me-2"></i>Agregar terraza grande
+                                    </button>
+                                    <button id="add-alcohol" disabled type="button"
+                                            class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3"><i
+                                            class="fas fa-plus me-2"></i>Agregar licencia de alcohol
+                                    </button>
+                                </div>
+                            {% endif %}
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th scope="col">Folio</th>
+                                        <th scope="col">Número del lugar</th>
+                                        <th scope="col">Sección</th>
+                                        <th scope="col">M2</th>
+                                        <th scope="col">Precio</th>
+                                        <th scope="col">Fecha de asignación</th>
+                                        {% if not payment %}
+                                            <th></th>
+                                        {% endif %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for sp in selected_places %}
+                                        <tr>
+                                            <td>
+                                                <input class="form-check-input config-chk" type="checkbox"
+                                                       value="{{ sp.uuid }}"
+                                                       data-m2="{{ sp.m2 }}" data-folio="{{ sp.folio }}"/>
+                                            </td>
+                                            <th scope="row">{{ sp.folio }}</th>
+                                            <td>{{ sp.nombre }}</td>
+                                            <td>{{ sp.get_zona_display }}</td>
+                                            <td>{{ sp.m2 }}</td>
+                                            <td>${{ sp.precio|intcomma }}</td>
+                                            <td>{{ sp.fecha_reg }}</td>
+                                            {% if not payment %}
+                                                <td><a class="ms-3 del-place" data-uuid="{{ sp.uuid }}"
+                                                       data-type="place" role="button"><i
+                                                        class="fas fa-xmark fa-lg text-danger"></i></a></td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <ul class="list-group list-group-light" id="extra-products">
+                                    <li class="list-group-item d-flex justify-content-end">
+                                        <h5 class="me-5 fw-bold m-0">Total por espacios:</h5>
+                                        <h5 class="ms-5 m-0">${{ total_places|intcomma }}</h5>
+                                    </li>
+                                    {% for p in selected_places %}
+                                        {% for px in p.extras.all %}
+                                            <li class="list-group-item d-flex justify-content-end">
+                                                {% if px.tipo == 'terraza' %}
+                                                    <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza para el espacio
+                                                        ({{ px.to_places }}):
+                                                    </h5>
+                                                    <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>
+                                                {% elif px.tipo == 'terraza_grande' %}
+                                                    <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza Grande para el
+                                                        espacio
+                                                        ({{ px.to_places }}):
+                                                    </h5>
+                                                    <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>
+                                                {% elif px.tipo == 'licencia_alcohol' %}
+                                                    <h5 class="m-0 me-5 fw-bold">Total por (1) Licencia de Alcohol para
+                                                        el/los espacio(s)
+                                                        ({{ px.to_places }}):
+                                                    </h5>
+                                                    <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>
+                                                {% endif %}
+                                                {% if not payment %}
+                                                    <a class="ms-3 del-pdt" data-uuid="{{ px.uuid }}"
+                                                       data-type="{{ px.tipo }}" role="button"><i
+                                                            class="fas fa-xmark fa-lg text-danger"></i></a>
+                                                {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                    <li class="list-group-item d-flex justify-content-end">
+                                        <h5 class="me-5 fw-bold m-0">Total por conceptos adicionales:</h5>
+                                        <h5 class="ms-5 m-0">${{ total_extras|intcomma }}</h5>
+                                    </li>
+                                </ul>
+                                <div class="d-flex justify-content-end">
+                                    <h2 class="me-5 m-0">Total:</h2>
+                                    <h1 class="ms-5 m-0 text-primary" id="total-price">${{ total|intcomma }}</h1>
+                                </div>
+                                {% if not payment %}
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <div class="d-flex justify-content-center">
+                                            <button name="card-payment"
+                                                    class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50">
+                                                <i class="far fa-credit-card me-2"></i>
+                                                Solicitar Pago
+                                            </button>
+                                            <button name="cash-payment"
+                                                    class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
+                                                <i class="fas fa-money-bill-1 me-2"></i>
+                                                Pagar con efectivo
+                                            </button>
+                                            <button name="cancel-pay"
+                                                    class="btn btn-danger btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
+                                                <i class="fas fa-close me-2"></i>
+                                                Cancelar compra
+                                            </button>
+                                        </div>
+                                    </form>
+                                {% else %}
+                                    <p class="note note-success mt-4">
+                                        Se ha definido que el pago fue seleccionado como tipo
+                                        <b>{{ payment.get_tipo_display }}</b> el
+                                        <b>{{ payment.fecha_reg }} hrs</b>. {% if payment.validador %}Efectuado por
+                                        <b>{{ payment.validador }}</b>{% endif %}.
+                                    </p>
+                                    <div class="d-flex justify-content-end">
+                                        <button name="reverse-pay" class="btn btn-danger btn-sm btn-rounded shadow-0">
+                                            <i class="fas fa-close me-2"></i>
+                                            Revertir compra
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                {% if user.citas.first %}
+                    <div id="citas"
+                         class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 fw-bold"><i class="fas fa-calendar-day me-3"></i>Cita Agendada</h4>
+                    </div>
+                    <div class="shadow-4 bg-white rounded-5 p-5 my-4">
+                        {% with date=user.citas.first %}
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th class="bg-light" style="width: 40%;">Folio</th>
+                                        <td>{{ date.folio }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light" style="width: 40%;">Fecha</th>
+                                        <td>{{ date.fecha }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light" style="width: 40%;">Hora</th>
+                                        <td>{{ date.hora }} horas</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light" style="width: 40%;">Lugar</th>
+                                        <td>Parque Tabasco Dora María</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light" style="width: 40%;">Documento de Cita</th>
+                                        <td><a target="_blank" class="btn btn-sm btn-success shadow-0"
+                                               href="{% url 'places:download_date' object.uuid date.uuid %}">Descargar
+                                            cita</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endwith %}
+                    </div>
+                {% endif %}
             </div>
-            {% endif %}
         </div>
     </div>
-</div>
 {% endblock main %}

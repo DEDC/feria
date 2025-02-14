@@ -162,3 +162,30 @@ LIMIT_ALL_PLACES = 900
 
 URL_CURP = config('URL_CURP')
 TOKEN_CURP = config('TOKEN_CURP')
+
+# TPAY Config
+TPAY_RUTA = config('TPAY_RUTA')
+TPAY_SOCKET = config('TPAY_SOCKET')
+TPAY_APIKEY = config('TPAY_APIKEY')
+TPAY_SISTEMA = config('TPAY_SISTEMA')
+TPAY_PROJECT_ID = config('TPAY_PROJECT_ID')
+TPAY_SESSION_ABORDAJE = config('TPAY_SESSION_ABORDAJE')
+TPAY_SESSION_ACCESS = config('TPAY_SESSION_ACCESS')
+TPAY_CAPTURA = config('TPAY_CAPTURA')
+TPAY_PROJECT = config('TPAY_PROJECT')
+TPAY_CHANNEL_SERVICE = config('TPAY_CHANNEL_SERVICE')
+
+kEYAES=config("AESKEY")
+IVAES=config("AESIV")
+
+# Configuración de correo en Django (settings.py)
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = config('EMAIL_SMTP')  # Cambia esto por tu proveedor SMTP (ej: smtp.gmail.com, smtp.office365.com)
+EMAIL_PORT = config('EMAIL_PORT')  # 465 para SSL, 587 para TLS
+EMAIL_USE_TLS = False  # Usa TLS (seguro)
+EMAIL_USE_SSL = True  # Usa SSL (poner en True si usas el puerto 465)
+EMAIL_HOST_USER = config('EMAIL_USER')  # Tu correo
+EMAIL_HOST_PASSWORD = config('EMAIL_PASS')  # Tu contraseña (usa variables de entorno para más seguridad)
+DEFAULT_FROM_EMAIL = config('EMAIL_USER')  # Nombre que aparecerá en los correos enviados
+

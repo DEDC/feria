@@ -13,6 +13,7 @@ from apps.places.forms import RequestForm, ShopForm
 # dates
 from apps.dates.models import CitasAgendadas
 from apps.dates.tools import get_dates_from_range, get_times_from_range
+from apps.tpay.tools import generarToken, solicitar_linea_captura
 # utils
 from utils.permissions import UserPermissions
 from utils.date import get_date_constancy
@@ -86,80 +87,37 @@ class Request(UserPermissions, DetailView):
 
     def post(self, request, *args, **kwargs):
         request_ = self.get_object()
-        if 'reverse-pay' in request.POST:
-            if request_.estatus == 'validated':
-                payment = request_.solicitud_pagos.first()
-                if payment:
-                    payment.delete()
-                    Validaciones.objects.create(solicitud=request_, estatus=request_.estatus, atendido=True, comentarios='El validador revirtió la compra', validador=request.user.get_full_name())
-                    messages.success(request, 'El pago se ha revertido exitosamente')
         if 'card-payment' in request.POST:
+            token = generarToken({
+                "user": request_.nombre.replace(" ", ""),
+                "email": request_.usuario.email
+            })
+            lineapago = solicitar_linea_captura(
+                token, request_.folio, request_.nombre, request_.curp_txt, request_.calle,
+                request_.colonia, request_.codigo_postal, request_.estado, request_.municipio
+            )
             if request_.estatus == 'validated':
-                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='tarjeta', pagado=True, validador=request.user.get_full_name())
+                # Pagos.objects.get_or_create(
+                #     solicitud=request_, usuario=request_.usuario, tipo='tarjeta', pagado=True,
+                #     validador=request.user.get_full_name(), data_tpay=lineapago
+                # )
                 messages.success(request, 'El Pago se definió con tarjeta')
+        elif 'cash-payment' in request.POST:
+            if request_.estatus == 'validated':
+                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='efectivo', pagado=False,
+                                            validador=request.user.get_full_name())
+                messages.success(request, 'El Pago se definió con efectivo. A la espera del comprobante del pago')
         elif 'cancel-pay' in request.POST:
             for place in request_.solicitud_lugar.all():
                 for px in place.extras.all():
                     px.delete()
                 place.delete()
-            Validaciones.objects.create(solicitud=request_, estatus=request_.estatus, atendido=True, comentarios='El validador canceló la compra', validador=request.user.get_full_name())
+            Validaciones.objects.create(solicitud=request_, estatus=request_.estatus, atendido=True,
+                                        comentarios='El validador canceló la compra',
+                                        validador=request.user.get_full_name())
             messages.success(request, 'El proceso de pago ha sido cancelado exitosamente')
-        elif 'cash-payment' in request.POST:
-            if request_.estatus == 'validated':
-                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='efectivo', pagado=False, validador=request.user.get_full_name())
-                messages.success(request, 'El Pago se definió con efectivo. A la espera del comprobante del pago')
-        elif 'cash-paid' in request.POST:
-            if request_.estatus == 'validated':
-                payment = request_.solicitud_pagos.first()
-                if payment:
-                    payment.pagado = True
-                    payment.save()
-                    messages.success(request, 'Se confirma el pago en efectivo')
-        elif 'transfer-paid' in request.POST:
-            if request_.estatus == 'validated':
-                payment = request_.solicitud_pagos.first()
-                if payment:
-                    payment.pagado = True
-                    payment.tipo = 'transferencia'
-                    payment.save()
-                    messages.success(request, 'Se confirma el pago con transferencia')
-        if 'validated' in request.POST:
-            request_.estatus = 'validated'
-            request_.save()
-            Validaciones.objects.create(solicitud=request_, estatus='validated', validador=request.user.get_full_name())
-            messages.success(request, 'Estatus asignado exitosamente.')
-        elif 'rejected' in request.POST:
-            request_.estatus = 'rejected'
-            lookup = (~Q(estatus='rejected'))
-            sib_req = Solicitudes.objects.filter(lookup, usuario=request_.usuario).exclude(uuid=request_.uuid)
-            if not sib_req.exists():
-                # quitar cita
-                date = request_.usuario.citas.first()
-                if date:
-                    messages.warning(request, 'La Cita {} - {} fue liberada.'.format(date.fecha, date.hora))
-                    date.delete()
-            request_.save()
-            Validaciones.objects.create(solicitud=request_, estatus='rejected', validador=request.user.get_full_name())
-            messages.success(request, 'Estatus asignado exitosamente.')
-        elif 'pending' in request.POST:
-            validation_fields = ['factura', 'regimen_fiscal', 'nombre', 'nombre_replegal', 'rfc_txt', 'curp_txt', 'calle', 'no_calle', 'colonia', 'codigo_postal', 'estado', 'municipio', 'constancia_fiscal', 'comprobante_domicilio', 'acta_constitutiva', 'identificacion', 'curp']
-            data = {
-                'just_fields': [],
-                'field_comments': {}
-            }
-            for f in request.POST:
-                if f in validation_fields:
-                    if not request.POST.get(f).strip() == '':
-                        data['just_fields'].append(f)
-                        data['field_comments'][f] = request.POST.get(f).strip()
-            if data['just_fields']:
-                request_.estatus = 'pending'
-                request_.save()
-                Validaciones.objects.create(solicitud=request_, estatus='pending', validador=request.user.get_full_name(), campos=data)
-                messages.success(request, 'Estatus asignado exitosamente.')
-            else:
-                messages.warning(request, 'No se realizó ninguna acción. No se detectaron campos validados.')
-        return redirect('admin:request', request_.uuid)
+
+        return redirect('places:detail_request', request_.uuid)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -171,6 +129,9 @@ class Request(UserPermissions, DetailView):
         context['payment'] = self.object.solicitud_pagos.first()
         context['requests'] = self.request.user.solicitudes.all()
         context['dates'] = self.request.user.citas.order_by('fecha', 'hora')
+        context['tpay_ruta'] = settings.TPAY_RUTA
+        context['tpay_socket'] = settings.TPAY_SOCKET
+        context['tpay_apikey'] = settings.TPAY_APIKEY
         return context
 
 
