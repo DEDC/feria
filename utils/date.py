@@ -26,7 +26,7 @@ def get_date_constancy(request_, date):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=CITA_ESPACIOS_FERIA.pdf'
     output = PdfWriter()
-    inputw = PdfReader(open('static/docs/CITA_ESPACIOS_FERIA.pdf', 'rb'))
+    inputw = PdfReader(open('static/docs/CITA_ESPACIOS_FERIA_2025.pdf', 'rb'))
     # num_pages = inputw.getNumPages()
     buffer = io.BytesIO()
     pdf = Canvas(buffer)
