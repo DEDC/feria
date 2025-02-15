@@ -52,8 +52,7 @@
         <div class="row gx-xl-5">
             <div class="col-xl-3">
                 <div class="shadow-4 p-4 bg-white rounded-5 mb-4">
-                    <a href="#" type="button"
-                       class="btn btn-secondary btn-rounded btn-lg w-100"><i class="fas fa-plus me-3"></i>No disponible</a>
+                    <a href="{% url 'places:main' %}" type="button" class="btn btn-primary btn-rounded btn-lg w-100"><i class="fas fa-angle-left me-3"></i>Solicitudes</a>
                 </div>
                 <div class="shadow-4 bg-white rounded-5 overflow-hidden d-none d-xl-block">
                     <div class="bg-light p-4 text-center">
@@ -85,6 +84,15 @@
             </div>
             <div class="col-xl-9 mb-4 mb-lg-0">
                 {% include 'base/validations.html' %}
+                {% if object.comercio %}
+                {% if not object.estatus == 'validated' and not object.estatus == 'rejected' %}
+                <div class="alert alert-dismissible fade show" role="alert" data-mdb-color="warning"><i
+                    class="fas fa-exclamation-triangle me-2"></i>
+                    <b>Su solicitud se ha guardado correctamente, el equipo de Comercialización  revisará su información.</b> Manténgase pendiente de su correo electrónico así como de este medio ya que serán las únicas vías para saber si tiene algún documento o información que deba modificar o bien, si su solicitud fue validada para avanzar a la selección del o los espacios a rentar así como para efectuar el pago correspondiente.
+                    <button type="button" class="btn-close"
+                    data-mdb-dismiss="alert" aria-label="Close"></button></div>
+                {% endif %}
+                {% endif %}
                 {% if not object.comercio %}
                     <div class="alert" role="alert" data-mdb-color="warning">
                         <i class="fas fa-exclamation-triangle me-3"></i>Para continuar con el proceso de la Solicitud <a
@@ -121,6 +129,23 @@
                     <div class="table-responsive">
                         <table class="table">
                             <tbody>
+                            <tr>
+                                <th class="bg-light" style="width: 40%;">Estatus actual
+                                <td>
+                                    {% if object.estatus == 'validated' %}
+                                    <span class="badge rounded-pill badge-success">Validado</span>
+                                    {% elif object.estatus == 'rejected' %}
+                                    <span class="badge rounded-pill badge-danger">Rechazado</span>
+                                    {% elif object.estatus == 'pending' %}
+                                    <span class="badge rounded-pill badge-warning">Observado</span>
+                                    {% elif object.estatus == 'resolved' %}
+                                    <span class="badge rounded-pill badge-primary">Solventado por el
+                                        usuario</span>
+                                    {% else %}
+                                    <span class="badge rounded-pill badge-secondary">No asignado</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Fecha de registro</th>
                                 <td>{{ object.fecha_reg }}</td>
@@ -249,6 +274,23 @@
                             <table class="table">
                                 <tbody>
                                 <tr>
+                                    <th class="bg-light" style="width: 40%;">Estatus actual
+                                    <td>
+                                        {% if object.comercio.estatus == 'validated' %}
+                                        <span class="badge rounded-pill badge-success">Validado</span>
+                                        {% elif object.comercio.estatus == 'rejected' %}
+                                        <span class="badge rounded-pill badge-danger">Rechazado</span>
+                                        {% elif object.comercio.estatus == 'pending' %}
+                                        <span class="badge rounded-pill badge-warning">Observado</span>
+                                        {% elif object.comercio.estatus == 'resolved' %}
+                                        <span class="badge rounded-pill badge-primary">Solventado por el
+                                            usuario</span>
+                                        {% else %}
+                                        <span class="badge rounded-pill badge-secondary">No asignado</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
                                     <th class="bg-light" style="width: 40%;">Folio</th>
                                     <td>{{ object.comercio.folio }}</td>
                                 </tr>
@@ -290,8 +332,6 @@
                         <h4 class="mb-0 fw-bold">
                             <i class="fas fa-map-pin me-3 green-text"></i>Selección de Espacios
                         </h4>
-                        <button type="button" id="reload-places" class="btn btn-lg btn-link btn-rounded"><i
-                                class="fas fa-arrows-rotate fa-lg"></i></button>
                     </div>
                     <p class="note note-info mb-4">
                         Al <b>Preseleccionar</b> los espacios se bloquearán por <b>30 minutos</b> y no serán visibles
@@ -300,12 +340,12 @@
                     </p>
                     <div
                             class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
-                        <button id="zone-a" type="button" class="btn btn-light">Zona A</button>
-                        <button id="zone-b" type="button" class="btn btn-light">Zona B</button>
-                        <button id="zone-c" type="button" class="btn btn-light">Zona C</button>
-                        <button id="zone-d" type="button" class="btn btn-light">Zona D</button>
-                        <button id="n-1" type="button" class="btn btn-light">Nave 1</button>
-                        <button id="n-2" type="button" class="btn btn-light">Nave 3</button>
+                        <button id="zone-a" type="button" class="btn btn-light">Zona A<i class="fas fa-arrows-rotate ms-2"></i></button>
+                        <button id="zone-b" type="button" class="btn btn-light">Zona B<i class="fas fa-arrows-rotate ms-2"></i></button>
+                        <button id="zone-c" type="button" class="btn btn-light">Zona C<i class="fas fa-arrows-rotate ms-2"></i></button>
+                        <button id="zone-d" type="button" class="btn btn-light">Zona D<i class="fas fa-arrows-rotate ms-2"></i></button>
+                        <button id="n-1" type="button" class="btn btn-light">Nave 1<i class="fas fa-arrows-rotate ms-2"></i></button>
+                        <button id="n-2" type="button" class="btn btn-light">Nave 3<i class="fas fa-arrows-rotate ms-2"></i></button>
                     </div>
                     <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
                         <input type="hidden" name="limit_places" value="{{ object.cantidad_espacios }}">
