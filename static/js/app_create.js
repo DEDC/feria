@@ -141,8 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 element.style.display = "none";
             });
             Swal.fire({
-                title: 'Error!',
-                text: 'El formato de la curp es invalido',
+                title: 'CURP',
+                text: 'El formato de la CURP no es válido',
                 icon: 'error',
                 confirmButtonText: 'Aceptar'
             })
