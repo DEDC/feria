@@ -11,6 +11,10 @@ from feria import settings
 
 keyAES = settings.kEYAES
 ivAES = settings.IVAES
+tramites = {
+    "A": "6171", "B": "6172", "C": "6173", "D": "6174", "N1": "6175",
+    "N2": "6176", "N3": "6177", "N4": "6178", "N5": "6179"
+}
 
 
 def encriptarData(data):
@@ -65,7 +69,7 @@ def generarToken(usuario):
 
         response = requests.post(
             "{}api/v1/gateway/client/loginMov".format(settings.TPAY_RUTA), params=param, headers=header,
-            data=jsonData, verify=False, stream=False
+            data=jsonData
         )
         respJson = json.loads(response.text)
         tokenDesencriptado = desencriptado(respJson["data"])
@@ -91,9 +95,10 @@ def sendEmail(correo, html, subject):
     message.send()
 
 
-def solicitar_linea_captura(token, folio, nombre, curp, calle, colonia, cp, estado, municipio):
+def solicitar_linea_captura(token, folio, zona, nombre, curp, calle, colonia, cp, estado, municipio):
     try:
-        folio = f"/?folioSeguimiento={folio}&token={token}&nombre={nombre}&curp={curp}&calle={calle}&colonia={colonia}&cp={cp}&estado={estado}&municipio={municipio}"
+        folio = f"/?folioSeguimiento={folio}&idTramite={tramites[zona]}&nombre={nombre}&curp={curp}&calle={calle}&colonia={colonia}&cp={cp}&estado={estado}&municipio={municipio}"
+        # folio = f"/?folioSeguimiento={folio}&idTramite={tramites[zona]}"
         # folio = f"/?folioSeguimiento={folio}&token={token}&nombre={nombre}&paterno={paterno}&materno={materno}&curp={curp}&calle={calle}&colonia={colonia}&cp={cp}&estado={estado}&municipio={municipio}"
         folioEncriptado = encriptarData(folio)
         header = {
@@ -102,9 +107,15 @@ def solicitar_linea_captura(token, folio, nombre, curp, calle, colonia, cp, esta
             "X-API-KEY": settings.TPAY_APIKEY,
             "X-SESSION-KEY": settings.TPAY_SESSION_ACCESS,
             "X-SISTEMA-KEY": settings.TPAY_SISTEMA,
+            "X-CHANNEL-SERVICE": settings.TPAY_CAPTURA,
             "Authorization": f"Bearer {token}"
         }
-        response = requests.get(f"{settings.TPAY_RUTA}?query={folioEncriptado}", headers=header)
+        parms = {"query": folioEncriptado}
+
+        response = requests.get(
+            f"{settings.TPAY_RUTA}api/v1/gateway/servExtApi1/externo/getLineaCaptura?query={folioEncriptado}",
+            headers=header
+        )
         respLinea = desencriptado(response.text)
         data = json.loads(respLinea)
         return data

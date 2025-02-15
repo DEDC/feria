@@ -1,4 +1,6 @@
 # Django
+import json
+
 from django.views.generic import TemplateView, CreateView, DetailView, RedirectView
 from django.urls import reverse_lazy, reverse
 from django.http import Http404
@@ -87,18 +89,7 @@ class Request(UserPermissions, DetailView):
 
     def post(self, request, *args, **kwargs):
         request_ = self.get_object()
-        if 'create-payment' in request.POST:
-            # token, error = generarToken({
-            #     "user": request_.nombre.replace(" ", ""),
-            #     "email": request_.usuario.email
-            # })
-            # if not error:
-            #     lineapago = solicitar_linea_captura(
-            #         token, request_.folio, request_.nombre, request_.curp_txt, request_.calle,
-            #         request_.colonia, request_.codigo_postal, request_.estado, request_.municipio
-            #     )
-            # else:
-            #     messages.error(request, f"{token}")
+        if 'send-payment' in request.POST:
             if request_.estatus == 'validated':
                 Pagos.objects.get_or_create(
                     solicitud=request_, usuario=request_.usuario, tipo='tarjeta', pagado=True,
@@ -118,6 +109,24 @@ class Request(UserPermissions, DetailView):
                                 messages.success(self.request, 'Cita asignada exitosamente.')
                                 break
                 messages.success(request, 'El Pago se definió con tarjeta')
+        elif 'create-payment' in request.POST:
+            user_data = json.dumps({
+                    "user": request_.nombre,
+                    "email": request_.usuario.email
+                }, separators=(",", ":")
+            )
+            token, error = generarToken(user_data)
+
+            if not error:
+                lineapago = solicitar_linea_captura(
+                    token, request_.folio, "A", request_.nombre, request_.curp_txt, request_.calle,
+                    request_.colonia, request_.codigo_postal, request_.estado, request_.municipio
+                )
+                request_.data_tpay = lineapago
+                request_.save()
+            else:
+                messages.error(request, f"{token}")
+
         elif 'cancel-pay' in request.POST:
             for place in request_.solicitud_lugar.all():
                 for px in place.extras.all():
@@ -143,6 +152,14 @@ class Request(UserPermissions, DetailView):
         context['tpay_ruta'] = settings.TPAY_RUTA
         context['tpay_socket'] = settings.TPAY_SOCKET
         context['tpay_apikey'] = settings.TPAY_APIKEY
+        if self.object.data_tpay:
+            tpay = self.object.data_tpay
+            if tpay["resultado"]:
+                try:
+                    context["pdf_url"] = tpay["data"]["urlFormatoPago"]["_text"]
+                    context["tpay_url"] = f"https://tpayqa.tabasco.gob.mx/tpay/?linea_captura={tpay['data']['lineaCaptura']['_text'].split('|')[1]}"
+                except Exception as e:
+                    print(e)
         return context
 
 

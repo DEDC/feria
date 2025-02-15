@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
 class Usuarios(AbstractUser):
     class Meta:
         ordering = ['-is_superuser', 'date_joined']

@@ -37,6 +37,7 @@ class Solicitudes(ControlInfo):
     # others
     nombre_replegal = models.CharField('Nombre del Representante Legal', max_length=100, null=True, blank=True)
     factura = models.BooleanField('Factura', choices=((True, 'Sí'), (False, 'No')))
+    data_tpay = models.JSONField(null=True, blank=True)
 
     def get_last_unattended_validation(self):
         return self.validaciones.filter(atendido=False, estatus='pending').last()

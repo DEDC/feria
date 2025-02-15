@@ -44,8 +44,8 @@
             background-color: #9FA6B2 !important;
         }
     </style>
-    <script>
-    </script>
+    <script async defer src="{{ tpay_ruta }}api/v1/component/js/orden?clientid={{ tpay_apikey }}"></script>
+    <script async defer src="{{ tpay_ruta }}api/v1/component/js/object?clientid={{ tpay_apikey }}"></script>
 {% endblock head %}
 {% block main %}
     <div class="container-fluid p-5">
@@ -430,11 +430,25 @@
                                     <form method="post">
                                         {% csrf_token %}
                                         <div class="d-flex justify-content-center">
-                                            <button name="create-payment"
-                                                    class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50">
-                                                <i class="far fa-credit-card me-2"></i>
-                                                Solicitar Pago
-                                            </button>
+                                            {% if object.data_tpay %}
+                                                <button type="button"
+                                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50">
+                                                    <i class="far fa-credit-card me-2"></i>
+                                                    Pagar en linea
+                                                </button>
+                                                <button type="button" id="btnEfectivo"
+                                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50">
+                                                    <i class="far fa-money-bill-1 me-2"></i>
+                                                    Pagar en efectivo
+                                                </button>
+                                            {% else %}
+                                                <button name="create-payment"
+                                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50">
+                                                    <i class="far fa-credit-card me-2"></i>
+                                                    Solicitar Pago
+                                                </button>
+                                            {% endif %}
+
                                             <button name="cancel-pay"
                                                     class="btn btn-danger btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
                                                 <i class="fas fa-close me-2"></i>
@@ -499,6 +513,79 @@
                         {% endwith %}
                     </div>
                 {% endif %}
+
+                {% if payment %}
+                    <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
+                         id="places">
+                        <h4 class="mb-0 fw-bold">
+                            <i class="fas fa-download me-3 green-text"></i>Descarga de documentos
+                        </h4>
+                    </div>
+                    <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
+                        {% if payment.pagado %}
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th class="bg-light" style="width: 40%;">Contrato</th>
+                                        <td><a class="btn btn-sm btn-success shadow-0"
+                                               href="{% url 'admin:download_contract' object.uuid %}">Descargar
+                                            Contrato</a></td>
+                                    </tr>
+                                    {% for place in selected_places %}
+                                        <tr>
+                                            <th class="bg-light" style="width: 40%;">
+                                                {{ place.get_zona_display }}&nbsp;&nbsp;{{ place.nombre }}
+                                                ({{ place.folio }})
+                                            </th>
+                                            <td><a class="btn btn-sm btn-success shadow-0"
+                                                   href="{% url 'admin:download_gafete' object.uuid place.uuid %}">Descargar
+                                                Gafete</a>
+                                                <a class="btn btn-sm btn-primary shadow-0 ms-2"
+                                                   href="{% url 'admin:download_suministros' object.uuid place.uuid %}">Descargar
+                                                    Suministros</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="note note-warning mt-4">
+                                A la espera del comprobante de pago en efectivo para liberar los documentos de
+                                descarga
+                            </p>
+                            <div class="d-flex justify-content-center">
+                                <button name="cash-paid"
+                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
+                                    <i class="fas fa-money-bill-1 me-2"></i>
+                                    Pagado con efectivo
+                                </button>
+                                <button name="transfer-paid"
+                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
+                                    <i class="fas fa-right-left me-2"></i>
+                                    Pagado con transferencia
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="modal fade show" id="modal-iframe" tabindex="-1" aria-labelledby="exampleModalFullscreenLabel"
+         style="display: block;" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title h4" id="exampleModalFullscreenLabel">Formato de pago: <strong id="type_pago"></strong></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <iframe src="{{ tpay_url }}" style="width: 100%; height: 90vh" frameborder="0"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnClose" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
