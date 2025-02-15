@@ -88,8 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
             var data = []
             let timerInterval;
             Swal.fire({
-                title: "Bucando CURP...",
-                html: "Esta ventana se cerra al finalizar la busqueda.",
+                title: "Validando CURP...",
+                html: "Esta ventana se cerrará al finalizar la búsqueda.",
                 howLoaderOnConfirm: true,
                 timer: 20000,
                 timerProgressBar: true,

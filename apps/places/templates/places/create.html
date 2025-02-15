@@ -59,7 +59,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css
             <div class="shadow-4 bg-white rounded-5 p-5">
                 <form method="post" enctype="multipart/form-data" id="form-request">
                     {% csrf_token %}
-                    <h6><b>Validar CURP</b></h6>
+                    <h6><b>Primero, ingresa tu CURP para ser validada</b></h6>
                     <hr>
                     <div class="row">
                         <div class="col-12">
@@ -73,8 +73,8 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css
                         </div>
                         <br>
                         <br>
-                        <div class="alert" role="alert" data-mdb-color="info">
-                            Las solicitudes que ingreses seran vinculados a tu CURP, Tienes para seleccionar 3 locales por solicitud
+                        <div class="alert mt-3" role="alert" data-mdb-color="info">
+                            Una vez validada, podrás continuar con el proceso de registro. Las solicitudes serán vinculadas a tu CURP.
                         </div>
                     </div>
                     <h6 class="form-sol"><b>Información General</b></h6>
