@@ -98,7 +98,7 @@ class Request(UserPermissions, DetailView):
                     request_.colonia, request_.codigo_postal, request_.estado, request_.municipio
                 )
             else:
-                messages.error(request, f"{token['error']['message']}")
+                messages.error(request, f"{token}")
             if request_.estatus == 'validated':
                 # Pagos.objects.get_or_create(
                 #     solicitud=request_, usuario=request_.usuario, tipo='tarjeta', pagado=True,

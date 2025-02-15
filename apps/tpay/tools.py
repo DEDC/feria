@@ -64,8 +64,8 @@ def generarToken(usuario):
         param = {"query": False}
 
         response = requests.post(
-            "{}/api/v1/gateway/client/loginMov".format(settings.TPAY_RUTA), params=param, headers=header,
-            data=jsonData
+            "{}api/v1/gateway/client/loginMov".format(settings.TPAY_RUTA), params=param, headers=header,
+            data=jsonData, verify=False, stream=False
         )
         respJson = json.loads(response.text)
         tokenDesencriptado = desencriptado(respJson["data"])
@@ -76,7 +76,7 @@ def generarToken(usuario):
         logging.warning(f"Fecha: {datetime.now()}")
         logging.error(f"error desencriptado: {e}")
         logging.warning("----------------------------------")
-        return respJson, True
+        return "504 Tiempo de espera agotado", True
 
 
 def sendEmail(correo, html, subject):
