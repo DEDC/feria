@@ -45,6 +45,7 @@ class ShopForm(forms.ModelForm):
         widgets = {
             'equipos': forms.TextInput(attrs={'placeholder': 'Ej. Mesas, Estúfas, Hornos, Refrigeradores, etc.'}),
             'voltaje': forms.Select(attrs={'class': 'select'}),
+            'giro': forms.Select(attrs={'class': 'select'}),
             'descripcion': forms.Textarea(attrs={'rows': '3'})
         }
     

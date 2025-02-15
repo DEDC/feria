@@ -32,12 +32,6 @@
         <div class="col-xl-9 mb-4 mb-lg-0">
             {% include 'base/validations.html' %}
             {% if not requests %}
-            <p class="note note-warning">
-                <b>
-                    Gracias expositores, hemos alcanzado el máximo de solicitudes. Gracias por su participación.
-                    Mantente al tanto de nuestras redes sociales. ¡Vivamos juntos la algarabía!
-                </b>
-            </p>
             <div class="alert" role="alert" data-mdb-color="warning">
                 <i class="fas fa-exclamation-triangle me-3"></i>Comience creando una Solicitud 
                 <a href="{% url 'places:create_request' %}" class="btn btn-sm btn-warning shadow-0 ms-2">Crear Solicitud</a>

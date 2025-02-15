@@ -56,10 +56,10 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css
                     role="button">Ver
                     mis solicitudes<i class="fas fa-arrow-right ms-2"></i></a>
             </div>
-            <div class="shadow-4 bg-white rounded-5 p-5">
-                <form method="post" enctype="multipart/form-data" id="form-request">
-                    {% csrf_token %}
-                    <h6><b>Validar CURP</b></h6>
+            <form method="post" enctype="multipart/form-data" id="form-request">
+                {% csrf_token %}
+                <div class="shadow-4 bg-white rounded-5 p-5">
+                    <h6><b>Primero, ingresa tu CURP para ser validada</b></h6>
                     <hr>
                     <div class="row">
                         <div class="col-12">
@@ -73,10 +73,12 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css
                         </div>
                         <br>
                         <br>
-                        <div class="alert" role="alert" data-mdb-color="info">
-                            Las solicitudes que ingreses seran vinculados a tu CURP, Tienes para seleccionar 3 locales por solicitud
+                        <div class="alert mt-3" role="alert" data-mdb-color="info">
+                            Una vez validada, podrás continuar con el proceso de registro. Las solicitudes serán vinculadas a tu CURP.
                         </div>
                     </div>
+                </div>
+                <div class="shadow-4 bg-white rounded-5 p-5 mt-4">
                     <h6 class="form-sol"><b>Información General</b></h6>
                     <hr class="form-sol">
                     <div class="row form-sol">
@@ -130,7 +132,20 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css
                                 <input type="number" name="cantidad_espacios" min="1" max="{{max_places}}"
                                     class="form-control" required id="id_cantidad_espacios">
                                 <label class="form-label"
-                                    for="{{form.cantidad_espacios.id}}">{{form.cantidad_espacios.label}}</label>
+                                    for="{{form.cantidad_espacios.id}}">{{form.cantidad_espacios.label}} (máximo 3)</label>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-4">
+                            <label class="form-check-label ms-2 me-3 fw-bold">{{form.mas_espacios.label}}</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="mas_espacios" id="morespaces1" value="True"
+                                    required />
+                                <label class="form-check-label" for="morespaces1">Sí</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="mas_espacios" id="morespaces2" value="False"
+                                    required checked />
+                                <label class="form-check-label" for="morespaces2">No</label>
                             </div>
                         </div>
                     </div>
@@ -199,8 +214,8 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css
                     <div class="d-grid gap-2 col-6 mx-auto mt-3">
                         <button class="btn btn-primary form-sol" type="submit">Guardar registro</button>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
