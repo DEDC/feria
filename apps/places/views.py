@@ -87,29 +87,37 @@ class Request(UserPermissions, DetailView):
 
     def post(self, request, *args, **kwargs):
         request_ = self.get_object()
-        if 'card-payment' in request.POST:
-            token, error = generarToken({
-                "user": request_.nombre.replace(" ", ""),
-                "email": request_.usuario.email
-            })
-            if not error:
-                lineapago = solicitar_linea_captura(
-                    token, request_.folio, request_.nombre, request_.curp_txt, request_.calle,
-                    request_.colonia, request_.codigo_postal, request_.estado, request_.municipio
+        if 'create-payment' in request.POST:
+            # token, error = generarToken({
+            #     "user": request_.nombre.replace(" ", ""),
+            #     "email": request_.usuario.email
+            # })
+            # if not error:
+            #     lineapago = solicitar_linea_captura(
+            #         token, request_.folio, request_.nombre, request_.curp_txt, request_.calle,
+            #         request_.colonia, request_.codigo_postal, request_.estado, request_.municipio
+            #     )
+            # else:
+            #     messages.error(request, f"{token}")
+            if request_.estatus == 'validated':
+                Pagos.objects.get_or_create(
+                    solicitud=request_, usuario=request_.usuario, tipo='tarjeta', pagado=True,
+                    validador=request.user.get_full_name()
                 )
-            else:
-                messages.error(request, f"{token}")
-            if request_.estatus == 'validated':
-                # Pagos.objects.get_or_create(
-                #     solicitud=request_, usuario=request_.usuario, tipo='tarjeta', pagado=True,
-                #     validador=request.user.get_full_name(), data_tpay=lineapago
-                # )
+
+                if not self.request.user.citas.exists():
+                    # assing date
+                    assign = False
+                    for d in dates:
+                        if assign: break
+                        for h in hours:
+                            assigned_dates = CitasAgendadas.objects.filter(fecha=d, hora=h)
+                            if assigned_dates.count() < settings.ATTENTION_MODULES:
+                                CitasAgendadas.objects.create(fecha=d, hora=h, usuario=self.request.user)
+                                assign = True
+                                messages.success(self.request, 'Cita asignada exitosamente.')
+                                break
                 messages.success(request, 'El Pago se definió con tarjeta')
-        elif 'cash-payment' in request.POST:
-            if request_.estatus == 'validated':
-                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='efectivo', pagado=False,
-                                            validador=request.user.get_full_name())
-                messages.success(request, 'El Pago se definió con efectivo. A la espera del comprobante del pago')
         elif 'cancel-pay' in request.POST:
             for place in request_.solicitud_lugar.all():
                 for px in place.extras.all():
