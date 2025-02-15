@@ -132,7 +132,20 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css
                                 <input type="number" name="cantidad_espacios" min="1" max="{{max_places}}"
                                     class="form-control" required id="id_cantidad_espacios">
                                 <label class="form-label"
-                                    for="{{form.cantidad_espacios.id}}">{{form.cantidad_espacios.label}}</label>
+                                    for="{{form.cantidad_espacios.id}}">{{form.cantidad_espacios.label}} (máximo 3)</label>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-4">
+                            <label class="form-check-label ms-2 me-3 fw-bold">{{form.mas_espacios.label}}</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="mas_espacios" id="morespaces1" value="True"
+                                    required />
+                                <label class="form-check-label" for="morespaces1">Sí</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="mas_espacios" id="morespaces2" value="False"
+                                    required checked />
+                                <label class="form-check-label" for="morespaces2">No</label>
                             </div>
                         </div>
                     </div>

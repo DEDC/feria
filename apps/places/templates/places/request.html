@@ -191,6 +191,10 @@
                                 <td>{{ object.cantidad_espacios }}</td>
                             </tr>
                             <tr>
+                                <th class="bg-light" style="width: 40%;">Requiero más espacios</th>
+                                <td>{{ object.get_mas_espacios_display }}</td>
+                            </tr>
+                            <tr>
                                 <th class="bg-light" style="width: 40%;">Calle</th>
                                 <td>{{ object.calle }}</td>
                             </tr>
@@ -301,6 +305,10 @@
                                 <tr>
                                     <th class="bg-light" style="width: 40%;">Descripción del comercio</th>
                                     <td>{{ object.comercio.descripcion|upper }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Giro del Comercio</th>
+                                    <td>{{ object.comercio.get_giro_display }}</td>
                                 </tr>
                                 <tr>
                                     <th class="bg-light" style="width: 40%;">Vende alcohol</th>

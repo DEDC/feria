@@ -10,12 +10,44 @@ from utils.models import ControlInfo, UploadTo
 from utils.validators import validate_pdf_file
 from utils.naves import estadosmexico
 
+giros = (
+    ('chocolates', 'Chocolates'), 
+    ('postres', 'Postres'),
+    ('pasteleria', 'Pastelería y Panadería'),
+    ('cafe', 'Café'),
+    ('miel', 'Miel'),
+    ('salsas', 'Salsas y Aderezos'),
+    ('frituras', 'Frituras y Botanas'),
+    ('quesos', 'Quesos y Embutidos'),
+    ('cervezas', 'Cerveza artesanal'),
+    ('cremas', 'Cremas de licor'),
+    ('vinos', 'Vinos artesanales'),
+    ('antojitos', 'Antojitos tabasqueños'),
+    ('butifarras', 'Butifarras'),
+    ('pozol', 'Pozol y Dulces'),
+    ('elotes', 'Elotes y Esquites (sin tanque de gas)'),
+    ('raspados', 'Raspados'),
+    ('dulces', 'Dulces típicos'),
+    ('algodon', 'Algodón de azúcar'),
+    ('palomitas', 'Palomitas'),
+    ('restaurantes', 'Restaurantes'),
+    ('cocina', 'Cocina de humo'),
+    ('botanas', 'Botanas y Comida rápida'),
+    ('bebidas', 'Bebidas preparadas y refrescos'),
+    ('panaderia', 'Postres y Panadería'),
+    ('bebidas_alcohol', 'Bebidas preparadas con alcohol'),
+    ('conservas', 'Conservas y Encurtidos'),
+    ('artesanias', 'Artesanías'),
+    ('juegos', 'Juguetes y Juegos'),
+)
+
 
 class Solicitudes(ControlInfo):
     identifier = 'SLC'
     estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Observado'), ('validated', 'Validado'), ('rejected', 'Rechazado'), ('resolved', 'Solventado'),))
     usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='solicitudes')
     cantidad_espacios = models.PositiveSmallIntegerField('Cantidad de espacios para el comercio', validators=[MinValueValidator(1)])
+    mas_espacios = models.BooleanField('Requiero más de 3 espacios', choices=((True, 'Sí'), (False, 'No')), default=False)
     regimen_fiscal = models.CharField('Régimen fiscal', max_length=100, choices = (('moral', 'Persona Moral'), ('fisica', 'Persona Física')), null=True, blank=True)
     # direccion
     colonia = models.CharField('Colonia', max_length=200)
@@ -51,6 +83,7 @@ class Comercios(ControlInfo):
     vende_alcohol = models.BooleanField('¿Vendará bedidas alcohólicas en su Comercio?', choices=((True, 'Sí'), (False, 'No')))
     voltaje = models.CharField('¿Qué voltaje necesita su Comercio?',   max_length=10, choices=(('110', '110v'), ('220', '220v')), null=True)
     equipos = models.CharField('¿Qué equipos usará para operar en su Comercio?', max_length=500, null=True)
+    giro = models.CharField('Giro del Comercio',   max_length=100, choices=giros, null=True)
     solicitud = models.OneToOneField(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='comercio')
 
     def get_last_unattended_validation(self):
