@@ -70,13 +70,13 @@ def generarToken(usuario):
         respJson = json.loads(response.text)
         tokenDesencriptado = desencriptado(respJson["data"])
         token = json.loads(tokenDesencriptado)
-        return token["session"]["token_user"]
+        return token["session"]["token_user"], False
     except Exception as e:
         logging.warning("------------------ERROR desencriptado----------------")
         logging.warning(f"Fecha: {datetime.now()}")
         logging.error(f"error desencriptado: {e}")
         logging.warning("----------------------------------")
-        return respJson
+        return respJson, True
 
 
 def sendEmail(correo, html, subject):

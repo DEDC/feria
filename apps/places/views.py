@@ -88,14 +88,17 @@ class Request(UserPermissions, DetailView):
     def post(self, request, *args, **kwargs):
         request_ = self.get_object()
         if 'card-payment' in request.POST:
-            token = generarToken({
+            token, error = generarToken({
                 "user": request_.nombre.replace(" ", ""),
                 "email": request_.usuario.email
             })
-            lineapago = solicitar_linea_captura(
-                token, request_.folio, request_.nombre, request_.curp_txt, request_.calle,
-                request_.colonia, request_.codigo_postal, request_.estado, request_.municipio
-            )
+            if not error:
+                lineapago = solicitar_linea_captura(
+                    token, request_.folio, request_.nombre, request_.curp_txt, request_.calle,
+                    request_.colonia, request_.codigo_postal, request_.estado, request_.municipio
+                )
+            else:
+                messages.error(request, f"{token['error']['message']}")
             if request_.estatus == 'validated':
                 # Pagos.objects.get_or_create(
                 #     solicitud=request_, usuario=request_.usuario, tipo='tarjeta', pagado=True,
