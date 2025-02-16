@@ -135,6 +135,22 @@
                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
                             <div class="ms-2 me-auto">
                                 <div class="fw-bold">
+                                    <input class="form-check-input me-1" type="checkbox" value="giro" />
+                                    {{object.get_giro_display}}
+                                </div>
+                                <small>Giro del Comercio</small>
+                            </div>
+                            <div>
+                                <div class="form-outline" data-mdb-input-init>
+                                    <textarea class="form-control d-none" rows="3"></textarea>
+                                    <label class="form-label">Observaciones</label>
+                                </div>
+                            </div>
+                        </li>
+                        <li
+                            class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">
                                     <input class="form-check-input me-1" type="checkbox" value="vende_alcohol" />
                                     {{object.vende_alcohol|yesno:'Sí,No'}}
                                 </div>
@@ -242,8 +258,13 @@
                                     {% endif %}
                             </td>
                             <td>{{vl.fecha_reg}}</td>
-                            <td>{{vl.comentarios|default:"No especificado"}}</td>
-                            <td>{{vl.campos|default:"No especificado"}}</td>
+                            <td>
+                                <td>
+                                    {% for key, value in vl.campos.field_comments.items %}
+                                    <b>{{key|title}}</b>: {{value}}
+                                    {% endfor %}
+                                </td>
+                            </td>
                             <td>
                                 {% if not vl.estatus == 'resolved' %}
                                 {{vl.validador}}

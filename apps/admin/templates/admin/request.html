@@ -167,6 +167,22 @@
                             <li
                                     class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
                                 <div class="ms-2 me-auto">
+                                    <div class="fw-bold">
+                                        <input class="form-check-input me-1" type="checkbox" value="mas_espacios"/>
+                                        {{ object.get_mas_espacios_display }}
+                                    </div>
+                                    <small>Requiero más de 3 espacios</small>
+                                </div>
+                                <div>
+                                    <div class="form-outline" data-mdb-input-init>
+                                        <textarea class="form-control d-none" rows="3"></textarea>
+                                        <label class="form-label">Observaciones</label>
+                                    </div>
+                                </div>
+                            </li>
+                            <li
+                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
+                                <div class="ms-2 me-auto">
                                     <div class="fw-bold"><a target="_blank"
                                                             href="{% url 'admin:update_user' object.usuario.id %}">{{ object.usuario.get_full_name }}</a>
                                     </div>
@@ -773,7 +789,11 @@
                                 </td>
                                 <td>{{ vl.fecha_reg }}</td>
                                 <td>{{ vl.comentarios|default:"No especificado" }}</td>
-                                <td>{{ vl.campos|default:"No especificado" }}</td>
+                                <td>
+                                    {% for key, value in vl.campos.field_comments.items %}
+                                    <b>{{key|title}}</b>: {{value}}
+                                    {% endfor %}
+                                </td>
                                 <td>
                                     {% if not vl.estatus == 'resolved' %}
                                         {{ vl.validador }}

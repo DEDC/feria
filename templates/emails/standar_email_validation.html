@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es-mx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificación Feria Tabasco 2025</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: #ffffff;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .content {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .subject {
+            font-size: 20px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #888888;
+            margin-top: 20px;
+        }
+
+        .button {
+            text-align: center;
+            display: block;
+            background-color: #e04392;
+            color: #ffffff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://siscomferia.com/static/images/logov3.png" alt="" width="200px">
+        </div>
+        <h3 class="subject">Notificación de Validación</h3>
+        <div class="content">
+            <p>{{username}}:</p>
+            <p>Se le ha asignado una validación con estatus de <b>{{estatus}}</b> al registro con folio <b>{{folio}}</b> en el Sistema de Comercialización
+                de la
+                Feria Tabasco 2025. Le invitamos a que ingrese al mismo con su usuario y contraseña para más
+                información.</p>
+            <p><a href="https://siscomferia.com/" class="button">Ir a la plataforma de Comercialización</a></p>
+        </div>
+        <div class="footer">
+            <p>&copy; Feria Tabasco 2025</p>
+        </div>
+    </div>
+</body>
+
+</html>

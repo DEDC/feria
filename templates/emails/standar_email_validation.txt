@@ -1,0 +1,5 @@
+
+Notificación de Validación | Feria Tabasco 2025. {{username}}: 
+Se le ha asignado una validación con estatus de {{estatus}} al registro con folio {{folio}} en el Sistema de Comercialización
+de la Feria Tabasco 2025. Le invitamos a que ingrese al mismo con su usuario y contraseña para más información.
+El sitio de internet es el siguiente https://siscomferia.com/
