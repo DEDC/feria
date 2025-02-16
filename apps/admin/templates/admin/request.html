@@ -789,7 +789,11 @@
                                 </td>
                                 <td>{{ vl.fecha_reg }}</td>
                                 <td>{{ vl.comentarios|default:"No especificado" }}</td>
-                                <td>{{ vl.campos|default:"No especificado" }}</td>
+                                <td>
+                                    {% for key, value in vl.campos.field_comments.items %}
+                                    <b>{{key|title}}</b>: {{value}}
+                                    {% endfor %}
+                                </td>
                                 <td>
                                     {% if not vl.estatus == 'resolved' %}
                                         {{ vl.validador }}
