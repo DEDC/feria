@@ -46,13 +46,58 @@
     </style>
     <script async defer src="{{ tpay_ruta }}api/v1/component/js/orden?clientid={{ tpay_apikey }}"></script>
     <script async defer src="{{ tpay_ruta }}api/v1/component/js/object?clientid={{ tpay_apikey }}"></script>
+    {% if object.data_tpay %}
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // Selecciona el botón y los elementos destino
+                const btnEfectivo = document.getElementById("btnEfectivo");
+                const btnTpay = document.getElementById("btnTpay");
+                const imagen = document.getElementById("iframe");
+                const texto = document.getElementById("type_pago");
+                const btn_close = document.querySelector('#btnClose');
+                const modal_select = document.querySelector('#modal-iframe');
+                const instance_select_modal = new mdb.Modal(modal_select)
+
+                // Función para manejar el evento click
+                btnEfectivo.addEventListener("click", function () {
+                    // Extraer los atributos data del botón
+                    const nuevoSrc = this.getAttribute("data-url");
+                    const nuevoTexto = this.getAttribute("data-type");
+
+                    // Asignar el nuevo src a la imagen
+                    imagen.src = nuevoSrc;
+
+                    // Actualizar el contenido del párrafo
+                    texto.textContent = nuevoTexto;
+                });
+
+                // Función para manejar el evento click
+                btnTpay.addEventListener("click", function () {
+                    // Extraer los atributos data del botón
+                    const nuevoSrc = this.getAttribute("data-url");
+                    const nuevoTexto = this.getAttribute("data-type");
+
+                    // Asignar el nuevo src a la imagen
+                    imagen.src = nuevoSrc;
+
+                    // Actualizar el contenido del párrafo
+                    texto.textContent = nuevoTexto;
+                });
+
+                btn_close.addEventListener('click', (e) => {
+                    instance_select_modal.hide()
+                })
+            });
+        </script>
+    {% endif %}
 {% endblock head %}
 {% block main %}
     <div class="container-fluid p-5">
         <div class="row gx-xl-5">
             <div class="col-xl-3">
                 <div class="shadow-4 p-4 bg-white rounded-5 mb-4">
-                    <a href="{% url 'places:main' %}" type="button" class="btn btn-primary btn-rounded btn-lg w-100"><i class="fas fa-angle-left me-3"></i>Solicitudes</a>
+                    <a href="{% url 'places:main' %}" type="button" class="btn btn-primary btn-rounded btn-lg w-100"><i
+                            class="fas fa-angle-left me-3"></i>Solicitudes</a>
                 </div>
                 <div class="shadow-4 bg-white rounded-5 overflow-hidden d-none d-xl-block">
                     <div class="bg-light p-4 text-center">
@@ -85,13 +130,18 @@
             <div class="col-xl-9 mb-4 mb-lg-0">
                 {% include 'base/validations.html' %}
                 {% if object.comercio %}
-                {% if not object.estatus == 'validated' and not object.estatus == 'rejected' %}
-                <div class="alert alert-dismissible fade show" role="alert" data-mdb-color="warning"><i
-                    class="fas fa-exclamation-triangle me-2"></i>
-                    <b>Su solicitud se ha guardado correctamente, el equipo de Comercialización  revisará su información.</b> Manténgase pendiente de su correo electrónico así como de este medio ya que serán las únicas vías para saber si tiene algún documento o información que deba modificar o bien, si su solicitud fue validada para avanzar a la selección del o los espacios a rentar así como para efectuar el pago correspondiente.
-                    <button type="button" class="btn-close"
-                    data-mdb-dismiss="alert" aria-label="Close"></button></div>
-                {% endif %}
+                    {% if not object.estatus == 'validated' and not object.estatus == 'rejected' %}
+                        <div class="alert alert-dismissible fade show" role="alert" data-mdb-color="warning"><i
+                                class="fas fa-exclamation-triangle me-2"></i>
+                            <b>Su solicitud se ha guardado correctamente, el equipo de Comercialización revisará su
+                                información.</b> Manténgase pendiente de su correo electrónico así como de este medio ya
+                            que serán las únicas vías para saber si tiene algún documento o información que deba
+                            modificar o bien, si su solicitud fue validada para avanzar a la selección del o los
+                            espacios a rentar así como para efectuar el pago correspondiente.
+                            <button type="button" class="btn-close"
+                                    data-mdb-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
                 {% endif %}
                 {% if not object.comercio %}
                     <div class="alert" role="alert" data-mdb-color="warning">
@@ -133,16 +183,16 @@
                                 <th class="bg-light" style="width: 40%;">Estatus actual
                                 <td>
                                     {% if object.estatus == 'validated' %}
-                                    <span class="badge rounded-pill badge-success">Validado</span>
+                                        <span class="badge rounded-pill badge-success">Validado</span>
                                     {% elif object.estatus == 'rejected' %}
-                                    <span class="badge rounded-pill badge-danger">Rechazado</span>
+                                        <span class="badge rounded-pill badge-danger">Rechazado</span>
                                     {% elif object.estatus == 'pending' %}
-                                    <span class="badge rounded-pill badge-warning">Observado</span>
+                                        <span class="badge rounded-pill badge-warning">Observado</span>
                                     {% elif object.estatus == 'resolved' %}
-                                    <span class="badge rounded-pill badge-primary">Solventado por el
+                                        <span class="badge rounded-pill badge-primary">Solventado por el
                                         usuario</span>
                                     {% else %}
-                                    <span class="badge rounded-pill badge-secondary">No asignado</span>
+                                        <span class="badge rounded-pill badge-secondary">No asignado</span>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -281,16 +331,16 @@
                                     <th class="bg-light" style="width: 40%;">Estatus actual
                                     <td>
                                         {% if object.comercio.estatus == 'validated' %}
-                                        <span class="badge rounded-pill badge-success">Validado</span>
+                                            <span class="badge rounded-pill badge-success">Validado</span>
                                         {% elif object.comercio.estatus == 'rejected' %}
-                                        <span class="badge rounded-pill badge-danger">Rechazado</span>
+                                            <span class="badge rounded-pill badge-danger">Rechazado</span>
                                         {% elif object.comercio.estatus == 'pending' %}
-                                        <span class="badge rounded-pill badge-warning">Observado</span>
+                                            <span class="badge rounded-pill badge-warning">Observado</span>
                                         {% elif object.comercio.estatus == 'resolved' %}
-                                        <span class="badge rounded-pill badge-primary">Solventado por el
+                                            <span class="badge rounded-pill badge-primary">Solventado por el
                                             usuario</span>
                                         {% else %}
-                                        <span class="badge rounded-pill badge-secondary">No asignado</span>
+                                            <span class="badge rounded-pill badge-secondary">No asignado</span>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -348,12 +398,18 @@
                     </p>
                     <div
                             class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
-                        <button id="zone-a" type="button" class="btn btn-light">Zona A<i class="fas fa-arrows-rotate ms-2"></i></button>
-                        <button id="zone-b" type="button" class="btn btn-light">Zona B<i class="fas fa-arrows-rotate ms-2"></i></button>
-                        <button id="zone-c" type="button" class="btn btn-light">Zona C<i class="fas fa-arrows-rotate ms-2"></i></button>
-                        <button id="zone-d" type="button" class="btn btn-light">Zona D<i class="fas fa-arrows-rotate ms-2"></i></button>
-                        <button id="n-1" type="button" class="btn btn-light">Nave 1<i class="fas fa-arrows-rotate ms-2"></i></button>
-                        <button id="n-2" type="button" class="btn btn-light">Nave 3<i class="fas fa-arrows-rotate ms-2"></i></button>
+                        <button id="zone-a" type="button" class="btn btn-light">Zona A<i
+                                class="fas fa-arrows-rotate ms-2"></i></button>
+                        <button id="zone-b" type="button" class="btn btn-light">Zona B<i
+                                class="fas fa-arrows-rotate ms-2"></i></button>
+                        <button id="zone-c" type="button" class="btn btn-light">Zona C<i
+                                class="fas fa-arrows-rotate ms-2"></i></button>
+                        <button id="zone-d" type="button" class="btn btn-light">Zona D<i
+                                class="fas fa-arrows-rotate ms-2"></i></button>
+                        <button id="n-1" type="button" class="btn btn-light">Nave 1<i
+                                class="fas fa-arrows-rotate ms-2"></i></button>
+                        <button id="n-2" type="button" class="btn btn-light">Nave 3<i
+                                class="fas fa-arrows-rotate ms-2"></i></button>
                     </div>
                     <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
                         <input type="hidden" name="limit_places" value="{{ object.cantidad_espacios }}">
@@ -479,13 +535,17 @@
                                         {% csrf_token %}
                                         <div class="d-flex justify-content-center">
                                             {% if object.data_tpay %}
-                                                <button type="button"
-                                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50">
+                                                <button type="button" data-url="{{ tpay_url }}" data-type="En linea"
+                                                        data-mdb-toggle="modal" data-mdb-target="#modal-iframe"
+                                                        id="btnTpay"
+                                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50 tpay">
                                                     <i class="far fa-credit-card me-2"></i>
                                                     Pagar en linea
                                                 </button>
-                                                <button type="button" id="btnEfectivo"
-                                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50">
+                                                <button type="button" data-url="{{ pdf_url }}" data-type="Efectivo"
+                                                        data-mdb-toggle="modal" data-mdb-target="#modal-iframe"
+                                                        id="btnEfectivo"
+                                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50 tpay">
                                                     <i class="far fa-money-bill-1 me-2"></i>
                                                     Pagar en efectivo
                                                 </button>
@@ -621,18 +681,19 @@
         </div>
     </div>
     <div class="modal fade" id="modal-iframe" tabindex="-1" aria-labelledby="exampleModalFullscreenLabel"
-         style="display: block;" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-fullscreen">
+         aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title h4" id="exampleModalFullscreenLabel">Formato de pago: <strong id="type_pago"></strong></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title h4" id="exampleModalFullscreenLabel">Formato de pago: <strong
+                            id="type_pago"></strong></h5>
+                    <button type="button" class="btn-close" id="btnClose" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
                 </div>
                 <div class="modal-body">
-                    <iframe src="{{ tpay_url }}" style="width: 100%; height: 90vh" frameborder="0"></iframe>
+                    <iframe id="iframe" src="" style="width: 100%; height: 90vh" frameborder="0"></iframe>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="btnClose" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

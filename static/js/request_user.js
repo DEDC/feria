@@ -14,11 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const reload_places = document.querySelector('#reload-places')
     const btn_preselect = document.querySelector('#preselection')
     const btn_select = document.querySelector('#selection')
-    const btn_close = document.querySelector('#btnClose')
-    const btn_efectivo = document.querySelector('#btnEfectivo')
     const timer = new easytimer.Timer();
-    const modal_select = document.querySelector('#modal-iframe');
-    const instance_select_modal = new mdb.Modal(modal_select)
     const request_uuid = document.querySelector('#request-uuid')
     const config_chks = document.querySelectorAll('.config-chk')
     const add_alcohol = document.querySelector('#add-alcohol')
@@ -183,14 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
     //     });
     // })
 
-    btn_efectivo.addEventListener('click', (e) => {
-        type_pago.html = "Efectivo";
-        instance_select_modal.show()
-    })
-
-    btn_close.addEventListener('click', (e) => {
-        instance_select_modal.hide()
-    })
 
     if (btn_preselect) {
         btn_preselect.addEventListener('click', (e) => {
