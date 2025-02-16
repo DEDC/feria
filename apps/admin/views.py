@@ -265,7 +265,7 @@ class Request(AdminPermissions, DetailView):
             Validaciones.objects.create(solicitud=request_, estatus='rejected', validador=request.user.get_full_name())
             messages.success(request, 'Estatus asignado exitosamente.')
         elif 'pending' in request.POST:
-            validation_fields = ['factura', 'regimen_fiscal', 'nombre', 'nombre_replegal', 'rfc_txt', 'curp_txt', 'calle', 'no_calle', 'colonia', 'codigo_postal', 'estado', 'municipio', 'constancia_fiscal', 'comprobante_domicilio', 'acta_constitutiva', 'identificacion', 'curp']
+            validation_fields = ['mas_espacios', 'factura', 'regimen_fiscal', 'nombre', 'nombre_replegal', 'rfc_txt', 'curp_txt', 'calle', 'no_calle', 'colonia', 'codigo_postal', 'estado', 'municipio', 'constancia_fiscal', 'comprobante_domicilio', 'acta_constitutiva', 'identificacion', 'curp']
             data = {
                 'just_fields': [],
                 'field_comments': {}
@@ -314,7 +314,7 @@ class Shop(AdminPermissions, DetailView):
             Validaciones.objects.create(comercio=shop_, estatus='rejected', validador=request.user.get_full_name())
             messages.success(request, 'Estatus asignado exitosamente.')
         elif 'pending' in request.POST:
-            validation_fields = ['nombre', 'descripcion', 'imagen', 'vende_alcohol', 'voltaje', 'equipos']
+            validation_fields = ['giro', 'nombre', 'descripcion', 'imagen', 'vende_alcohol', 'voltaje', 'equipos']
             data = {
                 'just_fields': [],
                 'field_comments': {}

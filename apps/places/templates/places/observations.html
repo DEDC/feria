@@ -114,6 +114,23 @@
                             </div>
                         </div>
                         {% endif %}
+                        {% if 'mas_espacios' in obs_fields %}
+                        <div class="col-12 mb-4">
+                            <div class="alert alert-danger p-2" role="alert" data-mdb-color="danger">
+                                <small>{{obs_comments.mas_espacios}}</small></div>
+                            <label class="form-check-label ms-2 me-3 fw-bold">Requiero más de 3 espacios</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="mas_espacios" id="factura1" value="True"
+                                    required {% if object.mas_espacios %}checked{% endif %} />
+                                <label class="form-check-label" for="factura1">Sí</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="mas_espacios" id="factura2" value="False"
+                                    required {% if not object.mas_espacios %}checked{% endif %} />
+                                <label class="form-check-label" for="factura2">No</label>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                     <h6><b>Datos de la Dirección</b></h6>
                     <hr>

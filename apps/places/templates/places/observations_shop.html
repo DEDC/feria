@@ -78,6 +78,15 @@
                             </div>
                         </div>
                         {% endif %}
+                        {% if 'giro' in obs_fields %}
+                        <div class="col-6">
+                            <div class="alert alert-danger p-2" role="alert" data-mdb-color="danger">
+                                <small>{{obs_comments.giro}}</small>
+                            </div>
+                            {{form.giro}}
+                            <label class="form-label select-label">{{form.giro.label}}</label>
+                        </div>
+                        {% endif %}
                         {% if 'imagen' in obs_fields %}
                         <div class="col-12">
                             <div class="alert alert-danger p-2" role="alert" data-mdb-color="danger">
