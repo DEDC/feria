@@ -243,11 +243,8 @@ class Request(AdminPermissions, DetailView):
             request_.save()
             Validaciones.objects.create(solicitud=request_, estatus='validated', validador=request.user.get_full_name())
             messages.success(request, 'Estatus asignado exitosamente.')
-            send_html_mail()
+            send_html_mail(request_.usuario.email, request_.usuario.get_full_name, request_.folio, estatus='Aprobado')
         elif 'rejected' in request.POST:
-            subject = "Solicitud No Aprobada ❌"
-            html = return_html_rejected(request_.nombre)
-            sendEmail(request_.usuario.email, html, subject)
             request_.estatus = 'rejected'
             lookup = (~Q(estatus='rejected'))
             sib_req = Solicitudes.objects.filter(lookup, usuario=request_.usuario).exclude(uuid=request_.uuid)
@@ -260,6 +257,7 @@ class Request(AdminPermissions, DetailView):
             request_.save()
             Validaciones.objects.create(solicitud=request_, estatus='rejected', validador=request.user.get_full_name())
             messages.success(request, 'Estatus asignado exitosamente.')
+            send_html_mail(request_.usuario.email, request_.usuario.get_full_name, request_.folio, estatus='Rechazado')
         elif 'pending' in request.POST:
             validation_fields = ['mas_espacios', 'factura', 'regimen_fiscal', 'nombre', 'nombre_replegal', 'rfc_txt', 'curp_txt', 'calle', 'no_calle', 'colonia', 'codigo_postal', 'estado', 'municipio', 'constancia_fiscal', 'comprobante_domicilio', 'acta_constitutiva', 'identificacion', 'curp']
             data = {
@@ -276,6 +274,7 @@ class Request(AdminPermissions, DetailView):
                 request_.save()
                 Validaciones.objects.create(solicitud=request_, estatus='pending', validador=request.user.get_full_name(), campos=data)
                 messages.success(request, 'Estatus asignado exitosamente.')
+                send_html_mail(request_.usuario.email, request_.usuario.get_full_name, request_.folio, estatus='Pendiente de cambios')
             else:
                 messages.warning(request, 'No se realizó ninguna acción. No se detectaron campos validados.')
         return redirect('admin:request', request_.uuid)
@@ -304,11 +303,13 @@ class Shop(AdminPermissions, DetailView):
             shop_.save()
             Validaciones.objects.create(comercio=shop_, estatus='validated', validador=request.user.get_full_name())
             messages.success(request, 'Estatus asignado exitosamente.')
+            send_html_mail(shop_.solicitud.usuario.email, shop_.solicitud.usuario.get_full_name, shop_.folio, estatus='Aprobado')
         elif 'rejected' in request.POST:
             shop_.estatus = 'rejected'
             shop_.save()
             Validaciones.objects.create(comercio=shop_, estatus='rejected', validador=request.user.get_full_name())
             messages.success(request, 'Estatus asignado exitosamente.')
+            send_html_mail(shop_.solicitud.usuario.email, shop_.solicitud.usuario.get_full_name, shop_.folio, estatus='Rechazado')
         elif 'pending' in request.POST:
             validation_fields = ['giro', 'nombre', 'descripcion', 'imagen', 'vende_alcohol', 'voltaje', 'equipos']
             data = {
@@ -325,6 +326,7 @@ class Shop(AdminPermissions, DetailView):
                 shop_.save()
                 Validaciones.objects.create(comercio=shop_, estatus='pending', validador=request.user.get_full_name(), campos=data)
                 messages.success(request, 'Estatus asignado exitosamente.')
+                send_html_mail(shop_.solicitud.usuario.email, shop_.solicitud.usuario.get_full_name, shop_.folio, estatus='Pendiente de cambios')
             else:
                 messages.warning(request, 'No se realizó ninguna acción. No se detectaron campos validados.')
         return redirect('admin:shop', shop_.uuid)
