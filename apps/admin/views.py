@@ -33,6 +33,7 @@ from utils.suministros import get_suministros
 from utils.tarjeton import get_tarjeton
 from utils.word_writer import generate_physical_document
 from utils.reports import get_report
+from utils.email import send_html_mail
 
 places_dict = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b, 'z_c': zona_c, 'z_d': zona_d}
 
@@ -238,16 +239,11 @@ class Request(AdminPermissions, DetailView):
                     payment.save()
                     messages.success(request, 'Se confirma el pago con transferencia')
         if 'validated' in request.POST:
-            subject = "Solicitud Aprobada ✅"
-            html = return_html_accept(request_.nombre)
-            try:
-                sendEmail(request_.usuario.email, html, subject)
-            except Exception as e:
-                print(e)
             request_.estatus = 'validated'
             request_.save()
             Validaciones.objects.create(solicitud=request_, estatus='validated', validador=request.user.get_full_name())
             messages.success(request, 'Estatus asignado exitosamente.')
+            send_html_mail()
         elif 'rejected' in request.POST:
             subject = "Solicitud No Aprobada ❌"
             html = return_html_rejected(request_.nombre)
