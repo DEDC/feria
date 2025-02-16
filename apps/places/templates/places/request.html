@@ -7,7 +7,9 @@
     <script src="{% static 'js/request_user.js' %}" type="module" defer></script>
     <script src="{% static 'js/easytimer.min.js' %}" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
-    <script type="text/JavaScript" src="https://momentJS.com/downloads/moment.js"></script>
+    <script type = "text/JavaScript" src="https://MomentJS.com/downloads/moment.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.min.css">
     <style>
         input[type="file"]::file-selector-button {
             background-color: #1c3e95 !important;
@@ -48,15 +50,58 @@
     <script async defer src="{{ tpay_ruta }}api/v1/component/js/object?clientid={{ tpay_apikey }}"></script>
     {% if object.data_tpay %}
         <script>
+
+            let envioP = {
+                "query": false,
+                "dataOrden": {
+                    "lineaCaptura": "lineadeCapturaRecaudador",
+                    "deviceUuid": "5e51f395-c34b-a6ac-8677-010420850709",
+                    "userId": 3,
+                    "sistemaId": {{tpay_sistema_id}},
+                    "platform": "{{tpay_project}}",
+                    "newCharge": {
+                        "amount": "{{ tpay_importe }}",
+                        "orderId": "{{ tpay_folio }}"
+                    }
+                },
+                "key": "{{ tpay_apikey }}",
+                "key_session_boardin": "{{tpay_boardin}}",
+                "key_session_passport": "{{tpay_access}}",
+                "key_channel_service ": " scriptComponent",
+                "socketId": "{{ tpay_socket }}",
+                "nombre": "{{ object.nombre }}",
+                "apellidoP": "",
+                "apellidoM": "",
+                "email": "{{ object.usuario.email }}",
+                "nomCSis": "{{tpat_sistema}}"
+            }
+
+            var data_pago = 'iniciando';
+
+            function dataFront(respuesta) {
+                try {
+                    data_pago = respuesta;
+                    console.log('****_', data_pago);
+                    // Procesar la respuesta
+                } catch {
+                    data_pago = 'Error data';
+                    // Control del error
+                }
+            }
+
+
             document.addEventListener('DOMContentLoaded', () => {
                 // Selecciona el botón y los elementos destino
                 const btnEfectivo = document.getElementById("btnEfectivo");
                 const btnTpay = document.getElementById("btnTpay");
                 const imagen = document.getElementById("iframe");
                 const texto = document.getElementById("type_pago");
+                const tpayComponent = document.getElementById("tpay-component");
                 const btn_close = document.querySelector('#btnClose');
                 const modal_select = document.querySelector('#modal-iframe');
                 const instance_select_modal = new mdb.Modal(modal_select)
+
+                tpayComponent.ordenpago = JSON.stringify(envioP);
 
                 // Función para manejar el evento click
                 btnEfectivo.addEventListener("click", function () {
@@ -550,7 +595,7 @@
                                                     Pagar en efectivo
                                                 </button>
                                             {% else %}
-{#                                                <button name="create-payment"#}
+                                                {#                                                <button name="create-payment"#}
                                                 <button name="send-payment"
                                                         class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50">
                                                     <i class="far fa-credit-card me-2"></i>
@@ -692,7 +737,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <iframe id="iframe" src="" style="width: 100%; height: 90vh" frameborder="0"></iframe>
+                    <iframe id="iframe" src="" style="width: 100%; height: 90vh; display: none;" frameborder="0"></iframe>
+                    <pago-component id="tpay-component" ccc="" max-width="80%"></pago-component>
                 </div>
                 <div class="modal-footer">
                 </div>

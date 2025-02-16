@@ -152,11 +152,19 @@ class Request(UserPermissions, DetailView):
         context['tpay_ruta'] = settings.TPAY_RUTA
         context['tpay_socket'] = settings.TPAY_SOCKET
         context['tpay_apikey'] = settings.TPAY_APIKEY
+        context['tpay_sistema_id'] = settings.TPAY_PROJECT_ID
+        context['tpay_project'] = settings.TPAY_PROJECT
+        context['tpay_boardin'] = settings.TPAY_SESSION_ABORDAJE
+        context['tpay_access'] = settings.TPAY_SESSION_ACCESS
+        context['tpat_sistema'] = settings.TPAY_SISTEMA
         if self.object.data_tpay:
             tpay = self.object.data_tpay
             if tpay["resultado"]:
                 try:
                     context["pdf_url"] = tpay["data"]["urlFormatoPago"]["_text"]
+                    context["tpay_folio"] = tpay["data"]["importe"]["_text"]
+                    context["tpay_captura"] = tpay["data"]["lineaCaptura"]["_text"]
+                    context["tpay_importe"] = tpay["data"]["folioControlEstado"]["_text"]
                     context["tpay_url"] = f"https://tpayqa.tabasco.gob.mx/tpay/?linea_captura={tpay['data']['lineaCaptura']['_text'].split('|')[1]}"
                 except Exception as e:
                     print(e)
