@@ -43,16 +43,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const moral_person = {
         'exclude': ['id_curp', 'id_curp_txt'],
-        'fields': ['id_rfc_txt', 'id_nombre_replegal', 'id_constancia_fiscal', 'id_acta_constitutiva']
+        'fields': ['id_rfc_txt', 'id_nombre_replegal', 'id_constancia_fiscal', 'id_acta_constitutiva', 'id_poder_notarial']
     }
 
     const physical_person = {
-        'exclude': ['id_acta_constitutiva', 'id_nombre_replegal'],
+        'exclude': ['id_acta_constitutiva', 'id_nombre_replegal', 'id_poder_notarial'],
         'fields': ['id_rfc_txt', 'id_curp_txt', 'id_curp', 'id_constancia_fiscal']
     }
 
     const general_person = {
-        'exclude': ['id_rfc_txt', 'id_constancia_fiscal', 'id_acta_constitutiva', 'id_nombre_replegal', 'reg1', 'reg2'],
+        'exclude': ['id_rfc_txt', 'id_constancia_fiscal', 'id_acta_constitutiva', 'id_poder_notarial', 'id_nombre_replegal', 'reg1', 'reg2'],
         'fields': ['id_curp', 'id_curp_txt', 'id_identificacion']
     }
 

@@ -19,6 +19,7 @@ from apps.tpay.tools import generarToken, solicitar_linea_captura
 # utils
 from utils.permissions import UserPermissions
 from utils.date import get_date_constancy
+from utils.email import send_html_mail_creation
 
 dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
@@ -69,6 +70,10 @@ class CreateRequest(UserPermissions, SuccessMessageMixin, CreateView):
         if dup.exists():
             messages.warning(self.request, 'Ya existe una solicitud con ese RFC/CURP registrada')
             return redirect('places:main')
+        try:
+            send_html_mail_creation(self.request.user.email, self.request.user.get_full_name)
+        except:
+            pass
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):

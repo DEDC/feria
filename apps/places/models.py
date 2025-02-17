@@ -11,6 +11,7 @@ from utils.validators import validate_pdf_file
 from utils.naves import estadosmexico
 
 giros = (
+    ('ambulante', 'Comercio Ambulante'),
     ('chocolates', 'Chocolates'), 
     ('postres', 'Postres'),
     ('pasteleria', 'Pastelería y Panadería'),
@@ -22,16 +23,13 @@ giros = (
     ('cervezas', 'Cerveza artesanal'),
     ('cremas', 'Cremas de licor'),
     ('vinos', 'Vinos artesanales'),
-    ('antojitos', 'Antojitos tabasqueños'),
     ('butifarras', 'Butifarras'),
     ('pozol', 'Pozol y Dulces'),
-    ('elotes', 'Elotes y Esquites (sin tanque de gas)'),
-    ('raspados', 'Raspados'),
-    ('dulces', 'Dulces típicos'),
-    ('algodon', 'Algodón de azúcar'),
-    ('palomitas', 'Palomitas'),
+    ('snacks', 'Carrito de Snacks'),
     ('restaurantes', 'Restaurantes'),
-    ('cocina', 'Cocina de humo'),
+    ('bares', 'Bares'),
+    ('cocina_humo', 'Cocina de humo'),
+    ('antojitos', 'Antojitos tabasqueños'),
     ('botanas', 'Botanas y Comida rápida'),
     ('bebidas', 'Bebidas preparadas y refrescos'),
     ('panaderia', 'Postres y Panadería'),
@@ -39,6 +37,17 @@ giros = (
     ('conservas', 'Conservas y Encurtidos'),
     ('artesanias', 'Artesanías'),
     ('juegos', 'Juguetes y Juegos'),
+    ('joyeria', 'Joyería, Bisutería y Accesorios'),
+    ('ropa', 'Ropa y Textiles'),
+    ('articulos_hogar', 'Artículos para el hogar'),
+    ('zapateria', 'Zapatería'),
+    ('perfumeria', 'Perfumería y Cosméticos'),
+    ('regalos', 'Regalos y Novedades'),
+    ('telefonia', 'Telefonía celular y Accesorios'),
+    ('articulos_belleza', 'Artículos de belleza'),
+    ('articulos_electro', 'Artículos electrónicos'),
+    ('electrodomesticos', 'Electrodomésticos'),
+    ('abarrotes', 'Abarrotes')
 )
 
 
@@ -63,6 +72,7 @@ class Solicitudes(ControlInfo):
     # general docs
     identificacion = models.FileField('Identificación Oficial', upload_to=UploadTo('IDENTIFICACION_OFICIAL', 'solicitudes'), validators=[validate_pdf_file])
     acta_constitutiva = models.FileField('Acta Constitutiva', upload_to=UploadTo('ACTA_CONSTITUTIVA', 'solicitudes'), validators=[validate_pdf_file], null=True, blank=True)
+    poder_notarial = models.FileField('Poder Notarial', upload_to=UploadTo('PODER_NOTARIAL', 'solicitudes'), validators=[validate_pdf_file], null=True, blank=True)
     comprobante_domicilio = models.FileField('Comprobante de Domicilio', upload_to=UploadTo('COMPROBANTE_DOMICILIO', 'solicitudes'), validators=[validate_pdf_file])
     constancia_fiscal = models.FileField('Constancia de Situación Fiscal', upload_to=UploadTo('CONSTANCIA_FISCAL', 'solicitudes'), validators=[validate_pdf_file], null=True, blank=True)
     curp = models.FileField('CURP', upload_to=UploadTo('CURP', 'solicitudes'), validators=[validate_pdf_file], null=True, blank=True)
@@ -80,10 +90,10 @@ class Comercios(ControlInfo):
     estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Observado'), ('validated', 'Validado'), ('rejected', 'Rechazado'), ('resolved', 'Solventado'),), default='')
     nombre = models.CharField('Nombre del Comercio', max_length = 100)
     descripcion = models.TextField('Describa a qué se dedica su Comercio')
-    imagen = models.ImageField('Adjunte el diseño en un archivo de imagen (JPG, PNG) del módulo o stand de su Comercio', upload_to=UploadTo('PROPUESTA_LOCAL', 'propuestas_locales'))
-    vende_alcohol = models.BooleanField('¿Vendará bedidas alcohólicas en su Comercio?', choices=((True, 'Sí'), (False, 'No')))
-    voltaje = models.CharField('¿Qué voltaje necesita su Comercio?',   max_length=10, choices=(('110', '110v'), ('220', '220v')), null=True)
-    equipos = models.CharField('¿Qué equipos usará para operar en su Comercio?', max_length=500, null=True)
+    imagen = models.ImageField('Adjunte el diseño en un archivo de imagen (JPG, PNG) del módulo o stand de su Comercio', upload_to=UploadTo('PROPUESTA_LOCAL', 'propuestas_locales'), blank=True, null=True)
+    vende_alcohol = models.BooleanField('¿Vendará bedidas alcohólicas en su Comercio?', choices=((True, 'Sí'), (False, 'No')), null=True, blank=True)
+    voltaje = models.CharField('¿Qué voltaje necesita su Comercio?',   max_length=10, choices=(('110', '110v'), ('220', '220v')), null=True, blank=True)
+    equipos = models.CharField('¿Qué equipos usará para operar en su Comercio?', max_length=500, null=True, blank=True)
     giro = models.CharField('Giro del Comercio',   max_length=100, choices=giros, null=True)
     solicitud = models.OneToOneField(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='comercio')
 

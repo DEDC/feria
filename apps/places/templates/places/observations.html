@@ -237,6 +237,14 @@
                             {{form.acta_constitutiva}}
                         </div>
                         {% endif %}
+                        {% if 'poder_notarial' in obs_fields %}
+                        <div class="col-12">
+                            <div class="alert alert-danger p-2" role="alert" data-mdb-color="danger">
+                                <small>{{obs_comments.poder_notarial}}</small></div>
+                            <label class="form-label">{{form.poder_notarial.label}}</label><br>
+                            {{form.poder_notarial}}
+                        </div>
+                        {% endif %}
                     </div>
                     <div class="d-grid gap-2 col-6 mx-auto mt-3">
                         <button class="btn btn-primary" type="submit">Cambiar Información</button>

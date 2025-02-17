@@ -8,6 +8,31 @@
         color: white;
     }
 </style>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let giro = document.querySelector('#id_giro')
+        let image = document.querySelector('#id_imagen')
+        let equipo = document.querySelector('#id_equipos')
+        let vende_alcohol = document.querySelector('[name="vende_alcohol"]')
+        let voltaje = document.querySelector('#id_voltaje')
+        let extra_info = document.querySelector('#extra_info')
+        giro.addEventListener('change', (e) => {
+            if (e.target.value === 'ambulante') {
+                image.required = false
+                equipo.required = false
+                vende_alcohol.required = false
+                voltaje.required = false
+                extra_info.style.display = 'none'
+            } else {
+                image.required = true
+                equipo.required = true
+                vende_alcohol.required = true
+                voltaje.required = true
+                extra_info.style.display = 'block'
+            }
+        })
+    })
+</script>
 {% endblock head %}
 {% block main %}
 <div class="container-fluid p-5">
@@ -72,39 +97,40 @@
                             <label class="form-label select-label">{{form.giro.label}}</label>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col">
-                            <label class="form-label">{{form.imagen.label}}</label><br>
-                            {{form.imagen}}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-outline">
-                                {{form.equipos}}
-                                <label class="form-label"
-                                    for="{{form.equipos.id}}">{{form.equipos.label}}</label>
+                    <div id="extra_info">
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label">{{form.imagen.label}}</label><br>
+                                {{form.imagen}}
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <label class="form-check-label ms-2 fw-bold me-3">{{form.vende_alcohol.label}}</label>
-                            <div class="btn-group shadow-0">
-                                <input type="radio" class="btn-check" name="vende_alcohol" value="True" id="option1"
-                                    required>
-                                <label class="btn btn-light" for="option1">Sí</label>
-                                <input type="radio" class="btn-check" name="vende_alcohol" value="False" id="option2"
-                                    required>
-                                <label class="btn btn-light" for="option2">No</label>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-outline">
+                                    {{form.equipos}}
+                                    <label class="form-label" for="{{form.equipos.id}}">{{form.equipos.label}}</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col">
-                            {{form.voltaje}}
-                            <label class="form-label select-label">{{form.voltaje.label}}</label>
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-check-label ms-2 fw-bold me-3">{{form.vende_alcohol.label}}</label>
+                                <div class="btn-group shadow-0">
+                                    <input type="radio" class="btn-check" name="vende_alcohol" value="True" id="option1">
+                                    <label class="btn btn-light" for="option1">Sí</label>
+                                    <input type="radio" class="btn-check" name="vende_alcohol" value="False" id="option2">
+                                    <label class="btn btn-light" for="option2">No</label>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <h6 class="pb-2 text-warning">El voltaje 220 tiene un costo adicional. El voltaje 110 incluye
+                                una toma de energía.</h6>
+                            <div class="col">
+                                {{form.voltaje}}
+                                <label class="form-label select-label">{{form.voltaje.label}}</label>
+                            </div>
                         </div>
                     </div>
                     <div class="d-grid gap-2 col-6 mx-auto mt-5">

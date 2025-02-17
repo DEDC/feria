@@ -337,6 +337,14 @@
                                     </td>
                                 </tr>
                             {% endif %}
+                            {% if object.poder_notarial %}
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Poder Notarial</th>
+                                    <td><a href="{{ object.poder_notarial.url }}" target="_blank" type="button"
+                                           class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
+                                    </td>
+                                </tr>
+                            {% endif %}
                             {% if object.identificacion %}
                                 <tr>
                                     <th class="bg-light" style="width: 40%;">Identificación Oficial</th>
@@ -405,24 +413,32 @@
                                     <th class="bg-light" style="width: 40%;">Giro del Comercio</th>
                                     <td>{{ object.comercio.get_giro_display }}</td>
                                 </tr>
+                                {% if object.comercio.vende_alcohol %}
                                 <tr>
                                     <th class="bg-light" style="width: 40%;">Vende alcohol</th>
-                                    <td>{{ object.comercio.get_vende_alcohol_display }}</td>
+                                    <td>{{ object.comercio.get_vende_alcohol_display|default:"No especificado" }}</td>
                                 </tr>
+                                {% endif %}
+                                {% if object.comercio.voltaje %}
                                 <tr>
                                     <th class="bg-light" style="width: 40%;">Voltaje</th>
-                                    <td>{{ object.comercio.get_voltaje_display }}</td>
+                                    <td>{{ object.comercio.get_voltaje_display|default:"No especificado" }}</td>
                                 </tr>
+                                {% endif %}
+                                {% if object.comercio.equipos %}
                                 <tr>
                                     <th class="bg-light" style="width: 40%;">Equipos a utilizar</th>
-                                    <td>{{ object.comercio.equipos }}</td>
+                                    <td>{{ object.comercio.equipos|default:"No especificado" }}</td>
                                 </tr>
+                                {% endif %}
+                                {% if object.comercio.imagen %}
                                 <tr>
-                                    <th class="bg-light" style="width: 40%;">Cómo será el local</th>
+                                    <th class="bg-light" style="width: 40%;">Cómo será el local</th>                            
                                     <td><a href="{{ object.comercio.imagen.url }}" target="_blank" type="button"
                                            class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
                                     </td>
                                 </tr>
+                                {% endif %}
                                 </tbody>
                             </table>
                         </div>
