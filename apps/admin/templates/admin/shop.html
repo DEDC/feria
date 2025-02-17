@@ -147,6 +147,7 @@
                                 </div>
                             </div>
                         </li>
+                        {% if object.vende_alcohol %}
                         <li
                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
                             <div class="ms-2 me-auto">
@@ -163,6 +164,8 @@
                                 </div>
                             </div>
                         </li>
+                        {% endif %}
+                        {% if object.voltaje %}
                         <li
                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
                             <div class="ms-2 me-auto">
@@ -179,6 +182,8 @@
                                 </div>
                             </div>
                         </li>
+                        {% endif %}
+                        {% if object.equipos %}
                         <li
                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
                             <div class="ms-2 me-auto">
@@ -195,6 +200,7 @@
                                 </div>
                             </div>
                         </li>
+                        {% endif %}
                         {% if object.imagen %}
                         <li
                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">

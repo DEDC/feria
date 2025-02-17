@@ -11,6 +11,7 @@ from utils.validators import validate_pdf_file
 from utils.naves import estadosmexico
 
 giros = (
+    ('ambulante', 'Comercio Ambulante'),
     ('chocolates', 'Chocolates'), 
     ('postres', 'Postres'),
     ('pasteleria', 'Pastelería y Panadería'),
@@ -89,10 +90,10 @@ class Comercios(ControlInfo):
     estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Observado'), ('validated', 'Validado'), ('rejected', 'Rechazado'), ('resolved', 'Solventado'),), default='')
     nombre = models.CharField('Nombre del Comercio', max_length = 100)
     descripcion = models.TextField('Describa a qué se dedica su Comercio')
-    imagen = models.ImageField('Adjunte el diseño en un archivo de imagen (JPG, PNG) del módulo o stand de su Comercio', upload_to=UploadTo('PROPUESTA_LOCAL', 'propuestas_locales'))
-    vende_alcohol = models.BooleanField('¿Vendará bedidas alcohólicas en su Comercio?', choices=((True, 'Sí'), (False, 'No')))
-    voltaje = models.CharField('¿Qué voltaje necesita su Comercio?',   max_length=10, choices=(('110', '110v'), ('220', '220v')), null=True)
-    equipos = models.CharField('¿Qué equipos usará para operar en su Comercio?', max_length=500, null=True)
+    imagen = models.ImageField('Adjunte el diseño en un archivo de imagen (JPG, PNG) del módulo o stand de su Comercio', upload_to=UploadTo('PROPUESTA_LOCAL', 'propuestas_locales'), blank=True, null=True)
+    vende_alcohol = models.BooleanField('¿Vendará bedidas alcohólicas en su Comercio?', choices=((True, 'Sí'), (False, 'No')), null=True, blank=True)
+    voltaje = models.CharField('¿Qué voltaje necesita su Comercio?',   max_length=10, choices=(('110', '110v'), ('220', '220v')), null=True, blank=True)
+    equipos = models.CharField('¿Qué equipos usará para operar en su Comercio?', max_length=500, null=True, blank=True)
     giro = models.CharField('Giro del Comercio',   max_length=100, choices=giros, null=True)
     solicitud = models.OneToOneField(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='comercio')
 
