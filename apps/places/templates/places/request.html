@@ -337,6 +337,14 @@
                                     </td>
                                 </tr>
                             {% endif %}
+                            {% if object.poder_notarial %}
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Poder Notarial</th>
+                                    <td><a href="{{ object.poder_notarial.url }}" target="_blank" type="button"
+                                           class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
+                                    </td>
+                                </tr>
+                            {% endif %}
                             {% if object.identificacion %}
                                 <tr>
                                     <th class="bg-light" style="width: 40%;">Identificación Oficial</th>

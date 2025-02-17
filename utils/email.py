@@ -23,3 +23,25 @@ def send_html_mail(to_email, name, folio, estatus):
         msg.send()
     except Exception as e:
         print(e)
+
+def send_html_mail_creation(to_email, name):
+    # First, render the plain text content.
+    text_content = render_to_string("emails/user_request_created.txt", context={"username": name},)
+
+    # Secondly, render the HTML content.
+    html_content = render_to_string("emails/user_request_created.html", context={"username": name},)
+
+    try:
+        # Then, create a multipart email instance.
+        msg = EmailMultiAlternatives(
+            "Notificación Feria Tabasco 2025",
+            text_content,
+            settings.DEFAULT_FROM_EMAIL,
+            [to_email]
+        )
+
+        # Lastly, attach the HTML content to the email instance and send.
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+    except Exception as e:
+        print(e)

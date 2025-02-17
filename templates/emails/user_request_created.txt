@@ -1,0 +1,5 @@
+Notificación de Solicitud | Feria Tabasco 2025. {{username}}: 
+Se ha creado exitosamente su Solicitud en el Sistema de Comercialización
+de la Feria Tabasco 2025. Le invitamos a que ingrese al mismo con su usuario y contraseña para más
+información y continuar con el proceso.
+El sitio de internet es el siguiente https://siscomferia.com/

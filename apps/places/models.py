@@ -22,16 +22,13 @@ giros = (
     ('cervezas', 'Cerveza artesanal'),
     ('cremas', 'Cremas de licor'),
     ('vinos', 'Vinos artesanales'),
-    ('antojitos', 'Antojitos tabasqueños'),
     ('butifarras', 'Butifarras'),
     ('pozol', 'Pozol y Dulces'),
-    ('elotes', 'Elotes y Esquites (sin tanque de gas)'),
-    ('raspados', 'Raspados'),
-    ('dulces', 'Dulces típicos'),
-    ('algodon', 'Algodón de azúcar'),
-    ('palomitas', 'Palomitas'),
+    ('snacks', 'Carrito de Snacks'),
     ('restaurantes', 'Restaurantes'),
-    ('cocina', 'Cocina de humo'),
+    ('bares', 'Bares'),
+    ('cocina_humo', 'Cocina de humo'),
+    ('antojitos', 'Antojitos tabasqueños'),
     ('botanas', 'Botanas y Comida rápida'),
     ('bebidas', 'Bebidas preparadas y refrescos'),
     ('panaderia', 'Postres y Panadería'),
@@ -39,6 +36,17 @@ giros = (
     ('conservas', 'Conservas y Encurtidos'),
     ('artesanias', 'Artesanías'),
     ('juegos', 'Juguetes y Juegos'),
+    ('joyeria', 'Joyería, Bisutería y Accesorios'),
+    ('ropa', 'Ropa y Textiles'),
+    ('articulos_hogar', 'Artículos para el hogar'),
+    ('zapateria', 'Zapatería'),
+    ('perfumeria', 'Perfumería y Cosméticos'),
+    ('regalos', 'Regalos y Novedades'),
+    ('telefonia', 'Telefonía celular y Accesorios'),
+    ('articulos_belleza', 'Artículos de belleza'),
+    ('articulos_electro', 'Artículos electrónicos'),
+    ('electrodomesticos', 'Electrodomésticos'),
+    ('abarrotes', 'Abarrotes')
 )
 
 
@@ -63,6 +71,7 @@ class Solicitudes(ControlInfo):
     # general docs
     identificacion = models.FileField('Identificación Oficial', upload_to=UploadTo('IDENTIFICACION_OFICIAL', 'solicitudes'), validators=[validate_pdf_file])
     acta_constitutiva = models.FileField('Acta Constitutiva', upload_to=UploadTo('ACTA_CONSTITUTIVA', 'solicitudes'), validators=[validate_pdf_file], null=True, blank=True)
+    poder_notarial = models.FileField('Poder Notarial', upload_to=UploadTo('PODER_NOTARIAL', 'solicitudes'), validators=[validate_pdf_file], null=True, blank=True)
     comprobante_domicilio = models.FileField('Comprobante de Domicilio', upload_to=UploadTo('COMPROBANTE_DOMICILIO', 'solicitudes'), validators=[validate_pdf_file])
     constancia_fiscal = models.FileField('Constancia de Situación Fiscal', upload_to=UploadTo('CONSTANCIA_FISCAL', 'solicitudes'), validators=[validate_pdf_file], null=True, blank=True)
     curp = models.FileField('CURP', upload_to=UploadTo('CURP', 'solicitudes'), validators=[validate_pdf_file], null=True, blank=True)

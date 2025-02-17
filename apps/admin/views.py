@@ -259,7 +259,7 @@ class Request(AdminPermissions, DetailView):
             messages.success(request, 'Estatus asignado exitosamente.')
             send_html_mail(request_.usuario.email, request_.usuario.get_full_name, request_.folio, estatus='Rechazado')
         elif 'pending' in request.POST:
-            validation_fields = ['mas_espacios', 'factura', 'regimen_fiscal', 'nombre', 'nombre_replegal', 'rfc_txt', 'curp_txt', 'calle', 'no_calle', 'colonia', 'codigo_postal', 'estado', 'municipio', 'constancia_fiscal', 'comprobante_domicilio', 'acta_constitutiva', 'identificacion', 'curp']
+            validation_fields = ['mas_espacios', 'factura', 'regimen_fiscal', 'nombre', 'nombre_replegal', 'rfc_txt', 'curp_txt', 'calle', 'no_calle', 'colonia', 'codigo_postal', 'estado', 'municipio', 'constancia_fiscal', 'comprobante_domicilio', 'acta_constitutiva', 'poder_notarial', 'identificacion', 'curp']
             data = {
                 'just_fields': [],
                 'field_comments': {}
