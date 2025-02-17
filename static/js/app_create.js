@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     Swal.showLoading();
                     data = await validateCURPService(curp.value);
                     console.log(data)
-                    if(data.data == null){
+                    if(data.data.length == 0){
                         forms_list.forEach(element => {
                             element.style.display = "block";
                         });
