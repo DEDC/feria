@@ -1,4 +1,5 @@
 # Django
+import datetime
 import json
 
 from django.views.generic import TemplateView, CreateView, DetailView, RedirectView
@@ -124,7 +125,7 @@ class Request(UserPermissions, DetailView):
 
             if not error:
                 lineapago = solicitar_linea_captura(
-                    token, request_.folio, "A", request_.nombre, request_.curp_txt, request_.calle,
+                    token, "{}-{}".format(request_.folio, datetime.datetime.now().strftime("%H%M%S")), "A", request_.nombre, request_.curp_txt, request_.calle,
                     request_.colonia, request_.codigo_postal, request_.estado, request_.municipio
                 )
                 request_.data_tpay = lineapago
@@ -163,14 +164,56 @@ class Request(UserPermissions, DetailView):
         context['tpay_access'] = settings.TPAY_SESSION_ACCESS
         context['tpat_sistema'] = settings.TPAY_SISTEMA
         if self.object.data_tpay:
-            tpay = self.object.data_tpay
+            user_data = json.dumps({
+                "user": self.object.nombre,
+                "email": self.object.usuario.email
+            }, separators=(",", ":")
+            )
+            token, error = generarToken(user_data)
+            sol = self.object
+
+            if not error:
+                lineapago = solicitar_linea_captura(
+                    token, "{}-{}".format(self.object.folio, datetime.datetime.now().strftime("%H%M%S")), "A", self.object.nombre,
+                    self.object.curp_txt, self.object.calle,
+                    self.object.colonia, self.object.codigo_postal, self.object.estado, self.object.municipio
+                )
+                sol.data_tpay = lineapago
+                sol.save()
+            tpay = sol.data_tpay
             if tpay["resultado"]:
                 try:
                     context["pdf_url"] = tpay["data"]["urlFormatoPago"]["_text"]
-                    context["tpay_folio"] = tpay["data"]["importe"]["_text"]
+                    context["tpay_importe"] = tpay["data"]["importe"]["_text"]
                     context["tpay_captura"] = tpay["data"]["lineaCaptura"]["_text"]
-                    context["tpay_importe"] = tpay["data"]["folioControlEstado"]["_text"]
+                    context["tpay_folio"] = tpay["data"]["folioControlEstado"]["_text"]
                     context["tpay_url"] = f"https://tpayqa.tabasco.gob.mx/tpay/?linea_captura={tpay['data']['lineaCaptura']['_text'].split('|')[1]}"
+
+                    ordenPago = {
+                        "query": False,
+                        "dataOrden": {
+                            "lineaCaptura": "lineadeCapturaRecaudador",
+                            "deviceUuid": "5e51f395-c34b-a6ac-8677-010420850709",
+                            "userId": 3,
+                            "sistemaId": settings.TPAY_PROJECT_ID,
+                            "platform": settings.TPAY_PROJECT,
+                            "newCharge": {
+                                "amount": tpay["data"]["importe"]["_text"],
+                                "orderId": tpay["data"]["folioControlEstado"]["_text"]
+                            }
+                        },
+                        "key": settings.TPAY_APIKEY,
+                        "key_session_boardin": settings.TPAY_SESSION_ABORDAJE,
+                        "key_session_passport": settings.TPAY_SESSION_ACCESS,
+                        "key_channel_service ": " scriptComponent",
+                        "socketId": settings.TPAY_SOCKET,
+                        "nombre": self.object.nombre,
+                        "apellidoP": "",
+                        "apellidoM": "",
+                        "email": self.object.usuario.email,
+                        "nomCSis": settings.TPAY_SISTEMA
+                    }
+                    context["ordenpago"] = json.dumps(ordenPago, separators=(',', ':'))
                 except Exception as e:
                     print(e)
         return context

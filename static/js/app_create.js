@@ -97,7 +97,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     Swal.showLoading();
                     data = await validateCURPService(curp.value);
                     console.log(data)
-                    if (data.data.codigo == "00") {
+                    if(data.data.length == 0){
+                        forms_list.forEach(element => {
+                            element.style.display = "block";
+                        });
+                        nombre.focus();
+                        Swal.close()
+                    }
+                    else if (data.data.codigo == "00") {
                         nombre.value = `${data.data.datos.nombres} ${data.data.datos.apellido1} ${data.data.datos.apellido2}`;
                         nombre_legal.value = `${data.data.datos.nombres} ${data.data.datos.apellido1} ${data.data.datos.apellido2}`;
                         forms_list.forEach(element => {
