@@ -47,7 +47,8 @@ giros = (
     ('articulos_belleza', 'Artículos de belleza'),
     ('articulos_electro', 'Artículos electrónicos'),
     ('electrodomesticos', 'Electrodomésticos'),
-    ('abarrotes', 'Abarrotes')
+    ('abarrotes', 'Abarrotes'),
+    ('otro', 'Otro')
 )
 
 
