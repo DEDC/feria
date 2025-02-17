@@ -46,9 +46,9 @@
             background-color: #9FA6B2 !important;
         }
     </style>
-    <script async defer src="{{ tpay_ruta }}api/v1/component/js/orden?clientid={{ tpay_apikey }}"></script>
-    <script async defer src="{{ tpay_ruta }}api/v1/component/js/object?clientid={{ tpay_apikey }}"></script>
     {% if object.data_tpay %}
+        <script async defer src="{{ tpay_ruta }}api/v1/component/js/orden?clientid={{ tpay_apikey }}"></script>
+        <script async defer src="{{ tpay_ruta }}api/v1/component/js/object?clientid={{ tpay_apikey }}"></script>
         <script>
 
             let envioP = {

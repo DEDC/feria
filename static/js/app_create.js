@@ -113,7 +113,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Forzar el blur (cuando pierde el foco)
                         setTimeout(() => nombre_legal.blur(), 300);
 
+                        Swal.close()
+
                     } else {
+                        Swal.close()
                         nombre.value = "";
                         nombre_legal.value = "";
                         forms_list.forEach(element => {
@@ -126,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             confirmButtonText: 'Aceptar'
                         });
                     }
-                    Swal.close()
                 },
                 willClose: () => {
                 }
