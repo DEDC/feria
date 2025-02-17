@@ -102,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             element.style.display = "block";
                         });
                         nombre.focus();
+                        Swal.close()
                     }
                     else if (data.data.codigo == "00") {
                         nombre.value = `${data.data.datos.nombres} ${data.data.datos.apellido1} ${data.data.datos.apellido2}`;
