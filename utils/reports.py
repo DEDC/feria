@@ -76,6 +76,7 @@ def get_requests_report():
         ws.cell(row=counter, column=17, value=r.codigo_postal)
         ws.cell(row=counter, column=18, value=r.get_estado_display())
         ws.cell(row=counter, column=19, value=r.municipio)
+        counter+=1
 
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     wb.save(response)
