@@ -76,6 +76,13 @@ def get_requests_report():
         ws.cell(row=counter, column=17, value=r.codigo_postal)
         ws.cell(row=counter, column=18, value=r.get_estado_display())
         ws.cell(row=counter, column=19, value=r.municipio)
+        if r.comercio:
+            c = r.comercio
+            ws.cell(row=counter, column=20, value=c.folio)
+            ws.cell(row=counter, column=21, value=c.get_estatus_display() if c.estatus else 'Sin asignar')
+            ws.cell(row=counter, column=22, value=c.nombre)
+            ws.cell(row=counter, column=23, value=c.get_giro_display())
+            ws.cell(row=counter, column=24, value=c.descripcion)
         counter+=1
 
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
