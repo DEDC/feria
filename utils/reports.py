@@ -50,6 +50,39 @@ def get_docs():
         counter+=1
     zf.close()
 
+def get_requests_report():
+    wb = load_workbook('static/docs/reporte_solicitudes.xlsx')
+    ws = wb.get_sheet_by_name('SOLICITUDES')
+    requests = Solicitudes.objects.all().order_by('fecha_reg')
+    counter = 3
+    for r in requests:
+        # tiendas info
+        ws.cell(row=counter, column=1, value=r.folio)
+        ws.cell(row=counter, column=2, value=r.get_estatus_display() if r.estatus else 'Sin asignar')
+        ws.cell(row=counter, column=3, value=r.fecha_reg.strftime('%d-%m-%Y'))
+        ws.cell(row=counter, column=4, value=r.usuario.get_full_name())
+        ws.cell(row=counter, column=5, value=str(r.usuario.phone_number))
+        ws.cell(row=counter, column=6, value= 'Sí' if r.factura else 'No')
+        ws.cell(row=counter, column=7, value= 'Sí' if r.regimen_fiscal else 'No')
+        ws.cell(row=counter, column=8, value=r.nombre)
+        ws.cell(row=counter, column=9, value=r.nombre_replegal if r.nombre_replegal is not None else '')
+        ws.cell(row=counter, column=10, value=r.rfc_txt.upper() if r.rfc_txt is not None else '')
+        ws.cell(row=counter, column=11, value=r.curp_txt.upper())
+        ws.cell(row=counter, column=12, value=int(r.cantidad_espacios))
+        ws.cell(row=counter, column=13, value= 'Sí' if r.mas_espacios else 'No')
+        ws.cell(row=counter, column=14, value=r.calle)
+        ws.cell(row=counter, column=15, value=r.no_calle)
+        ws.cell(row=counter, column=16, value=r.colonia)
+        ws.cell(row=counter, column=17, value=r.codigo_postal)
+        ws.cell(row=counter, column=18, value=r.get_estado_display())
+        ws.cell(row=counter, column=19, value=r.municipio)
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    wb.save(response)
+    response['Content-Disposition'] = 'attachment; filename=REPORTE_SOLICITUDES_FERIA_2025.xlsx'
+    return response
+
+
 def get_report():
     wb = load_workbook('static/docs/layout_feria.xlsx')
     ws = wb.get_sheet_by_name('LOCALES')
