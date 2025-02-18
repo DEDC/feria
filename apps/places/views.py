@@ -185,7 +185,7 @@ class Request(UserPermissions, DetailView):
                 try:
                     context["pdf_url"] = tpay["data"]["urlFormatoPago"]["_text"]
                     context["tpay_importe"] = tpay["data"]["importe"]["_text"]
-                    context["tpay_captura"] = tpay["data"]["lineaCaptura"]["_text"]
+                    context["tpay_captura"] = tpay["data"]["lineaCaptura"]["_text"].split('|')[1]
                     context["tpay_folio"] = tpay["data"]["folioControlEstado"]["_text"]
                     context["tpay_url"] = f"https://tpayqa.tabasco.gob.mx/tpay/?linea_captura={tpay['data']['lineaCaptura']['_text'].split('|')[1]}"
 

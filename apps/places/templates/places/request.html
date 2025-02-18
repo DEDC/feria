@@ -50,7 +50,31 @@
         <script async defer src="{{ tpay_ruta }}api/v1/component/js/orden?clientid={{ tpay_apikey }}"></script>
         <script async defer src="{{ tpay_ruta }}api/v1/component/js/object?clientid={{ tpay_apikey }}"></script>
         <script>
-
+            let envioP = {
+                "query": false,
+                "dataOrden": {
+                    "lineaCaptura": "{{ tpay_captura }}",
+                    "deviceUuid": "5e51f395-c34b-a6ac-8677-010420850701",
+                    "userId": 3,
+                    "sistemaId": 21,
+                    "platform": "ComFeriaTabasco_WEB",
+                    "newCharge": {
+                        "amount": "{{ tpay_importe }}",
+                        "orderId": "{{ tpay_folio }}"
+                    }
+                },
+                "key": "{{ tpay_apikey }}",
+                "key_session_boardin": "5000",
+                "key_session_passport": "6002",
+                "key_channel_service": "scriptComponent",
+                "socketId": "{{ tpay_socket }}",
+                "nombre": "JUAN",
+                "apellidoP": "PÉREZ",
+                "apellidoM": "PÉREZ",
+                "email": "JUANPEREZ@GMAIL.COM",
+                "nomCSis": "{{ tpat_sistema }}"
+            };
+            
             var data_pago = 'iniciando';
 
             function dataFront(respuesta) {
@@ -64,11 +88,11 @@
                 }
             }
 
-            function createTPay() {
+            function createTPay(ordenPago) {
                 let tpay = document.createElement("pago-component");
                 //tpay.ordenpago = ;
 
-                tpay.ordenpago = JSON.stringify({{ ordenpago }});
+                tpay.ordenpago = JSON.stringify(ordenPago);
                 tpay.style.maxWidth = "80%";
                 return tpay;
             }
@@ -88,7 +112,7 @@
                 {#console.log("String JSON",JSON.stringify(envioP))#}
 
                 let contentTPay = document.getElementById("content-tpay");
-                contentTPay.appendChild(createTPay())
+                contentTPay.appendChild(createTPay(envioP))
 
                 // Función para manejar el evento click
                 btnEfectivo.addEventListener("click", function () {
