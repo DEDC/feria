@@ -192,8 +192,8 @@ class Request(UserPermissions, DetailView):
                     ordenPago = {
                         "query": False,
                         "dataOrden": {
-                            "lineaCaptura": "lineadeCapturaRecaudador",
-                            "deviceUuid": "5e51f395-c34b-a6ac-8677-010420850709",
+                            "lineaCaptura": tpay['data']['lineaCaptura']['_text'].split('|')[1],
+                            "deviceUuid": "5e51f395-c34b-a6ac-8677-010420850701",
                             "userId": 3,
                             "sistemaId": settings.TPAY_PROJECT_ID,
                             "platform": settings.TPAY_PROJECT,
@@ -203,15 +203,15 @@ class Request(UserPermissions, DetailView):
                             }
                         },
                         "key": settings.TPAY_APIKEY,
-                        "key_session_boardin": settings.TPAY_SESSION_ABORDAJE,
-                        "key_session_passport": settings.TPAY_SESSION_ACCESS,
-                        "key_channel_service ": " scriptComponent",
+                        "key_session_boardin": "5000",
+                        "key_session_passport": "6002",
+                        "key_channel_service": "scriptComponent",
                         "socketId": settings.TPAY_SOCKET,
-                        "nombre": self.object.nombre,
-                        "apellidoP": "",
-                        "apellidoM": "",
+                        "nombre": "JUAN",
+                        "apellidoP": "PÉREZ",
+                        "apellidoM": "PÉREZ",
                         "email": self.object.usuario.email,
-                        "nomCSis": settings.TPAY_SISTEMA
+                        "nomCSis": "CFeriatabW"
                     }
                     context["ordenpago"] = json.dumps(ordenPago, separators=(',', ':'))
                 except Exception as e:
