@@ -67,7 +67,7 @@ def get_requests_report():
         ws.cell(row=counter, column=8, value=r.nombre)
         ws.cell(row=counter, column=9, value=r.nombre_replegal if r.nombre_replegal is not None else '')
         ws.cell(row=counter, column=10, value=r.rfc_txt.upper() if r.rfc_txt is not None else '')
-        ws.cell(row=counter, column=11, value=r.curp_txt.upper())
+        ws.cell(row=counter, column=11, value=r.curp_txt.upper() if r.curp_txt is not None else '')
         ws.cell(row=counter, column=12, value=int(r.cantidad_espacios))
         ws.cell(row=counter, column=13, value= 'Sí' if r.mas_espacios else 'No')
         ws.cell(row=counter, column=14, value=r.calle)
