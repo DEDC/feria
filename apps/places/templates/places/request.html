@@ -66,7 +66,9 @@
 
             function createTPay() {
                 let tpay = document.createElement("pago-component");
-                tpay.ordenpago = '{{ ordenpago }}';
+                //tpay.ordenpago = ;
+
+                tpay.ordenpago = JSON.stringify({{ ordenpago }});
                 tpay.style.maxWidth = "80%";
                 return tpay;
             }
