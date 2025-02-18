@@ -136,5 +136,5 @@ def get_report():
 
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     wb.save(response)
-    response['Content-Disposition'] = 'attachment; filename=REPORTE_SISCOMFERIA.xlsx'
+    response['Content-Disposition'] = 'attachment; filename=REPORTE_FERIA_2025.xlsx'
     return response

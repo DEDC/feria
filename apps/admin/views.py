@@ -26,7 +26,7 @@ from apps.users.forms import UserUpdateForm
 from apps.dates.models import CitasAgendadas
 # utils
 from utils.naves import nave1, nave3, zona_a, zona_b, zona_c, zona_d
-from utils.permissions import AdminPermissions
+from utils.permissions import AdminPermissions, AdminStaffPermissions
 from utils.date import get_date_constancy
 from utils.gafete import get_gafete
 from utils.suministros import get_suministros
@@ -34,20 +34,34 @@ from utils.tarjeton import get_tarjeton
 from utils.word_writer import generate_physical_document
 from utils.reports import get_report
 from utils.email import send_html_mail
+from datetime import datetime
 
 places_dict = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b, 'z_c': zona_c, 'z_d': zona_d}
 
-class Main(AdminPermissions, TemplateView):
+class Main(AdminStaffPermissions, TemplateView):
     template_name = 'admin/main.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['requests'] = Solicitudes.objects.all().order_by('fecha_reg')
-        context['dates'] = CitasAgendadas.objects.all().order_by('fecha', 'hora')
-        context['branches'] = Comercios.objects.all().order_by('nombre')
+        today = datetime.now().strftime('%Y-%m-%d')
+        requests = Solicitudes.objects.all()
+        dates = CitasAgendadas.objects.all()
+        users = Usuarios.objects.all()
+        validations = Validaciones.objects.all()
+        branches = Comercios.objects.all()
+        context['requests'] = requests.count()
+        context['dates'] = dates.count()
+        context['users'] = users.count()
+        context['validations'] = validations.count()
+        context['branches'] = branches.count()
+        context['requests_today'] = requests.filter(fecha_reg__date=today).count()
+        context['dates_today'] = dates.filter(fecha_reg__date=today).count()
+        context['users_today'] = users.filter(date_joined__date=today).count()
+        context['validations_today'] = validations.filter(fecha_reg__date=today).count()
+        context['branches_today'] = branches.filter(fecha_reg__date=today).count()
         return context
 
-class ListRequests(AdminPermissions, ListView):
+class ListRequests(AdminStaffPermissions, ListView):
     model = Solicitudes
     paginate_by = 30
     template_name = 'admin/list_requests.html'
@@ -60,6 +74,7 @@ class ListRequests(AdminPermissions, ListView):
         context['rejected'] = requests.filter(estatus='rejected')
         context['pending'] = requests.filter(estatus='pending')
         context['not_assign'] = requests.filter(estatus='')
+        context['more3'] = requests.filter(mas_espacios=True)
         context['q'] = self.request.GET.get('q', '')
         context['e'] = self.request.GET.get('e', '')
         return context
@@ -77,11 +92,13 @@ class ListRequests(AdminPermissions, ListView):
         if e:
             if e == 'noassign':
                 queryset = queryset.filter(estatus='')
+            elif e == 'more3':
+                queryset = queryset.filter(mas_espacios=True)
             elif e in ['validated', 'rejected', 'resolved', 'pending']:
                 queryset = queryset.filter(estatus=e)
         return queryset.order_by('pk')
 
-class ListUsers(AdminPermissions, ListView):
+class ListUsers(AdminStaffPermissions, ListView):
     model = Usuarios
     paginate_by = 30
     template_name = 'admin/list_users.html'
@@ -101,7 +118,7 @@ class ListUsers(AdminPermissions, ListView):
             queryset = queryset.filter(lookup)
         return queryset.order_by('pk')
 
-class ListParking(AdminPermissions, ListView):
+class ListParking(AdminStaffPermissions, ListView):
     model = Estacionamiento
     paginate_by = 30
     template_name = 'admin/list_parking.html'
@@ -132,7 +149,7 @@ class ListParking(AdminPermissions, ListView):
             messages.error(request, form.errors)
         return redirect('admin:list_parking')
     
-class ListDates(AdminPermissions, ListView):
+class ListDates(AdminStaffPermissions, ListView):
     model = CitasAgendadas
     paginate_by = 30
     template_name = 'admin/list_dates.html'
@@ -152,7 +169,7 @@ class ListDates(AdminPermissions, ListView):
             queryset = queryset.filter(lookup)
         return queryset.order_by('pk')
 
-class UpdateRequest(AdminPermissions, SuccessMessageMixin, UpdateView):
+class UpdateRequest(AdminStaffPermissions, SuccessMessageMixin, UpdateView):
     template_name = 'admin/update_request.html'
     model = Solicitudes
     form_class = RequestForm
@@ -163,7 +180,7 @@ class UpdateRequest(AdminPermissions, SuccessMessageMixin, UpdateView):
     def get_success_url(self, *args, **kwargs):
         return reverse_lazy('admin:update_request', kwargs={'uuid':self.object.uuid})
 
-class UpdateShop(AdminPermissions, SuccessMessageMixin, UpdateView):
+class UpdateShop(AdminStaffPermissions, SuccessMessageMixin, UpdateView):
     template_name = 'admin/update_shop.html'
     model = Comercios
     form_class = ShopForm
@@ -174,7 +191,7 @@ class UpdateShop(AdminPermissions, SuccessMessageMixin, UpdateView):
     def get_success_url(self, *args, **kwargs):
         return reverse_lazy('admin:update_shop', kwargs={'uuid':self.object.uuid})
 
-class UpdateUser(AdminPermissions, SuccessMessageMixin, UpdateView):
+class UpdateUser(AdminStaffPermissions, SuccessMessageMixin, UpdateView):
     template_name = 'admin/update_user.html'
     model = Usuarios
     form_class = UserUpdateForm
@@ -183,7 +200,7 @@ class UpdateUser(AdminPermissions, SuccessMessageMixin, UpdateView):
     def get_success_url(self, *args, **kwargs):
         return reverse_lazy('admin:update_user', kwargs={'pk':self.object.pk})
 
-class UpdateParking(AdminPermissions, SuccessMessageMixin, UpdateView):
+class UpdateParking(AdminStaffPermissions, SuccessMessageMixin, UpdateView):
     template_name = 'admin/update_parking.html'
     model = Estacionamiento
     form_class = ParkingForm
@@ -193,7 +210,7 @@ class UpdateParking(AdminPermissions, SuccessMessageMixin, UpdateView):
         return reverse_lazy('admin:update_parking', kwargs={'pk':self.object.pk})
 
 
-class Request(AdminPermissions, DetailView):
+class Request(AdminStaffPermissions, DetailView):
     template_name = 'admin/request.html'
     model = Solicitudes
     slug_field = 'uuid'
@@ -290,7 +307,7 @@ class Request(AdminPermissions, DetailView):
         context['payment'] = self.object.solicitud_pagos.first()
         return context
 
-class Shop(AdminPermissions, DetailView):
+class Shop(AdminStaffPermissions, DetailView):
     template_name = 'admin/shop.html'
     model = Comercios
     slug_field = 'uuid'
