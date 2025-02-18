@@ -82,11 +82,11 @@
                 const modal_select = document.querySelector('#modal-iframe');
                 const instance_select_modal = new mdb.Modal(modal_select)
 
-                console.log("JSON", envioP);
-                console.log("String JSON",JSON.stringify(envioP))
+                {#console.log("JSON", envioP);#}
+                {#console.log("String JSON",JSON.stringify(envioP))#}
 
                 let contentTPay = document.getElementById("content-tpay");
-                contentTPay.appendChild(createTPay(envioP))
+                contentTPay.appendChild(createTPay())
 
                 // Función para manejar el evento click
                 btnEfectivo.addEventListener("click", function () {
