@@ -2,34 +2,196 @@
 {% load static %}
 {% block main %}
 <div class="container-fluid p-5">
-    <div class="row gx-xl-5">
-        <div class="col-xl-3">
-            <div class="shadow-4 bg-white rounded-5 overflow-hidden d-none d-xl-block">
-                <div class="bg-light p-4 text-center">
-                    <h5 class="mb-0">Administrador</h5>
+    <div class="container my-5">
+        <section class="mb-4">
+            <h5 class="mb-4">Selecciona el módulo para mostrar más información</h5>
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="p-3 badge-info rounded-4">
+                                        <i class="fas fa-clipboard-list fa-2x fa-fw"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-4">
+                                    <p class="text-muted mb-1">Solicitudes</p>
+                                    <h2 class="mb-0">
+                                        {{requests}}
+                                        <span class="text-success" style="font-size: 0.875rem"><i
+                                                class="fas fa-arrow-up fa-sm"></i>
+                                            <span> {{requests_today}}</span> hoy</span>
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer border-0 bg-light p-2">
+                            <a class="btn btn-link m-0" href="{% url 'admin:list_requests' %}" role="button"
+                                data-mdb-ripple-init data-ripple-color="primary">Ver más<i
+                                    class="fas fa-arrow-right ms-2"></i></a>
+                            <a class="btn btn-link m-0" href="{% url 'admin:download_requests_report' %}" role="button"
+                                data-mdb-ripple-init data-ripple-color="primary">Descargar<i
+                                    class="fas fa-arrow-down ms-2"></i></a>
+                        </div>
+                    </div>
                 </div>
-                <div class="p-4">
-                    <ul class="nav nav-pills nav-justified mb-4" id="ex1" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" href="{% url 'admin:list_requests' %}" role="tab">Solicitudes</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" href="{% url 'admin:list_dates' %}" role="tab">Citas Agendadas</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link active" id="ex3-tab-3" data-mdb-toggle="pill" href="#ex3-pills-3"
-                                role="tab" aria-controls="ex3-pills-3" aria-selected="false" tabindex="-1">Comercios Registrados</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" href="{% url 'admin:list_users' %}" role="tab">Usuarios Registrados</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" href="{% url 'admin:list_parking' %}" role="tab">Tarjetones de Estacionamiento</a>
-                        </li>
-                    </ul>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="p-3 badge-info rounded-4">
+                                        <i class="fas fa-user-group fa-2x fa-fw"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-4">
+                                    <p class="text-muted mb-1">Usuarios</p>
+                                    <h2 class="mb-0">
+                                        {{users}}
+                                        <span class="text-success" style="font-size: 0.875rem"><i
+                                                class="fas fa-arrow-up fa-sm"></i>
+                                            <span> {{users_today}}</span> hoy</span>
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer border-0 bg-light p-2">
+                            <a class="btn btn-link m-0" href="{% url 'admin:list_users' %}" role="button"
+                                data-mdb-ripple-init data-ripple-color="primary">Ver más<i
+                                    class="fas fa-arrow-right ms-2"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="p-3 badge-info rounded-4">
+                                        <i class="fas fa-calendar-day fa-2x fa-fw"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-4">
+                                    <p class="text-muted mb-1">Citas Agendadas</p>
+                                    <h2 class="mb-0">
+                                        {{dates}}
+                                        <span class="text-success" style="font-size: 0.875rem"><i
+                                                class="fas fa-arrow-up fa-sm"></i>
+                                            <span> {{dates_today}}</span> hoy</span>
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer border-0 bg-light p-2">
+                            <a class="btn btn-link m-0" href="{% url 'admin:list_dates' %}" role="button"
+                                data-mdb-ripple-init data-ripple-color="primary">Ver más<i
+                                    class="fas fa-arrow-right ms-2"></i></a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
+        <section class="mb-4">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="p-3 badge-info rounded-4">
+                                        <i class="fas fa-spell-check fa-2x fa-fw"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-4">
+                                    <p class="text-muted mb-1">Validaciones efectuadas</p>
+                                    <h2 class="mb-0">
+                                        {{validations}}
+                                        <span class="text-success" style="font-size: 0.875rem"><i
+                                                class="fas fa-arrow-up fa-sm"></i>
+                                            <span> {{validations_today}}</span> hoy</span>
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer border-0 bg-light p-2"></div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="p-3 badge-info rounded-4">
+                                        <i class="fas fa-shop fa-2x fa-fw"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-4">
+                                    <p class="text-muted mb-1">Comercios</p>
+                                    <h2 class="mb-0">
+                                        {{branches}}
+                                        <span class="text-success" style="font-size: 0.875rem"><i
+                                                class="fas fa-arrow-up fa-sm"></i>
+                                            <span> {{branches_today}}</span> hoy</span>
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer border-0 bg-light p-2"></div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="p-3 badge-info rounded-4">
+                                        <i class="fas fa-map-pin fa-2x fa-fw"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-4">
+                                    <p class="text-muted mb-1">Locales ocupados</p>
+                                    <h2 class="mb-0">
+                                        {{dates}}
+                                        <span class="text-success" style="font-size: 0.875rem"><i
+                                                class="fas fa-arrow-up fa-sm"></i>
+                                            <span> {{dates_today}}</span> hoy</span>
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer border-0 bg-light p-2"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="mb-4">
+            {% if user.is_superuser %}
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="p-3 badge-success rounded-4">
+                                        <i class="fas fa-file-excel fa-2x fa-fw"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-4">
+                                    <h4>Reporte General</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer border-0 bg-light p-2">
+                            <a class="btn btn-link m-0" href="{% url 'admin:download_report' %}" role="button"
+                                data-mdb-ripple-init data-ripple-color="primary">Descargar<i
+                                    class="fas fa-arrow-down ms-2"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </section>
     </div>
 </div>
 {% endblock main %}

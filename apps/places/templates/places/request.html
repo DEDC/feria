@@ -222,6 +222,7 @@
                             class="btn btn-sm btn-warning shadow-0 ms-2">Atender observación</a>
                     </div>
                 {% endif %}
+                <!-- Bloque Solicitud -->
                 <div
                         class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
                     <h4 style="cursor: pointer;" data-mdb-toggle="collapse" data-mdb-target="#collapseRequest"
@@ -376,6 +377,8 @@
                         </table>
                     </div>
                 </div>
+                <!-- Final Bloque Solicitud -->
+                 <!-- Bloque Comercio -->
                 <div id="comercio" data-mdb-toggle="collapse" data-mdb-target="#collapseShop" aria-expanded="true"
                      class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
                     <h4 style="cursor: pointer;" class="mb-0 fw-bold"><i class="fas fa-shop me-3"></i>Comercio
@@ -455,7 +458,15 @@
                         </div>
                     {% endif %}
                 </div>
+                <!-- Final Bloque Comercio -->
                 {% if object.estatus == "validated" %}
+                    <!-- Mensaje Provisional -->
+                    <div class="alert alert-dismissible fade show" role="alert" data-mdb-color="success"><i
+                        class="fas fa-check-circle me-3"></i>Su Solicitud con folio <b>{{object.folio}}</b> ha sido validada, a partir del lunes 24 de febrero del presente año podrá seleccionar el/los espacios que desea adquirir en esta misma plataforma.<button type="button" class="btn-close"
+                        data-mdb-dismiss="alert" aria-label="Close"></button></div>
+                    <!-- Final Mensaje Provisional -->
+                    {% comment %}
+                    <!-- Bloque selección de lugares -->
                     <input type="hidden" id="request-uuid" value="{{ object.uuid }}">
                     <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
                          id="places">
@@ -652,7 +663,10 @@
                             </div>
                         </div>
                     {% endif %}
+                    {% endcomment %}
+                    <!-- Final Bloque de Selección de Lugares -->
                 {% endif %}
+                <!-- Bloque de Citas -->
                 {% if user.citas.first %}
                     <div id="citas"
                          class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
@@ -692,7 +706,8 @@
                         {% endwith %}
                     </div>
                 {% endif %}
-
+                <!-- Final Bloque de Citas -->
+                 <!-- Bloque de Información de Pago -->
                 {% if payment %}
                     <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
                          id="places">
@@ -748,6 +763,7 @@
                         {% endif %}
                     </div>
                 {% endif %}
+                <!-- Final Información de Pago -->
             </div>
         </div>
     </div>

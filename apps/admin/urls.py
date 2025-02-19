@@ -3,7 +3,7 @@ from django.urls import path
 # admin
 from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, UpdateShop, DownloadDateDoc, 
                               ListRequests, ListUsers, UnlockRequest, UpdateUser, UserDates, ListDates, 
-                              DownloadContract, DownloadGafate, DownloadSuministros, DownloadReport, ListParking,
+                              DownloadContract, DownloadGafate, DownloadSuministros, DownloadReport, DownloadRequestsReport, ListParking,
                               DownloadTarjeton, UpdateParking,
                               set_place_temp, unset_place_temp, set_place,
                               add_alcohol, add_terraza, add_big_terraza, delete_item, delete_place)
@@ -41,4 +41,5 @@ urlpatterns = [
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/suministros/descargar', DownloadSuministros.as_view(), name='download_suministros'),
     path('tarjeton/<uuid:uuid>/descargar', DownloadTarjeton.as_view(), name='download_tarjeton'),
     path('reportes/descargar', DownloadReport.as_view(), name='download_report'),
+    path('solicitudes/reporte/descargar', DownloadRequestsReport.as_view(), name='download_requests_report'),
 ]

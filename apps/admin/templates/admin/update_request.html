@@ -97,6 +97,19 @@
                                     for="{{form.cantidad_espacios.id}}">{{form.cantidad_espacios.label}}</label>
                             </div>
                         </div>
+                        <div class="col-6">
+                            <label class="form-check-label ms-2 me-3 fw-bold">Requiero más de 3 espacios</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="mas_espacios" id="more1"
+                                    value="True" {% if object.mas_espacios %} checked{% endif %} />
+                                <label class="form-check-label" for="more1">Sí</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="mas_espacios" id="more2"
+                                    value="False" {% if not object.mas_espacios %}checked{% endif %} />
+                                <label class="form-check-label" for="more2">No</label>
+                            </div>
+                        </div>
                     </div>
                     <h6><b>Datos de la Dirección</b></h6>
                     <hr>
@@ -148,16 +161,20 @@
                             {{form.comprobante_domicilio}}
                         </div>
                         <div class="col-12">
-                            <label class="form-label">{{form.constancia_fiscal.label}}</label><br>
-                            {{form.constancia_fiscal}}
-                        </div>
-                        <div class="col-12">
                             <label class="form-label">{{form.curp.label}}</label><br>
                             {{form.curp}}
                         </div>
                         <div class="col-12">
+                            <label class="form-label">{{form.constancia_fiscal.label}}</label><br>
+                            {{form.constancia_fiscal}}
+                        </div>
+                        <div class="col-12">
                             <label class="form-label">{{form.acta_constitutiva.label}}</label><br>
                             {{form.acta_constitutiva}}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">{{form.poder_notarial.label}}</label><br>
+                            {{form.poder_notarial}}
                         </div>
                     </div>
                     <div class="d-grid gap-2 col-6 mx-auto mt-3">
