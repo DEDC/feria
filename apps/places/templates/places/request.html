@@ -239,7 +239,7 @@
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Estatus actual
                                 <td>
-                                    {% if object.estatus == 'validated' %}
+                                    {% if object.estatus == 'validated' or object.estatus == "validated-direct" %}
                                         <span class="badge rounded-pill badge-success">Validado</span>
                                     {% elif object.estatus == 'rejected' %}
                                         <span class="badge rounded-pill badge-danger">Rechazado</span>

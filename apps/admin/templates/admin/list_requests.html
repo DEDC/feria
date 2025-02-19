@@ -167,7 +167,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    {% if rq.estatus == 'validated' %}
+                                    {% if rq.estatus == 'validated' or object.estatus == "validated-direct" %}
                                     <span class="badge rounded-pill badge-success">Validado</span>
                                     {% elif rq.estatus == 'rejected' %}
                                     <span class="badge rounded-pill badge-danger">Rechazado</span>
