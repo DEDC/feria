@@ -54,7 +54,7 @@ giros = (
 
 class Solicitudes(ControlInfo):
     identifier = 'SLC'
-    estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Observado'), ('validated', 'Validado'), ('rejected', 'Rechazado'), ('resolved', 'Solventado'),))
+    estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Observado'), ('validated', 'Validado'), ('validated-direct', 'Validado Directamente'), ('rejected', 'Rechazado'), ('resolved', 'Solventado'),))
     usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='solicitudes')
     cantidad_espacios = models.PositiveSmallIntegerField('Cantidad de espacios para el comercio', validators=[MinValueValidator(1)])
     mas_espacios = models.BooleanField('Requiero más de 3 espacios', choices=((True, 'Sí'), (False, 'No')), default=False)
@@ -104,7 +104,7 @@ class Comercios(ControlInfo):
 
 class Validaciones(ControlInfo):
     identifier = 'VAL'
-    estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Observado'), ('validated', 'Validado'), ('rejected', 'Rechazado'), ('resolved', 'Solventado'),), null=True)
+    estatus = models.CharField(max_length=20, editable=False, choices=(('pending', 'Observado'), ('validated', 'Validado'), ('rejected', 'Rechazado'), ('resolved', 'Solventado'), ('validated-direct', 'Validado Directamente'),), null=True)
     solicitud = models.ForeignKey(Solicitudes, related_name='validaciones', on_delete=models.CASCADE, null=True)
     comercio = models.ForeignKey(Comercios, related_name='validaciones_com', on_delete=models.CASCADE, null=True)
     campos = models.JSONField(null=True)
@@ -142,10 +142,18 @@ class Pagos(ControlInfo):
         (2, "Aceptado"),
         (3, "Cancelado"),
     )
-    identifier='PAG'
+    identifier = 'PAG'
     solicitud = models.ForeignKey(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='solicitud_pagos')
     usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='usuario_pagos')
-    tipo = models.CharField(max_length=20, null=True, choices=(('tarjeta', 'Tarjeta'), ('efectivo', 'Efectivo'), ('transferencia', 'Transferencia')))
+    tipo = models.CharField(
+        max_length=20, null=True,
+        choices=(
+            ('directo', 'Directo'),
+            ('tarjeta', 'Tarjeta'),
+            ('efectivo', 'Efectivo'),
+            ('transferencia', 'Transferencia')
+        )
+    )
     pagado = models.BooleanField(default=False)
     data_tpay = models.JSONField(null=True, blank=True)
     validador = models.CharField(max_length=200, editable=False, null=True)

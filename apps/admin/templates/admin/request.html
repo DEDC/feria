@@ -57,8 +57,14 @@
                                     </h1>
                                 {% endif %}
                                 <button name="validated" type="submit" data-mdb-ripple-init data-mdb-ripple-color="dark"
-                                        class="btn btn-lg btn-rounded btn-outline-success shadow-0 w-100"><i
-                                        class="fas fa-check me-2"></i>Validar
+                                        class="btn btn-lg btn-rounded btn-outline-success shadow-0 w-100">
+                                        <i class="fas fa-check me-2"></i>
+                                        Validar
+                                </button>
+                                <button name="validated-payment" type="submit" data-mdb-ripple-init data-mdb-ripple-color="dark"
+                                        class="btn btn-lg btn-rounded btn-outline-success shadow-0 w-100 my-3">
+                                        <i class="fas fa-check-square me-2"></i>
+                                        Validar Directo
                                 </button>
                                 <button name="pending" type="submit"
                                         class="btn btn-outline-warning btn-lg btn-rounded shadow-0 w-100 my-3"><i
@@ -519,8 +525,7 @@
                             {% endif %}
                         </ul>
                     </div>
-                    {% if payment %}
-
+                    {% if object.estatus == 'validated-direct' %}
                         {% if not payment %}
                             <div data-mdb-alert-init="" class="alert fade alert-success alert-fixed" id="alert-success"
                                  role="alert"
@@ -598,15 +603,15 @@
                             <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
                                 {% if not payment %}
                                     <div class="d-flex justify-content-end">
-                                        <button id="add-terraza" disabled type="button"
+                                        <button id="add-terraza" disabled type="button" style="display: none"
                                                 class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
                                                 class="fas fa-plus me-2"></i>Agregar terraza
                                         </button>
-                                        <button id="add-big-terraza" disabled type="button"
+                                        <button id="add-big-terraza" disabled type="button" style="display: none"
                                                 class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
                                                 class="fas fa-plus me-2"></i>Agregar terraza grande
                                         </button>
-                                        <button id="add-alcohol" disabled type="button"
+                                        <button id="add-alcohol" disabled type="button" style="display: none"
                                                 class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3"><i
                                                 class="fas fa-plus me-2"></i>Agregar licencia de alcohol
                                         </button>
@@ -643,9 +648,12 @@
                                                 <td>${{ sp.precio|intcomma }}</td>
                                                 <td>{{ sp.fecha_reg }}</td>
                                                 {% if not payment %}
-                                                    <td><a class="ms-3 del-place" data-uuid="{{ sp.uuid }}"
-                                                           data-type="place" role="button"><i
-                                                            class="fas fa-xmark fa-lg text-danger"></i></a></td>
+                                                    <td>
+                                                        <a class="ms-3 del-place" data-uuid="{{ sp.uuid }}"
+                                                           data-type="place" role="button">
+                                                            <i class="fas fa-xmark fa-lg text-danger"></i>
+                                                        </a>
+                                                    </td>
                                                 {% endif %}
                                             </tr>
                                         {% endfor %}
@@ -694,7 +702,7 @@
                                         <h2 class="me-5 m-0">Total:</h2>
                                         <h1 class="ms-5 m-0 text-primary" id="total-price">${{ total|intcomma }}</h1>
                                     </div>
-                                    <p class="note note-success mt-4">
+                                    <p class="note note-success mt-4" style="display: none;">
                                         Se ha definido que el pago fue seleccionado como tipo
                                         <b>{{ payment.get_tipo_display }}</b> el
                                         <b>{{ payment.fecha_reg }} hrs</b>. {% if payment.validador %}Efectuado por
@@ -711,7 +719,7 @@
                             </div>
                         {% endif %}
                     {% endif %}
-                    {% if payment %}
+                    {% if pagado %}
                         <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
                              id="places">
                             <h4 class="mb-0 fw-bold">
@@ -752,7 +760,7 @@
                                     descarga
                                 </p>
                                 <div class="d-flex justify-content-center">
-                                    <button name="cash-paid"
+                                    <button name="cash-paid" style="display: none"
                                             class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
                                         <i class="fas fa-money-bill-1 me-2"></i>
                                         Pagado con efectivo

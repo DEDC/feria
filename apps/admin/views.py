@@ -14,6 +14,8 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
+
+from apps.dates.tools import get_dates_from_range, get_times_from_range
 # places
 from apps.places.models import Solicitudes, Comercios, Validaciones, Lugares, ProductosExtras, Pagos, Estacionamiento
 from apps.places.forms import RequestForm, ShopForm, ParkingForm
@@ -38,6 +40,10 @@ from datetime import datetime
 
 places_dict = {'n_1': nave1, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b, 'z_c': zona_c, 'z_d': zona_d}
 
+dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
+hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
+
+
 class Main(AdminStaffPermissions, TemplateView):
     template_name = 'admin/main.html'
 
@@ -60,6 +66,7 @@ class Main(AdminStaffPermissions, TemplateView):
         context['validations_today'] = validations.filter(fecha_reg__date=today).count()
         context['branches_today'] = branches.filter(fecha_reg__date=today).count()
         return context
+
 
 class ListRequests(AdminStaffPermissions, ListView):
     model = Solicitudes
@@ -98,6 +105,7 @@ class ListRequests(AdminStaffPermissions, ListView):
                 queryset = queryset.filter(estatus=e)
         return queryset.order_by('pk')
 
+
 class ListUsers(AdminStaffPermissions, ListView):
     model = Usuarios
     paginate_by = 30
@@ -117,6 +125,7 @@ class ListUsers(AdminStaffPermissions, ListView):
             lookup = (Q(first_name__icontains=q)|Q(last_name__icontains=q)|Q(email__icontains=q)|Q(phone_number__icontains=q))
             queryset = queryset.filter(lookup)
         return queryset.order_by('pk')
+
 
 class ListParking(AdminStaffPermissions, ListView):
     model = Estacionamiento
@@ -148,7 +157,8 @@ class ListParking(AdminStaffPermissions, ListView):
             messages.error(request, 'Ha ocurrido un error al crear el Tarjetón')
             messages.error(request, form.errors)
         return redirect('admin:list_parking')
-    
+
+
 class ListDates(AdminStaffPermissions, ListView):
     model = CitasAgendadas
     paginate_by = 30
@@ -169,6 +179,7 @@ class ListDates(AdminStaffPermissions, ListView):
             queryset = queryset.filter(lookup)
         return queryset.order_by('pk')
 
+
 class UpdateRequest(AdminStaffPermissions, SuccessMessageMixin, UpdateView):
     template_name = 'admin/update_request.html'
     model = Solicitudes
@@ -179,6 +190,7 @@ class UpdateRequest(AdminStaffPermissions, SuccessMessageMixin, UpdateView):
 
     def get_success_url(self, *args, **kwargs):
         return reverse_lazy('admin:update_request', kwargs={'uuid':self.object.uuid})
+
 
 class UpdateShop(AdminStaffPermissions, SuccessMessageMixin, UpdateView):
     template_name = 'admin/update_shop.html'
@@ -191,6 +203,7 @@ class UpdateShop(AdminStaffPermissions, SuccessMessageMixin, UpdateView):
     def get_success_url(self, *args, **kwargs):
         return reverse_lazy('admin:update_shop', kwargs={'uuid':self.object.uuid})
 
+
 class UpdateUser(AdminStaffPermissions, SuccessMessageMixin, UpdateView):
     template_name = 'admin/update_user.html'
     model = Usuarios
@@ -199,6 +212,7 @@ class UpdateUser(AdminStaffPermissions, SuccessMessageMixin, UpdateView):
 
     def get_success_url(self, *args, **kwargs):
         return reverse_lazy('admin:update_user', kwargs={'pk':self.object.pk})
+
 
 class UpdateParking(AdminStaffPermissions, SuccessMessageMixin, UpdateView):
     template_name = 'admin/update_parking.html'
@@ -248,19 +262,26 @@ class Request(AdminStaffPermissions, DetailView):
                     payment.save()
                     messages.success(request, 'Se confirma el pago en efectivo')
         elif 'transfer-paid' in request.POST:
-            if request_.estatus == 'validated':
-                payment = request_.solicitud_pagos.first()
-                if payment:
-                    payment.pagado = True
-                    payment.tipo = 'transferencia'
-                    payment.save()
-                    messages.success(request, 'Se confirma el pago con transferencia')
+            if request_.estatus == 'validated-direct':
+                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='transferencia', pagado=True,
+                                            validador=request.user.get_full_name())
+                messages.success(request, 'Se confirma el pago con transferencia')
         if 'validated' in request.POST:
+
             request_.estatus = 'validated'
             request_.save()
             Validaciones.objects.create(solicitud=request_, estatus='validated', validador=request.user.get_full_name())
             messages.success(request, 'Estatus asignado exitosamente.')
             send_html_mail(request_.usuario.email, request_.usuario.get_full_name, request_.folio, estatus='Aprobado')
+
+        elif 'validated-payment' in request.POST:
+
+            request_.estatus = 'validated-direct'
+            request_.directo = True
+            request_.save()
+            Validaciones.objects.create(solicitud=request_, estatus='validated-direct', validador=request.user.get_full_name())
+            messages.success(request, 'Estatus asignado exitosamente.')
+
         elif 'rejected' in request.POST:
             request_.estatus = 'rejected'
             lookup = (~Q(estatus='rejected'))
@@ -305,7 +326,14 @@ class Request(AdminStaffPermissions, DetailView):
         context['total'] = context['total_extras'] + context['total_places']
         context['selected_places'] = places
         context['payment'] = self.object.solicitud_pagos.first()
+        pagado = False
+        if self.object.estatus == "validated-direct":
+            pagado = True
+        if self.object.estatus == "validated" and self.object.solicitud_pagos.first():
+            pagado = True
+        context["pagado"] = pagado
         return context
+
 
 class Shop(AdminStaffPermissions, DetailView):
     template_name = 'admin/shop.html'
@@ -348,8 +376,10 @@ class Shop(AdminStaffPermissions, DetailView):
                 messages.warning(request, 'No se realizó ninguna acción. No se detectaron campos validados.')
         return redirect('admin:shop', shop_.uuid)
 
+
 class SetPlace(AdminPermissions, TemplateView):
     template_name = 'admin/set_place.html'
+
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
@@ -361,6 +391,7 @@ def render_place(request, key):
             if Lugares.objects.filter(uuid_place=p['uuid']).exists():
                 p['status'] = 'unavailable'
     return JsonResponse(places_dict[key])
+
 
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
@@ -382,6 +413,7 @@ def set_place_temp(request, uuid, zone):
         except Exception as e:
             return Response({'status_code': 'notsaved', 'error': str(e)}, status=status.HTTP_200_OK)
 
+
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([IsAuthenticated,])
@@ -392,6 +424,7 @@ def unset_place_temp(request, uuid):
         if p_.exists():
             p_.get().delete()
     return Response({})
+
 
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
@@ -406,6 +439,7 @@ def set_place(request, uuid):
             pl.save()
     return Response({})
 
+
 class DownloadDateDoc(AdminPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
         try:
@@ -416,6 +450,7 @@ class DownloadDateDoc(AdminPermissions, RedirectView):
         except (Solicitudes.DoesNotExist, CitasAgendadas.DoesNotExist):
             raise Http404()
 
+
 class DownloadContract(AdminPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
         try:
@@ -424,6 +459,7 @@ class DownloadContract(AdminPermissions, RedirectView):
             return doc
         except (Solicitudes.DoesNotExist):
             raise Http404()
+
 
 class DownloadGafate(AdminPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
@@ -435,6 +471,7 @@ class DownloadGafate(AdminPermissions, RedirectView):
         except (Solicitudes.DoesNotExist, Lugares.DoesNotExist):
             raise Http404()
 
+
 class DownloadSuministros(AdminPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
         try:
@@ -445,6 +482,7 @@ class DownloadSuministros(AdminPermissions, RedirectView):
         except (Solicitudes.DoesNotExist, Lugares.DoesNotExist):
             raise Http404()
 
+
 class DownloadTarjeton(AdminPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
         try:
@@ -453,6 +491,7 @@ class DownloadTarjeton(AdminPermissions, RedirectView):
             return doc
         except (Estacionamiento.DoesNotExist):
             raise Http404()
+
 
 class DownloadReport(AdminPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
@@ -463,6 +502,7 @@ class DownloadReport(AdminPermissions, RedirectView):
             print(e)
             return redirect('admin:main')
 
+
 class DownloadRequestsReport(AdminPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
         try:
@@ -471,6 +511,7 @@ class DownloadRequestsReport(AdminPermissions, RedirectView):
         except Exception as e:
             print(e)
             return redirect('admin:main')
+
 
 class UnlockRequest(AdminPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
@@ -487,6 +528,7 @@ class UnlockRequest(AdminPermissions, RedirectView):
             return redirect('admin:request', request_.uuid)
         except (Solicitudes.DoesNotExist):
             raise Http404()
+
 
 class UserDates(AdminPermissions, TemplateView):
     template_name = 'admin/user_dates.html'
@@ -511,6 +553,7 @@ class UserDates(AdminPermissions, TemplateView):
             return redirect('admin:list_users')
         return self.render_to_response(context)
 
+
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([IsAuthenticated,])
@@ -524,6 +567,7 @@ def add_terraza(request, uuid, uuid_place):
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([IsAuthenticated,])
@@ -536,6 +580,7 @@ def add_big_terraza(request, uuid, uuid_place):
         return Response({})
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
@@ -563,6 +608,7 @@ def add_alcohol(request, uuid, uuid_place):
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([IsAuthenticated,])
@@ -575,6 +621,7 @@ def delete_item(request, uuid, uuid_pdt):
         return Response({})
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
