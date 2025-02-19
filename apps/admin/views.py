@@ -78,6 +78,7 @@ class ListRequests(AdminStaffPermissions, ListView):
         requests = Solicitudes.objects.all()
         context['total'] = requests
         context['validated'] = requests.filter(estatus='validated')
+        context['validated-direct'] = requests.filter(estatus='validated-direct')
         context['rejected'] = requests.filter(estatus='rejected')
         context['pending'] = requests.filter(estatus='pending')
         context['not_assign'] = requests.filter(estatus='')
@@ -101,7 +102,7 @@ class ListRequests(AdminStaffPermissions, ListView):
                 queryset = queryset.filter(estatus='')
             elif e == 'more3':
                 queryset = queryset.filter(mas_espacios=True)
-            elif e in ['validated', 'rejected', 'resolved', 'pending']:
+            elif e in ['validated', 'rejected', 'resolved', 'pending', 'validated-direct']:
                 queryset = queryset.filter(estatus=e)
         return queryset.order_by('pk')
 

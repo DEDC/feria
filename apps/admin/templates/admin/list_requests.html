@@ -132,6 +132,8 @@
                 <a href="?q=&page=" class="badge rounded-pill badge-info me-1 {% if e == '' %}border border-2{% endif %}">Todos</a>
                 <a href="?q={{q}}&e=validated&page={{page_obj.number}}"
                     class="badge rounded-pill badge-success me-1 {% if e == 'validated' %}border border-2{% endif %}">Validados</a>
+                <a href="?q={{q}}&e=validated-direct&page={{page_obj.number}}"
+                    class="badge rounded-pill badge-success me-1 {% if e == 'validated' %}border border-2{% endif %}">Validados Directamente</a>
                 <a href="?q={{q}}&e=rejected&page={{page_obj.number}}"
                     class="badge rounded-pill badge-danger me-1 {% if e == 'rejected' %}border border-2{% endif %}">Rechazados</a>
                 <a href="?q={{q}}&e=pending&page={{page_obj.number}}"
@@ -167,8 +169,10 @@
                                     </a>
                                 </td>
                                 <td>
-                                    {% if rq.estatus == 'validated' or object.estatus == "validated-direct" %}
+                                    {% if rq.estatus == 'validated' %}
                                     <span class="badge rounded-pill badge-success">Validado</span>
+                                    {% elif rq.estatus == 'validated-direct' %}
+                                    <span class="badge rounded-pill badge-success">Validado Directamente</span>
                                     {% elif rq.estatus == 'rejected' %}
                                     <span class="badge rounded-pill badge-danger">Rechazado</span>
                                     {% elif rq.estatus == 'pending' %}
