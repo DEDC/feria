@@ -11,7 +11,7 @@ from django.shortcuts import redirect
 from django.db.models import Sum, Q
 from django.conf import settings
 # places
-from apps.places.models import Solicitudes, Comercios, Validaciones, Pagos
+from apps.places.models import Solicitudes, Comercios, Validaciones, Pagos, Lugares
 from apps.places.forms import RequestForm, ShopForm
 # dates
 from apps.dates.models import CitasAgendadas
@@ -124,12 +124,15 @@ class Request(UserPermissions, DetailView):
             token, error = generarToken(user_data)
 
             if not error:
-                lineapago = solicitar_linea_captura(
-                    token, "{}-{}".format(request_.folio, datetime.datetime.now().strftime("%H%M%S")), "A", request_.nombre, request_.curp_txt, request_.calle,
-                    request_.colonia, request_.codigo_postal, request_.estado, request_.municipio
-                )
-                request_.data_tpay = lineapago
-                request_.save()
+                lugares = Lugares.objects.filter(solicitud=request_)
+                for lug in lugares:
+                    lineapago = solicitar_linea_captura(
+                        token, "{}-{}".format(request_.folio, datetime.datetime.now().strftime("%H%M%S")), lug.tramite_id,
+                        request_.nombre, request_.curp_txt, request_.calle,
+                        request_.colonia, request_.codigo_postal, request_.estado, request_.municipio
+                    )
+                    lug.data_tpay = lineapago
+                    lug.save()
             else:
                 messages.error(request, f"{token}")
 
@@ -181,39 +184,13 @@ class Request(UserPermissions, DetailView):
                 sol.data_tpay = lineapago
                 sol.save()
             tpay = sol.data_tpay
-            if tpay["resultado"]:
+            if tpay:
                 try:
                     context["pdf_url"] = tpay["data"]["urlFormatoPago"]["_text"]
                     context["tpay_importe"] = tpay["data"]["importe"]["_text"]
                     context["tpay_captura"] = tpay["data"]["lineaCaptura"]["_text"].split('|')[1]
                     context["tpay_folio"] = tpay["data"]["folioControlEstado"]["_text"]
                     context["tpay_url"] = f"https://tpayqa.tabasco.gob.mx/tpay/?linea_captura={tpay['data']['lineaCaptura']['_text'].split('|')[1]}"
-
-                    ordenPago = {
-                        "query": False,
-                        "dataOrden": {
-                            "lineaCaptura": tpay['data']['lineaCaptura']['_text'].split('|')[1],
-                            "deviceUuid": "5e51f395-c34b-a6ac-8677-010420850701",
-                            "userId": 3,
-                            "sistemaId": settings.TPAY_PROJECT_ID,
-                            "platform": settings.TPAY_PROJECT,
-                            "newCharge": {
-                                "amount": tpay["data"]["importe"]["_text"],
-                                "orderId": tpay["data"]["folioControlEstado"]["_text"]
-                            }
-                        },
-                        "key": settings.TPAY_APIKEY,
-                        "key_session_boardin": "5000",
-                        "key_session_passport": "6002",
-                        "key_channel_service": "scriptComponent",
-                        "socketId": settings.TPAY_SOCKET,
-                        "nombre": "JUAN",
-                        "apellidoP": "PÉREZ",
-                        "apellidoM": "PÉREZ",
-                        "email": self.object.usuario.email,
-                        "nomCSis": "CFeriatabW"
-                    }
-                    context["ordenpago"] = json.dumps(ordenPago, separators=(',', ':'))
                 except Exception as e:
                     print(e)
         return context

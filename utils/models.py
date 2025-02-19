@@ -4,6 +4,7 @@ import os
 # Django
 from django.db import models
 
+
 class ControlInfo(models.Model):
     class Meta:
         ordering = ['-fecha_reg']
@@ -23,6 +24,7 @@ class ControlInfo(models.Model):
 
     class Meta:
         abstract = True
+
 
 class UploadTo:
   def __init__(self, name, folder_name):

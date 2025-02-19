@@ -54,7 +54,7 @@
                 "query": false,
                 "dataOrden": {
                     "lineaCaptura": "{{ tpay_captura }}",
-                    "deviceUuid": "5e51f395-c34b-a6ac-8677-010420850701",
+                    "deviceUuid": "{{ object.uuid }}", // UUID por solicitudCaptura por id usuario
                     "userId": 3,
                     "sistemaId": 21,
                     "platform": "ComFeriaTabasco_WEB",
@@ -74,7 +74,7 @@
                 "email": "JUANPEREZ@GMAIL.COM",
                 "nomCSis": "{{ tpat_sistema }}"
             };
-            
+
             var data_pago = 'iniciando';
 
             function dataFront(respuesta) {

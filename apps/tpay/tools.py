@@ -95,9 +95,9 @@ def sendEmail(correo, html, subject):
     message.send()
 
 
-def solicitar_linea_captura(token, folio, zona, nombre, curp, calle, colonia, cp, estado, municipio):
+def solicitar_linea_captura(token, folio, tramite_id, nombre, curp, calle, colonia, cp, estado, municipio):
     try:
-        folio = f"/?folioSeguimiento={folio}&idTramite={tramites[zona]}&nombre={nombre}&curp={curp}&calle={calle}&colonia={colonia}&cp={cp}&estado={estado}&municipio={municipio}"
+        folio = f"/?folioSeguimiento={folio}&idTramite={tramite_id}&nombre={nombre}&curp={curp}&calle={calle}&colonia={colonia}&cp={cp}&estado={estado}&municipio={municipio}"
         # folio = f"/?folioSeguimiento={folio}&idTramite={tramites[zona]}"
         # folio = f"/?folioSeguimiento={folio}&token={token}&nombre={nombre}&paterno={paterno}&materno={materno}&curp={curp}&calle={calle}&colonia={colonia}&cp={cp}&estado={estado}&municipio={municipio}"
         folioEncriptado = encriptarData(folio)

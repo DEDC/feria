@@ -121,12 +121,14 @@ class Lugares(ControlInfo):
     precio = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     m2 = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     nombre = models.CharField(max_length=10, default='')
+    tramite_id = models.IntegerField(default=0)
     usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='usuario_lugar')
     solicitud = models.ForeignKey(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='solicitud_lugar')
+    data_tpay = models.JSONField(null=True, blank=True)
 
 
 class ProductosExtras(ControlInfo):
-    identifier='PDX'
+    identifier = 'PDX'
     lugar = models.ForeignKey(Lugares, editable=False, on_delete=models.PROTECT, related_name='extras')
     tipo = models.CharField(max_length=20, null=True, choices=(('terraza', 'Terraza'), ('terraza_grande', 'Terraza Grande'), ('licencia_alcohol', 'Licencia de Alcohol')))
     precio = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
