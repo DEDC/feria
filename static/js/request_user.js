@@ -1,13 +1,8 @@
 import { getPlaces, setPlaceTemp, unsetPlaceTemp, setPlace, addTerraza, addAlcohol, addBigTerraza, deleteItem, deletePlace } from "../js/api/utilities.js";
-import { url_nave_1, url_nave_3, url_zone_a, url_zone_b, url_zone_c, url_zone_d } from '../js/api/endpoints.js'
+import { url_nave_2 } from '../js/api/endpoints.js'
 
 document.addEventListener('DOMContentLoaded', () => {
-    const zone_a_btn = document.querySelector('#zone-a')
-    const zone_b_btn = document.querySelector('#zone-b')
-    const zone_c_btn = document.querySelector('#zone-c')
-    const zone_d_btn = document.querySelector('#zone-d')
-    const n_1_btn = document.querySelector('#n-1')
-    const n_3_btn = document.querySelector('#n-2')
+    const n_2_btn = document.querySelector('#n-2')
     const zone_title = document.querySelector('#zone_title')
     const table_places = document.querySelector('.table-places')
     const type_pago = document.querySelector('.type_pago')
@@ -112,45 +107,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let current_zone = ''
     let modal_shown = false
 
-    if (n_1_btn) {
-        n_1_btn.addEventListener('click', (e) => {
-            get_places_zone(url_nave_1)
-            current_zone = 'n_1'
-        })
-    }
-
-    if (n_3_btn) {
-        n_3_btn.addEventListener('click', (e) => {
-            get_places_zone(url_nave_3)
-            current_zone = 'n_3'
-        })
-    }
-
-    if (zone_a_btn) {
-        zone_a_btn.addEventListener('click', (e) => {
-            get_places_zone(url_zone_a)
-            current_zone = 'z_a'
-        })
-    }
-
-    if (zone_b_btn) {
-        zone_b_btn.addEventListener('click', (e) => {
-            get_places_zone(url_zone_b)
-            current_zone = 'z_b'
-        })
-    }
-
-    if (zone_c_btn) {
-        zone_c_btn.addEventListener('click', (e) => {
-            get_places_zone(url_zone_c)
-            current_zone = 'z_c'
-        })
-    }
-
-    if (zone_d_btn) {
-        zone_d_btn.addEventListener('click', (e) => {
-            get_places_zone(url_zone_d)
-            current_zone = 'z_d'
+    if (n_2_btn) {
+        n_2_btn.addEventListener('click', (e) => {
+            get_places_zone(url_nave_2)
+            current_zone = 'n_2'
         })
     }
 
