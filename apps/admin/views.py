@@ -401,7 +401,7 @@ def set_place_temp(request, uuid, zone):
     places = request.POST.getlist('places')
     request_ = Solicitudes.objects.get(uuid=uuid)
     objects = []
-    if zone in ['z_a', 'z_b', 'z_c', 'z_d', 'n_1', 'n_3']:
+    if zone in ['n_2']:
         for p in places:
             for p2 in places_dict[zone]['places']:
                 if p2['uuid'] == str(p):
