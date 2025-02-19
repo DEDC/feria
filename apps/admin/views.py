@@ -327,7 +327,7 @@ class Request(AdminStaffPermissions, DetailView):
         context['selected_places'] = places
         context['payment'] = self.object.solicitud_pagos.first()
         pagado = False
-        if self.object.estatus == "validated-direct":
+        if self.object.estatus == "validated-direct" and self.object.solicitud_lugar.first():
             pagado = True
         if self.object.estatus == "validated" and self.object.solicitud_pagos.first():
             pagado = True
