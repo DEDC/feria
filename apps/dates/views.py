@@ -18,6 +18,7 @@ from apps.places.models import Lugares
 all_dates = get_dates_from_range('2025-02-28', settings.END_DATES)
 all_hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
 
+
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([IsAuthenticated])
@@ -69,7 +70,7 @@ def get_curp_service(request, curp):
     return Response(response)
 
 
-class PDFLineaCapturaView(APIView):
+class PDFLineaCapturaView(View):
     def get(self, request, *args, **kwargs):
         # URL desde donde se obtiene el PDF
         pdf_url = Lugares.objects.filter(uuid=self.kwargs["pk"]).first()
