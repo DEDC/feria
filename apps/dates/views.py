@@ -6,7 +6,7 @@ from django.views import View
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.conf import settings
 from rest_framework.views import APIView
 import requests
@@ -171,6 +171,8 @@ class TpayValidadoView(APIView):
 
 
 class WebHookTapyApiView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request, *args, **kwargs):
         data = request.data
         print(data)
