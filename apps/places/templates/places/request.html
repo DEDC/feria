@@ -734,12 +734,13 @@
                                                         <td>{{ sp.fecha_reg }}</td>
                                                         {% if not payment %}
                                                             <td>
+                                                                {{ sp.data_tpay }}
                                                                 {% if sp.data_tpay %}
                                                                     <a class="ms-3 tpay-place" data-uuid="{{ sp.uuid }}"
                                                                        data-mdb-toggle="modal"
                                                                        data-mdb-target="#modal-tpay"
                                                                        data-type="place" role="button">
-                                                                        <i class="fas fa-pdf fa-lg text-warning"></i>
+                                                                        <i class="fas fa-pdf fa-lg text-success"></i>
                                                                     </a>
                                                                     <a class="ms-3 pdf-place" data-uuid="{{ sp.uuid }}"
                                                                        data-mdb-toggle="modal"
