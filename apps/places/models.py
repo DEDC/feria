@@ -150,7 +150,7 @@ class Pagos(ControlInfo):
     tipo = models.CharField(
         max_length=20, null=True,
         choices=(
-            ('directo', 'Directo'),
+            ('tpay', 'TPAY'),
             ('tarjeta', 'Tarjeta'),
             ('efectivo', 'Efectivo'),
             ('transferencia', 'Transferencia')

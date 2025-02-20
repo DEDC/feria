@@ -1,6 +1,7 @@
 # Django
 import datetime
 import json
+import time
 
 from django.views.generic import TemplateView, CreateView, DetailView, RedirectView
 from django.urls import reverse_lazy, reverse
@@ -143,6 +144,7 @@ class Request(UserPermissions, DetailView):
                     request_.data_tpay = lug.data_tpay
                     request_.save()
                     lug.save()
+                    time.sleep(2)
             else:
                 messages.error(request, f"{token}")
 
@@ -161,6 +163,27 @@ class Request(UserPermissions, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         places = self.object.solicitud_lugar.filter(estatus='assign')
+        validados = places.filter(tpay_pagado=True).count()
+        total_tpay = places.exclude(tramite_id=0).count()
+        if validados == total_tpay:
+            if self.object.estatus == 'validated' and not self.object.estatus == 'validated-direct':
+                if not Pagos.objects.filter(solicitud=self.object):
+                    Pagos.objects.get_or_create(
+                        solicitud=self.object, usuario=self.object.usuario, tipo='tpay', pagado=True,
+                        validador=self.object.usuario.get_full_name()
+                    )
+                    if not self.request.user.citas.exists():
+                        # assing date
+                        assign = False
+                        for d in dates:
+                            if assign: break
+                            for h in hours:
+                                assigned_dates = CitasAgendadas.objects.filter(fecha=d, hora=h)
+                                if assigned_dates.count() < settings.ATTENTION_MODULES:
+                                    CitasAgendadas.objects.create(fecha=d, hora=h, usuario=self.request.user)
+                                    assign = True
+                                    messages.success(self.request, 'Cita asignada exitosamente.')
+                                    break
         context['total_places'] = places.aggregate(price=Sum('precio'))['price'] or 0
         context['total_extras'] = places.aggregate(price=Sum('extras__precio'))['price'] or 0
         context['total'] = context['total_extras'] + context['total_places']
