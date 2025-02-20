@@ -27,7 +27,7 @@ from apps.users.forms import UserUpdateForm
 # dates
 from apps.dates.models import CitasAgendadas
 # utils
-from utils.naves import nave2
+from utils.naves import nave1, nave2, nave3
 from utils.permissions import AdminPermissions, AdminStaffPermissions
 from utils.date import get_date_constancy
 from utils.gafete import get_gafete
@@ -38,7 +38,7 @@ from utils.reports import get_report, get_requests_report
 from utils.email import send_html_mail
 from datetime import datetime
 
-places_dict = {'n_2': nave2,}
+places_dict = {'n_1': nave1, 'n_2': nave2, 'n_3': nave3,}
 
 dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
