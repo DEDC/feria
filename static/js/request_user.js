@@ -11,9 +11,13 @@ import {
     pdfPlace, tpayPlace
 } from "../js/api/utilities.js";
 import { url_nave_2 } from '../js/api/endpoints.js'
+import { getPlaces, setPlaceTemp, unsetPlaceTemp, setPlace, addTerraza, addAlcohol, addBigTerraza, deleteItem, deletePlace } from "../js/api/utilities.js";
+import { url_nave_1, url_nave_2, url_nave_3 } from '../js/api/endpoints.js'
 
 document.addEventListener('DOMContentLoaded', () => {
+    const n_1_btn = document.querySelector('#n-1')
     const n_2_btn = document.querySelector('#n-2')
+    const n_3_btn = document.querySelector('#n-3')
     const zone_title = document.querySelector('#zone_title')
     const table_places = document.querySelector('.table-places')
     const type_pago = document.querySelector('.type_pago')
@@ -118,10 +122,24 @@ document.addEventListener('DOMContentLoaded', () => {
     let current_zone = ''
     let modal_shown = false
 
+    if (n_1_btn) {
+        n_1_btn.addEventListener('click', (e) => {
+            get_places_zone(url_nave_1)
+            current_zone = 'n_1'
+        })
+    }
+
     if (n_2_btn) {
         n_2_btn.addEventListener('click', (e) => {
             get_places_zone(url_nave_2)
             current_zone = 'n_2'
+        })
+    }
+
+    if (n_3_btn) {
+        n_3_btn.addEventListener('click', (e) => {
+            get_places_zone(url_nave_3)
+            current_zone = 'n_3'
         })
     }
 
@@ -205,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
         unsetPlaceTemp(request_uuid.value, data).then((resp) => {
             console.log(resp)
         }).then(() => {
-            mdb.Alert.getInstance(document.getElementById('alert-warning')).show();
+            // mdb.Alert.getInstance(document.getElementById('alert-warning')).show();
             places.forEach(element => {
                 element.classList.remove('selected')
             });
@@ -249,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
-            //mdb.Alert.getInstance(document.getElementById('alert-success')).show();
+            mdb.Alert.getInstance(document.getElementById('alert-success')).show();
         }).catch((error) => {
             console.log(error);
         });

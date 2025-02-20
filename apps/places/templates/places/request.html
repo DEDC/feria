@@ -7,7 +7,7 @@
     <script src="{% static 'js/request_user.js' %}" type="module" defer></script>
     <script src="{% static 'js/easytimer.min.js' %}" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
-    <script type = "text/JavaScript" src="https://MomentJS.com/downloads/moment.js"></script>
+    <script type="text/JavaScript" src="https://MomentJS.com/downloads/moment.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.min.css">
     <style>
@@ -45,6 +45,7 @@
         td[data-status="unavailable"] {
             background-color: #9FA6B2 !important;
         }
+
     </style>
     {% if object.data_tpay %}
         <script async defer src="{{ tpay_ruta }}api/v1/component/js/orden?clientid={{ tpay_apikey }}"></script>
@@ -86,9 +87,6 @@
 
                 const tpay_place = document.querySelectorAll('.tpay-place')
                 const pdf_place = document.querySelectorAll('.pdf-place')
-
-                {#console.log("JSON", envioP);#}
-                {#console.log("String JSON",JSON.stringify(envioP))#}
 
                 tpay_place.forEach(element => {
                     element.addEventListener('click', (e) => {
@@ -189,8 +187,8 @@
                             que serán las únicas vías para saber si tiene algún documento o información que deba
                             modificar o bien, si su solicitud fue validada para avanzar a la selección del o los
                             espacios a rentar así como para efectuar el pago correspondiente.
-                            <button type="button" class="btn-close"
-                                    data-mdb-dismiss="alert" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-mdb-dismiss="alert"
+                                    aria-label="Close"></button>
                         </div>
                     {% endif %}
                 {% endif %}
@@ -204,9 +202,8 @@
                     {% if object.comercio.get_last_unattended_validation %}
                         <div class="alert" role="alert" data-mdb-color="warning">
                             <i class="fas fa-exclamation-triangle me-3"></i>Tiene una observación en su <b>Comercio</b>
-                            <a
-                                    href="{% url 'places:observations_shop' object.comercio.uuid %}"
-                                    class="btn btn-sm btn-warning shadow-0 ms-2">Atender observación</a>
+                            <a href="{% url 'places:observations_shop' object.comercio.uuid %}"
+                               class="btn btn-sm btn-warning shadow-0 ms-2">Atender observación</a>
                         </div>
                     {% endif %}
                 {% endif %}
@@ -234,8 +231,10 @@
                             <tr>
                                 <th class="bg-light" style="width: 40%;">Estatus actual
                                 <td>
-                                    {% if object.estatus == 'validated' or object.estatus == "validated-direct" %}
+                                    {% if object.estatus == 'validated' %}
                                         <span class="badge rounded-pill badge-success">Validado</span>
+                                    {% elif object.estatus == 'validated-direct' %}
+                                        <span class="badge rounded-pill badge-success">Validación directa</span>
                                     {% elif object.estatus == 'rejected' %}
                                         <span class="badge rounded-pill badge-danger">Rechazado</span>
                                     {% elif object.estatus == 'pending' %}
@@ -373,7 +372,7 @@
                     </div>
                 </div>
                 <!-- Final Bloque Solicitud -->
-                 <!-- Bloque Comercio -->
+                <!-- Bloque Comercio -->
                 <div id="comercio" data-mdb-toggle="collapse" data-mdb-target="#collapseShop" aria-expanded="true"
                      class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
                     <h4 style="cursor: pointer;" class="mb-0 fw-bold"><i class="fas fa-shop me-3"></i>Comercio
@@ -400,7 +399,7 @@
                                             <span class="badge rounded-pill badge-warning">Observado</span>
                                         {% elif object.comercio.estatus == 'resolved' %}
                                             <span class="badge rounded-pill badge-primary">Solventado por el
-                                            usuario</span>
+                                        usuario</span>
                                         {% else %}
                                             <span class="badge rounded-pill badge-secondary">No asignado</span>
                                         {% endif %}
@@ -423,30 +422,30 @@
                                     <td>{{ object.comercio.get_giro_display }}</td>
                                 </tr>
                                 {% if object.comercio.vende_alcohol %}
-                                <tr>
-                                    <th class="bg-light" style="width: 40%;">Vende alcohol</th>
-                                    <td>{{ object.comercio.get_vende_alcohol_display|default:"No especificado" }}</td>
-                                </tr>
+                                    <tr>
+                                        <th class="bg-light" style="width: 40%;">Vende alcohol</th>
+                                        <td>{{ object.comercio.get_vende_alcohol_display|default:"No especificado" }}</td>
+                                    </tr>
                                 {% endif %}
                                 {% if object.comercio.voltaje %}
-                                <tr>
-                                    <th class="bg-light" style="width: 40%;">Voltaje</th>
-                                    <td>{{ object.comercio.get_voltaje_display|default:"No especificado" }}</td>
-                                </tr>
+                                    <tr>
+                                        <th class="bg-light" style="width: 40%;">Voltaje</th>
+                                        <td>{{ object.comercio.get_voltaje_display|default:"No especificado" }}</td>
+                                    </tr>
                                 {% endif %}
                                 {% if object.comercio.equipos %}
-                                <tr>
-                                    <th class="bg-light" style="width: 40%;">Equipos a utilizar</th>
-                                    <td>{{ object.comercio.equipos|default:"No especificado" }}</td>
-                                </tr>
+                                    <tr>
+                                        <th class="bg-light" style="width: 40%;">Equipos a utilizar</th>
+                                        <td>{{ object.comercio.equipos|default:"No especificado" }}</td>
+                                    </tr>
                                 {% endif %}
                                 {% if object.comercio.imagen %}
-                                <tr>
-                                    <th class="bg-light" style="width: 40%;">Cómo será el local</th>                            
-                                    <td><a href="{{ object.comercio.imagen.url }}" target="_blank" type="button"
-                                           class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <th class="bg-light" style="width: 40%;">Cómo será el local</th>
+                                        <td><a href="{{ object.comercio.imagen.url }}" target="_blank" type="button"
+                                               class="btn btn-sm btn-light"><i class="fas fa-eye me-2"></i>Ver documento</a>
+                                        </td>
+                                    </tr>
                                 {% endif %}
                                 </tbody>
                             </table>
@@ -454,203 +453,401 @@
                     {% endif %}
                 </div>
                 <!-- Final Bloque Comercio -->
-                {% if object.estatus == "validated" %}
-                    <!-- Mensaje Provisional -->
-                    <div class="alert alert-dismissible fade show" role="alert" data-mdb-color="success"><i
-                        class="fas fa-check-circle me-3"></i>Su Solicitud con folio <b>{{object.folio}}</b> ha sido validada, a partir del lunes 24 de febrero del presente año podrá seleccionar el/los espacios que desea adquirir en esta misma plataforma.<button type="button" class="btn-close"
-                        data-mdb-dismiss="alert" aria-label="Close"></button></div>
-                    <!-- Final Mensaje Provisional -->
-                    
-                    <!-- Bloque selección de lugares -->
-                    <input type="hidden" id="request-uuid" value="{{ object.uuid }}">
+                {% if object.estatus == "validated" or object.estatus == "validated-direct" %}
+                <!-- Mensaje Provisional -->
+                <div class="alert alert-dismissible fade show" role="alert" data-mdb-color="success"><i
+                        class="fas fa-check-circle me-3"></i>Su Solicitud con folio <b>{{ object.folio }}</b> ha sido
+                    validada, a partir del lunes 24 de febrero del presente año podrá seleccionar el/los espacios que
+                    desea
+                    adquirir en esta misma plataforma.
+                    <button type="button" class="btn-close" data-mdb-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+                <!-- Final Mensaje Provisional -->
+
+                <!-- Bloque selección de lugares -->
+                <div data-mdb-alert-init="" class="alert fade alert-success alert-fixed" id="alert-success" role="alert"
+                     data-mdb-color="success" data-mdb-position="top-center" data-mdb-stacking="true"
+                     data-mdb-append-to-body="true" data-mdb-hidden="true" data-mdb-autohide="true"
+                     data-mdb-delay="1000"
+                     data-mdb-alert-initialized="true">
+                    <i class="fas fa-check-circle me-2"></i> <b>Espacios Actualizados</b>
+                </div>
+                <div data-mdb-alert-init="" class="alert fade alert-warning alert-fixed" id="alert-warning" role="alert"
+                     data-mdb-color="warning" data-mdb-position="top-center" data-mdb-stacking="true"
+                     data-mdb-append-to-body="true" data-mdb-hidden="true" data-mdb-autohide="true"
+                     data-mdb-delay="2000"
+                     data-mdb-alert-initialized="true">
+                    <i class="fas fa-ban me-2"></i> <b>Selección Cancelada</b>
+                </div>
+                <div data-mdb-alert-init="" class="alert fade alert-warning alert-fixed" id="alert-notplaces"
+                     role="alert"
+                     data-mdb-color="warning" data-mdb-position="top-center" data-mdb-stacking="true"
+                     data-mdb-append-to-body="true" data-mdb-hidden="true" data-mdb-autohide="true"
+                     data-mdb-delay="2000"
+                     data-mdb-alert-initialized="true">
+                    <i class="fas fa-ban me-2"></i> <b>No se preseleccionaron los espacios. Intente con
+                    otros
+                    espacios.</b>
+                </div>
+                <input type="hidden" id="request-uuid" value="{{ object.uuid }}">
+                <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
+                     id="places">
+                    <h4 class="mb-0 fw-bold">
+                        <i class="fas fa-map-pin me-3 green-text"></i>Selección de Espacios
+                    </h4>
+                </div>
+                <p class="note note-info mb-4">
+                    Al <b>Preseleccionar</b> los espacios se bloquearán por <b>30 minutos</b> y no serán visibles
+                    para otros módulos.
+                    Si no se confirma la selección, los espacios volverán a estar disponibles después de ese tiempo.
+                </p>
+                <div
+                        class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                    <button id="n-1" type="button" class="btn btn-light">Nave 1<i
+                            class="fas fa-arrows-rotate ms-2"></i></button>
+                    <button id="n-2" type="button" class="btn btn-light">Nave 2<i
+                            class="fas fa-arrows-rotate ms-2"></i></button>
+                    <button id="n-3" type="button" class="btn btn-light">Nave 3<i
+                            class="fas fa-arrows-rotate ms-2"></i></button>
+                </div>
+                <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
+                    <input type="hidden" name="limit_places" value="{{ object.cantidad_espacios }}">
+                    <h3 class="text-center mb-3"><span id="zone_title" class="badge badge-info">Selecciona una de las
+                        zonas de arriba</span></h3>
+                    <div class="table-responsive">
+                        <table class="table table-places m-0"></table>
+                    </div>
+                    <button type="button" id="preselection" disabled
+                            class="btn btn-lg btn-rounded btn-primary shadow-0 w-100 mt-3"><i
+                            class="fas fa-check me-2"></i>Preseleccionar espacios
+                    </button>
+                </div>
+                {% endif %}
+                {% if selected_places %}
                     <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
                          id="places">
                         <h4 class="mb-0 fw-bold">
-                            <i class="fas fa-map-pin me-3 green-text"></i>Selección de Espacios
+                            <i class="fas fa-list-check me-3 green-text"></i>Configuración adicional de los espacios
+                            seleccionados ({{ selected_places.count }})
                         </h4>
                     </div>
-                    <p class="note note-info mb-4">
-                        Al <b>Preseleccionar</b> los espacios se bloquearán por <b>30 minutos</b> y no serán visibles
-                        para otros módulos.
-                        Si no se confirma la selección, los espacios volverán a estar disponibles después de ese tiempo.
-                    </p>
-                    <div
-                            class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
-                        <button id="n-2" type="button" class="btn btn-light">Nave 2<i
-                                class="fas fa-arrows-rotate ms-2"></i></button>
-                    </div>
                     <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
-                        <input type="hidden" name="limit_places" value="{{ object.cantidad_espacios }}">
-                        <h3 class="text-center mb-3"><span id="zone_title" class="badge badge-info">Selecciona una de las
-                            zonas de arriba</span></h3>
+                        {% if not payment %}
+                            <div class="d-flex justify-content-end">
+                                <button id="add-terraza" disabled type="button"
+                                        class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
+                                        class="fas fa-plus me-2"></i>Agregar terraza
+                                </button>
+                                <button id="add-big-terraza" disabled type="button"
+                                        class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
+                                        class="fas fa-plus me-2"></i>Agregar terraza grande
+                                </button>
+                                <button id="add-alcohol" disabled type="button" style="display: none;"
+                                        class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3"><i
+                                        class="fas fa-plus me-2"></i>Agregar
+                                    licencia de alcohol
+                                </button>
+                            </div>
+                        {% endif %}
                         <div class="table-responsive">
-                            <table class="table table-places m-0"></table>
-                        </div>
-                        <button type="button" id="preselection" disabled
-                                class="btn btn-lg btn-rounded btn-primary shadow-0 w-100 mt-3"><i
-                                class="fas fa-check me-2"></i>Preseleccionar espacios
-                        </button>
-                    </div>
-                    {% if selected_places %}
-                        <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
-                             id="places">
-                            <h4 class="mb-0 fw-bold">
-                                <i class="fas fa-list-check me-3 green-text"></i>Configuración adicional de los espacios
-                                seleccionados ({{ selected_places.count }})
-                            </h4>
-                        </div>
-                        <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
-                            {% if not payment %}
-                                <div class="d-flex justify-content-end">
-                                    <button id="add-terraza" disabled type="button"
-                                            class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
-                                            class="fas fa-plus me-2"></i>Agregar terraza
-                                    </button>
-                                    <button id="add-big-terraza" disabled type="button"
-                                            class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
-                                            class="fas fa-plus me-2"></i>Agregar terraza grande
-                                    </button>
-                                    <button id="add-alcohol" disabled type="button" style="display: none;"
-                                            class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3"><i
-                                            class="fas fa-plus me-2"></i>Agregar licencia de alcohol
-                                    </button>
-                                </div>
-                            {% endif %}
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th scope="col">Folio</th>
+                                    <th scope="col">Número del lugar</th>
+                                    <th scope="col">Sección</th>
+                                    <th scope="col">M2</th>
+                                    <th scope="col">Precio</th>
+                                    <th scope="col">Fecha de asignación</th>
+                                    {% if not payment %}
                                         <th></th>
-                                        <th scope="col">Folio</th>
-                                        <th scope="col">Número del lugar</th>
-                                        <th scope="col">Sección</th>
-                                        <th scope="col">M2</th>
-                                        <th scope="col">Precio</th>
-                                        <th scope="col">Fecha de asignación</th>
+                                    {% endif %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for sp in selected_places %}
+                                    <tr>
+                                        <td>
+                                            <input class="form-check-input config-chk" type="checkbox"
+                                                   value="{{ sp.uuid }}"
+                                                   data-m2="{{ sp.m2 }}" data-folio="{{ sp.folio }}"/>
+                                        </td>
+                                        <th scope="row">{{ sp.folio }}</th>
+                                        <td>{{ sp.nombre }}</td>
+                                        <td>{{ sp.get_zona_display }}</td>
+                                        <td>{{ sp.m2 }}</td>
+                                        <td>${{ sp.precio|intcomma }}</td>
+                                        <td>{{ sp.fecha_reg }}</td>
                                         {% if not payment %}
-                                            <th></th>
+                                            <td><a class="ms-3 del-place" data-uuid="{{ sp.uuid }}" data-type="place"
+                                                   role="button"><i class="fas fa-xmark fa-lg text-danger"></i></a></td>
                                         {% endif %}
                                     </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for sp in selected_places %}
-                                        <tr>
-                                            <td>
-                                                <input class="form-check-input config-chk" type="checkbox"
-                                                       value="{{ sp.uuid }}"
-                                                       data-m2="{{ sp.m2 }}" data-folio="{{ sp.folio }}"/>
-                                            </td>
-                                            <th scope="row">{{ sp.folio }}</th>
-                                            <td>{{ sp.nombre }}</td>
-                                            <td>{{ sp.get_zona_display }}</td>
-                                            <td>{{ sp.m2 }}</td>
-                                            <td>${{ sp.precio|intcomma }}</td>
-                                            <td>{{ sp.fecha_reg }}</td>
-                                        {% if not payment %}
-                                            <td>
-                                            {% if sp.data_tpay %}
-                                                <a class="ms-3 tpay-place" data-uuid="{{ sp.uuid }}"
-                                                   data-mdb-toggle="modal" data-mdb-target="#modal-tpay"
-                                                   data-type="place" role="button">
-                                                    <i class="fas fa-pdf fa-lg text-warning"></i>
-                                                </a>
-                                                <a class="ms-3 pdf-place" data-uuid="{{ sp.uuid }}"
-                                                   data-mdb-toggle="modal" data-mdb-target="#modal-iframe"
-                                                   data-type="place" role="button">
-                                                    <i class="fas fa-pdf fa-lg text-warning"></i>
-                                                </a>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <ul class="list-group list-group-light" id="extra-products">
+                                <li class="list-group-item d-flex justify-content-end">
+                                    <h5 class="me-5 fw-bold m-0">Total por espacios:</h5>
+                                    <h5 class="ms-5 m-0">${{ total_places|intcomma }}</h5>
+                                </li>
+                                {% for p in selected_places %}
+                                    {% for px in p.extras.all %}
+                                        <li class="list-group-item d-flex justify-content-end">
+                                            {% if px.tipo == 'terraza' %}
+                                                <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza para el espacio
+                                                    ({{ px.to_places }}):
+                                                </h5>
+                                                <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>
+                                            {% elif px.tipo == 'terraza_grande' %}
+                                                <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza Grande para el
+                                                    espacio
+                                                    ({{ px.to_places }}):
+                                                </h5>
+                                                <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>
+                                            {% elif px.tipo == 'licencia_alcohol' %}
+                                                <h5 class="m-0 me-5 fw-bold">Total por (1) Licencia de Alcohol para
+                                                    el/los espacio(s)
+                                                    ({{ px.to_places }}):
+                                                </h5>
+                                                <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>
                                             {% endif %}
-                                                <a class="ms-3 del-place" data-uuid="{{ sp.uuid }}"
-                                                   data-type="place" role="button">
-                                                    <i class="fas fa-xmark fa-lg text-danger"></i>
-                                                </a>
-                                            </td>
-                                        {% endif %}
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                                <ul class="list-group list-group-light" id="extra-products">
-                                    <li class="list-group-item d-flex justify-content-end">
-                                        <h5 class="me-5 fw-bold m-0">Total por espacios:</h5>
-                                        <h5 class="ms-5 m-0">${{ total_places|intcomma }}</h5>
-                                    </li>
-                                    {% for p in selected_places %}
-                                        {% for px in p.extras.all %}
-                                            <li class="list-group-item d-flex justify-content-end">
-                                                {% if px.tipo == 'terraza' %}
-                                                    <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza para el espacio
-                                                        ({{ px.to_places }}):
-                                                    </h5>
-                                                    <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>
-                                                {% elif px.tipo == 'terraza_grande' %}
-                                                    <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza Grande para el
-                                                        espacio
-                                                        ({{ px.to_places }}):
-                                                    </h5>
-                                                    <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>
-                                                {% elif px.tipo == 'licencia_alcohol' %}
-                                                    <h5 class="m-0 me-5 fw-bold">Total por (1) Licencia de Alcohol para
-                                                        el/los espacio(s)
-                                                        ({{ px.to_places }}):
-                                                    </h5>
-                                                    <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>
-                                                {% endif %}
-                                                {% if not payment %}
-                                                    <a class="ms-3 del-pdt" data-uuid="{{ px.uuid }}"
-                                                       data-type="{{ px.tipo }}" role="button"><i
-                                                            class="fas fa-xmark fa-lg text-danger"></i></a>
-                                                {% endif %}
-                                            </li>
-                                        {% endfor %}
-                                    {% endfor %}
-                                    <li class="list-group-item d-flex justify-content-end">
-                                        <h5 class="me-5 fw-bold m-0">Total por conceptos adicionales:</h5>
-                                        <h5 class="ms-5 m-0">${{ total_extras|intcomma }}</h5>
-                                    </li>
-                                </ul>
-                                <div class="d-flex justify-content-end">
-                                    <h2 class="me-5 m-0">Total:</h2>
-                                    <h1 class="ms-5 m-0 text-primary" id="total-price">${{ total|intcomma }}</h1>
-                                </div>
-                                {% if not payment %}
-                                    <form method="post">
-                                        {% csrf_token %}
-                                        <div class="d-flex justify-content-center">
-                                            {% if not object.data_tpay %}
-                                                {#                                                <button name="create-payment"#}
-                                                <button name="create-payment"
-                                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50">
-                                                    <i class="far fa-credit-card me-2"></i>
-                                                    Solicitar Pagos
-                                                </button>
+                                            {% if not payment %}
+                                                <a class="ms-3 del-pdt" data-uuid="{{ px.uuid }}"
+                                                   data-type="{{ px.tipo }}" role="button"><i
+                                                        class="fas fa-xmark fa-lg text-danger"></i></a>
                                             {% endif %}
-
-                                            <button name="cancel-pay"
-                                                    class="btn btn-danger btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
-                                                <i class="fas fa-close me-2"></i>
-                                                Cancelar compra
+                                        </li>
+                                    {% endfor %}
+                                {% endfor %}
+                                <li class="list-group-item d-flex justify-content-end">
+                                    <h5 class="me-5 fw-bold m-0">Total por conceptos adicionales:</h5>
+                                    <h5 class="ms-5 m-0">${{ total_extras|intcomma }}</h5>
+                                </li>
+                            </ul>
+                            <div class="d-flex justify-content-end">
+                                <h2 class="me-5 m-0">Total:</h2>
+                                <h1 class="ms-5 m-0 text-primary" id="total-price">${{ total|intcomma }}</h1>
+                            </div>
+                            {% if not payment %}
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="d-flex justify-content-center">
+                                        {% if object.data_tpay %}
+                                            <button type="button" data-mdb-toggle="modal" data-mdb-target="#modal-tpay"
+                                                    class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50 tpay">
+                                                <i class="far fa-credit-card me-2"></i>
+                                                Pagar en linea
                                             </button>
-                                        </div>
-                                    </form>
-                                {% else %}
-                                    <p class="note note-success mt-4">
-                                        Se ha definido que el pago fue seleccionado como tipo
-                                        <b>{{ payment.get_tipo_display }}</b> el
-                                        <b>{{ payment.fecha_reg }} hrs</b>. {% if payment.validador %}Efectuado por
-                                        <b>{{ payment.validador }}</b>{% endif %}.
-                                    </p>
-                                    <div class="d-flex justify-content-end">
-                                        <button name="reverse-pay" style="display: none" class="btn btn-danger btn-sm btn-rounded shadow-0">
+                                            <button type="button" data-mdb-toggle="modal"
+                                                    data-mdb-target="#modal-iframe"
+                                                    class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50 tpay">
+                                                <i class="far fa-money-bill-1 me-2"></i>
+                                                Pagar en efectivo
+                                            </button>
+                                        {% else %}
+                                            {# <button name="create-payment" #}
+                                            <button name="create-payment"
+                                                    class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50">
+                                                <i class="far fa-credit-card me-2"></i>
+                                                Solicitar Pago
+                                            </button>
+                                        {% endif %}
+
+                                        <button name="cancel-pay"
+                                                class="btn btn-danger btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
                                             <i class="fas fa-close me-2"></i>
-                                            Revertir compra
+                                            Cancelar compra
                                         </button>
                                     </div>
+                                </form>
+                            {% else %}
+                                <p class="note note-success mt-4">
+                                    Se ha definido que el pago fue seleccionado como tipo
+                                    <b>{{ payment.get_tipo_display }}</b> el
+                                    <b>{{ payment.fecha_reg }} hrs</b>. {% if payment.validador %}Efectuado por
+                                    <b>{{ payment.validador }}</b>{% endif %}.
+                                </p>
+                                <div class="d-flex justify-content-end">
+                                    <button name="reverse-pay" class="btn btn-danger btn-sm btn-rounded shadow-0">
+                                        <i class="fas fa-close me-2"></i>
+                                        Revertir compra
+                                    </button>
+                                </div>
+                                {% if selected_places %}
+                                    <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
+                                         id="places">
+                                        <h4 class="mb-0 fw-bold">
+                                            <i class="fas fa-list-check me-3 green-text"></i>Configuración adicional de
+                                            los espacios
+                                            seleccionados ({{ selected_places.count }})
+                                        </h4>
+                                    </div>
+                                    <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
+                                        {% if not payment %}
+                                            <div class="d-flex justify-content-end" style="display: none">
+                                                <button id="add-terraza" disabled type="button"
+                                                        class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
+                                                        class="fas fa-plus me-2"></i>Agregar terraza
+                                                </button>
+                                                <button id="add-big-terraza" disabled type="button"
+                                                        class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
+                                                        class="fas fa-plus me-2"></i>Agregar terraza grande
+                                                </button>
+                                                <button id="add-alcohol" disabled type="button" style="display: none;"
+                                                        class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3"><i
+                                                        class="fas fa-plus me-2"></i>Agregar licencia de alcohol
+                                                </button>
+                                            </div>
+                                        {% endif %}
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th scope="col">Folio</th>
+                                                    <th scope="col">Número del lugar</th>
+                                                    <th scope="col">Sección</th>
+                                                    <th scope="col">M2</th>
+                                                    <th scope="col">Precio</th>
+                                                    <th scope="col">Fecha de asignación</th>
+                                                    {% if not payment %}
+                                                        <th></th>
+                                                    {% endif %}
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for sp in selected_places %}
+                                                    <tr>
+                                                        <td>
+                                                            <input class="form-check-input config-chk" type="checkbox"
+                                                                   value="{{ sp.uuid }}"
+                                                                   data-m2="{{ sp.m2 }}" data-folio="{{ sp.folio }}"/>
+                                                        </td>
+                                                        <th scope="row">{{ sp.folio }}</th>
+                                                        <td>{{ sp.nombre }}</td>
+                                                        <td>{{ sp.get_zona_display }}</td>
+                                                        <td>{{ sp.m2 }}</td>
+                                                        <td>${{ sp.precio|intcomma }}</td>
+                                                        <td>{{ sp.fecha_reg }}</td>
+                                                        {% if not payment %}
+                                                            <td>
+                                                                {% if sp.data_tpay %}
+                                                                    <a class="ms-3 tpay-place" data-uuid="{{ sp.uuid }}"
+                                                                       data-mdb-toggle="modal"
+                                                                       data-mdb-target="#modal-tpay"
+                                                                       data-type="place" role="button">
+                                                                        <i class="fas fa-pdf fa-lg text-warning"></i>
+                                                                    </a>
+                                                                    <a class="ms-3 pdf-place" data-uuid="{{ sp.uuid }}"
+                                                                       data-mdb-toggle="modal"
+                                                                       data-mdb-target="#modal-iframe"
+                                                                       data-type="place" role="button">
+                                                                        <i class="fas fa-pdf fa-lg text-warning"></i>
+                                                                    </a>
+                                                                {% endif %}
+                                                                <a class="ms-3 del-place" data-uuid="{{ sp.uuid }}"
+                                                                   data-type="place" role="button">
+                                                                    <i class="fas fa-xmark fa-lg text-danger"></i>
+                                                                </a>
+                                                            </td>
+                                                        {% endif %}
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                            <ul class="list-group list-group-light" id="extra-products">
+                                                <li class="list-group-item d-flex justify-content-end">
+                                                    <h5 class="me-5 fw-bold m-0">Total por espacios:</h5>
+                                                    <h5 class="ms-5 m-0">${{ total_places|intcomma }}</h5>
+                                                </li>
+                                                {% for p in selected_places %}
+                                                    {% for px in p.extras.all %}
+                                                        <li class="list-group-item d-flex justify-content-end">
+                                                            {% if px.tipo == 'terraza' %}
+                                                                <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza para
+                                                                    el espacio
+                                                                    ({{ px.to_places }}):
+                                                                </h5>
+                                                                <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>
+                                                            {% elif px.tipo == 'terraza_grande' %}
+                                                                <h5 class="m-0 me-5 fw-bold">Total por (1) Terraza
+                                                                    Grande para el
+                                                                    espacio
+                                                                    ({{ px.to_places }}):
+                                                                </h5>
+                                                                <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>
+                                                            {% elif px.tipo == 'licencia_alcohol' %}
+                                                                <h5 class="m-0 me-5 fw-bold">Total por (1) Licencia de
+                                                                    Alcohol para
+                                                                    el/los espacio(s)
+                                                                    ({{ px.to_places }}):
+                                                                </h5>
+                                                                <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>
+                                                            {% endif %}
+                                                            {% if not payment %}
+                                                                <a class="ms-3 del-pdt" data-uuid="{{ px.uuid }}"
+                                                                   data-type="{{ px.tipo }}" role="button"><i
+                                                                        class="fas fa-xmark fa-lg text-danger"></i></a>
+                                                            {% endif %}
+                                                        </li>
+                                                    {% endfor %}
+                                                {% endfor %}
+                                                <li class="list-group-item d-flex justify-content-end">
+                                                    <h5 class="me-5 fw-bold m-0">Total por conceptos adicionales:</h5>
+                                                    <h5 class="ms-5 m-0">${{ total_extras|intcomma }}</h5>
+                                                </li>
+                                            </ul>
+                                            <div class="d-flex justify-content-end">
+                                                <h2 class="me-5 m-0">Total:</h2>
+                                                <h1 class="ms-5 m-0 text-primary" id="total-price">
+                                                    ${{ total|intcomma }}</h1>
+                                            </div>
+                                            {% if not payment %}
+                                                <form method="post">
+                                                    {% csrf_token %}
+                                                    <div class="d-flex justify-content-center">
+                                                        {% if not object.data_tpay %}
+                                                            {#                                                <button name="create-payment"#}
+                                                            <button name="create-payment"
+                                                                    class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50">
+                                                                <i class="far fa-credit-card me-2"></i>
+                                                                Solicitar Pagos
+                                                            </button>
+                                                        {% endif %}
+
+                                                        <button name="cancel-pay"
+                                                                class="btn btn-danger btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
+                                                            <i class="fas fa-close me-2"></i>
+                                                            Cancelar compra
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            {% else %}
+                                                <p class="note note-success mt-4">
+                                                    Se ha definido que el pago fue seleccionado como tipo
+                                                    <b>{{ payment.get_tipo_display }}</b> el
+                                                    <b>{{ payment.fecha_reg }} hrs</b>. {% if payment.validador %}
+                                                    Efectuado por
+                                                    <b>{{ payment.validador }}</b>{% endif %}.
+                                                </p>
+                                                <div class="d-flex justify-content-end">
+                                                    <button name="reverse-pay" style="display: none"
+                                                            class="btn btn-danger btn-sm btn-rounded shadow-0">
+                                                        <i class="fas fa-close me-2"></i>
+                                                        Revertir compra
+                                                    </button>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
                                 {% endif %}
-                            </div>
-                        </div>
-                    {% endif %}
-                    
+                                </div>
+                                </div>
+                            {% endif %}
+
                     <!-- Final Bloque de Selección de Lugares -->
                 {% endif %}
                 <!-- Bloque de Citas -->
@@ -694,7 +891,7 @@
                     </div>
                 {% endif %}
                 <!-- Final Bloque de Citas -->
-                 <!-- Bloque de Información de Pago -->
+                <!-- Bloque de Información de Pago -->
                 {% if payment %}
                     <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
                          id="places">
@@ -724,7 +921,8 @@
                                                 Gafete</a>
                                                 <a class="btn btn-sm btn-primary shadow-0 ms-2"
                                                    href="{% url 'admin:download_suministros' object.uuid place.uuid %}">Descargar
-                                                    Suministros</a></td>
+                                                    Suministros</a>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -755,7 +953,8 @@
         </div>
     </div>
     <div class="modal fade" id="modal-iframe" tabindex="-1" aria-labelledby="exampleModalFullscreenLabel"
-         aria-modal="true" role="dialog">
+         aria-modal="true"
+         role="dialog">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -765,7 +964,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <iframe id="iframe" src="" style="width: 100%; height: 90vh;" frameborder="0"></iframe>
+                    <iframe id="iframe" src="{{ pdf_url }}" style="width: 100%; height: 90vh;" frameborder="0"></iframe>
                 </div>
                 <div class="modal-footer">
                 </div>
@@ -773,12 +972,13 @@
         </div>
     </div>
     <div class="modal fade" id="modal-tpay" tabindex="-1" aria-labelledby="exampleModalFullscreenLabel"
-         aria-modal="true" role="dialog">
+         aria-modal="true"
+         role="dialog">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title h4" id="exampleModalFullscreenLabel">Formato de pago: <strong
-                            id="type_pago">En linea</strong></h5>
+                    <h5 class="modal-title h4" id="exampleModalFullscreenLabel">Formato de pago: <strong id="type_pago">En
+                        linea</strong></h5>
                     <button type="button" class="btn-close" id="btnClose" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>

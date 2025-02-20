@@ -79,15 +79,17 @@
                                 <td>
                                     {% if rq.estatus == 'validated' %}
                                     <h6 class="badge rounded-pill badge-success">Validado</span>
-                                        {% elif rq.estatus == 'rejected' %}
-                                        <span class="badge rounded-pill badge-danger">Rechazado</span>
-                                        {% elif rq.estatus == 'pending' %}
-                                        <span class="badge rounded-pill badge-warning">Observado</span>
-                                        {% elif rq.estatus == 'resolved' %}
-                                        <span class="badge rounded-pill badge-primary">Solventado</span>
-                                        {% else %}
-                                        <span class="badge rounded-pill badge-secondary">No asignado</span>
-                                        {% endif %}
+                                    {% elif rq.estatus == 'validated-direct' %}
+                                    <h6 class="badge rounded-pill badge-success">Validación directa</span>
+                                    {% elif rq.estatus == 'rejected' %}
+                                    <span class="badge rounded-pill badge-danger">Rechazado</span>
+                                    {% elif rq.estatus == 'pending' %}
+                                    <span class="badge rounded-pill badge-warning">Observado</span>
+                                    {% elif rq.estatus == 'resolved' %}
+                                    <span class="badge rounded-pill badge-primary">Solventado</span>
+                                    {% else %}
+                                    <span class="badge rounded-pill badge-secondary">No asignado</span>
+                                    {% endif %}
                                 </td>
                                 <td>{{rq.fecha_reg}}</td>
                                 <td>{{rq.nombre}}</td>

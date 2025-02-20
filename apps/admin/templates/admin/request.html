@@ -58,13 +58,14 @@
                                 {% endif %}
                                 <button name="validated" type="submit" data-mdb-ripple-init data-mdb-ripple-color="dark"
                                         class="btn btn-lg btn-rounded btn-outline-success shadow-0 w-100">
-                                        <i class="fas fa-check me-2"></i>
-                                        Validar
+                                    <i class="fas fa-check me-2"></i>
+                                    Validar
                                 </button>
-                                <button name="validated-payment" type="submit" data-mdb-ripple-init data-mdb-ripple-color="dark"
-                                        class="btn btn-lg btn-rounded btn-outline-success shadow-0 w-100 my-3">
-                                        <i class="fas fa-check-square me-2"></i>
-                                        Validar Directo
+                                <button name="validated-payment" type="submit" data-mdb-ripple-init
+                                        data-mdb-ripple-color="dark"
+                                        class="btn btn-lg btn-rounded btn-outline-success shadow-0 w-100 mt-3">
+                                    <i class="fas fa-people-arrows me-2"></i>
+                                    Validar Directo
                                 </button>
                                 <button name="pending" type="submit"
                                         class="btn btn-outline-warning btn-lg btn-rounded shadow-0 w-100 my-3"><i
@@ -76,6 +77,9 @@
                                 </button>
                             {% elif object.estatus == 'validated' %}
                                 <h1 class="text-center"><span class="badge rounded-pill badge-success">Validado</span>
+                                </h1>
+                            {% elif object.estatus == 'validated-direct' %}
+                                <h1 class="text-center"><span class="badge rounded-pill badge-success">Validación directa</span>
                                 </h1>
                             {% elif object.estatus == 'rejected' %}
                                 <h1 class="text-center"><span class="badge rounded-pill badge-danger">Rechazado</span>
@@ -97,12 +101,12 @@
                     </div>
                 </div>
                 <div class="col-xl-9 mb-4 mb-lg-0">
-                    {% if object.estatus == 'validatedx' %}
+                    {% if object.estatus == 'validated' %}
                         {% if not selected_places %}
                             <div class="alert" role="alert" data-mdb-color="warning">
                                 <i class="fas fa-exclamation-triangle me-3"></i>Para continuar con el proceso de la
-                                Solicitud <a
-                                    href="#places" class="btn btn-sm btn-warning shadow-0 ms-2">Asigna un espacio</a>
+                                Solicitud <a href="#places" class="btn btn-sm btn-warning shadow-0 ms-2">Asigna un
+                                espacio</a>
                             </div>
                         {% endif %}
                     {% endif %}
@@ -154,8 +158,8 @@
                                     class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
                                 <div class="ms-2 me-auto">
                                     {% if object.comercio %}
-                                        <div class="fw-bold"><a
-                                                href="{% url 'admin:shop' object.comercio.uuid %}">{{ object.comercio.folio }}</a>
+                                        <div class="fw-bold"><a href="{% url 'admin:shop' object.comercio.uuid %}">
+                                            {{ object.comercio.folio }}</a>
                                         </div>
                                     {% else %}
                                         <div class="fw-bold">No especificado</div>
@@ -190,7 +194,8 @@
                                     class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3">
                                 <div class="ms-2 me-auto">
                                     <div class="fw-bold"><a target="_blank"
-                                                            href="{% url 'admin:update_user' object.usuario.id %}">{{ object.usuario.get_full_name }}</a>
+                                                            href="{% url 'admin:update_user' object.usuario.id %}">
+                                        {{ object.usuario.get_full_name }}</a>
                                     </div>
                                     <small>Usuario relacionado</small>
                                 </div>
@@ -559,7 +564,8 @@
                                 <h4 class="mb-0 fw-bold">
                                     <i class="fas fa-map-pin me-3 green-text"></i>Selección de Espacios
                                 </h4>
-                                <button type="button" id="reload-places" class="btn btn-lg btn-link btn-rounded"></button>
+                                <button type="button" id="reload-places"
+                                        class="btn btn-lg btn-link btn-rounded"></button>
                             </div>
                             <p class="note note-info mb-4">
                                 Al <b>Preseleccionar</b> los espacios se bloquearán por <b>30 minutos</b> y no serán
@@ -570,7 +576,11 @@
                             </p>
                             <div
                                     class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
-                                    <button id="n-2" type="button" class="btn btn-light">Nave 2<i
+                                <button id="n-1" type="button" class="btn btn-light">Nave 1<i
+                                        class="fas fa-arrows-rotate ms-2"></i></button>
+                                <button id="n-2" type="button" class="btn btn-light">Nave 2<i
+                                        class="fas fa-arrows-rotate ms-2"></i></button>
+                                <button id="n-3" type="button" class="btn btn-light">Nave 3<i
                                         class="fas fa-arrows-rotate ms-2"></i></button>
                             </div>
                             <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
@@ -645,7 +655,8 @@
                                                 {% if not payment %}
                                                     <td>
                                                         <a class="ms-3 del-place" data-uuid="{{ sp.uuid }}"
-                                                           data-type="place" role="button">
+                                                           data-type="place"
+                                                           role="button">
                                                             <i class="fas fa-xmark fa-lg text-danger"></i>
                                                         </a>
                                                     </td>
@@ -682,8 +693,8 @@
                                                     {% endif %}
                                                     {% if not payment %}
                                                         <a class="ms-3 del-pdt" data-uuid="{{ px.uuid }}"
-                                                           data-type="{{ px.tipo }}" role="button"><i
-                                                                class="fas fa-xmark fa-lg text-danger"></i></a>
+                                                           data-type="{{ px.tipo }}"
+                                                           role="button"><i class="fas fa-xmark fa-lg text-danger"></i></a>
                                                     {% endif %}
                                                 </li>
                                             {% endfor %}
@@ -704,14 +715,36 @@
                                         <b>{{ payment.validador }}</b>{% endif %}.
                                     </p>
                                     <div class="d-flex justify-content-end">
-                                        <button name="reverse-pay"
-                                                class="btn btn-danger btn-sm btn-rounded shadow-0">
+                                        <button name="reverse-pay" class="btn btn-danger btn-sm btn-rounded shadow-0">
                                             <i class="fas fa-close me-2"></i>
                                             Revertir compra
                                         </button>
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-xl-9 mb-4 mb-lg-0">
+                            {% if object.estatus == 'validatedx' %}
+                                {% if not selected_places %}
+                                    <div class="alert" role="alert" data-mdb-color="warning">
+                                        <i class="fas fa-exclamation-triangle me-3"></i>Para continuar con el proceso de
+                                        la
+                                        Solicitud <a
+                                            href="#places" class="btn btn-sm btn-warning shadow-0 ms-2">Asigna un
+                                        espacio</a>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            {% include 'base/validations.html' %}
+                            <div
+                                    class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0 fw-bold">
+                                <i class="fas fa-clipboard-list me-3 green-text"></i>Solicitud {{ object.folio }}
+                                - {{ object.id }}
+                            </h4>
+                            <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block"
+                               href="{% url 'admin:list_requests' %}"
+                               role="button">Ver
+                                todo<i class="fas fa-arrow-right ms-2"></i></a>
                         {% endif %}
                     {% endif %}
                     {% if pagado %}
@@ -743,7 +776,8 @@
                                                     Gafete</a>
                                                     <a class="btn btn-sm btn-primary shadow-0 ms-2"
                                                        href="{% url 'admin:download_suministros' object.uuid place.uuid %}">Descargar
-                                                        Suministros</a></td>
+                                                        Suministros</a>
+                                                </td>
                                             </tr>
                                         {% endfor %}
                                         </tbody>
@@ -763,14 +797,14 @@
                                     <button name="transfer-paid"
                                             class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
                                         <i class="fas fa-right-left me-2"></i>
-                                        Pagado con transferencia
+                                        Aplicar Pagos
                                     </button>
                                 </div>
                             {% endif %}
                         </div>
                     {% endif %}
-                </div>
-            </div>
+                    </div>
+                    </div>
         </form>
     </div>
     <!-- Modal Validations -->
@@ -800,6 +834,8 @@
                                 <td>
                                     {% if vl.estatus == 'validated' %}
                                         <span class="badge rounded-pill badge-success">Validado</span>
+                                    {% elif vl.estatus == 'validated-direct' %}
+                                        <span class="badge rounded-pill badge-success">Validación directa</span>
                                     {% elif vl.estatus == 'rejected' %}
                                         <span class="badge rounded-pill badge-danger">Rechazado</span>
                                     {% elif vl.estatus == 'pending' %}
@@ -814,7 +850,7 @@
                                 <td>{{ vl.comentarios|default:"No especificado" }}</td>
                                 <td>
                                     {% for key, value in vl.campos.field_comments.items %}
-                                    <b>{{key|title}}</b>: {{value}}
+                                        <b>{{ key|title }}</b>: {{ value }}
                                     {% endfor %}
                                 </td>
                                 <td>
@@ -835,8 +871,7 @@
                 <div class="modal-footer d-flex justify-content-between">
                     <a type="button" href="{% url 'admin:unlock_validation' object.uuid %}"
                        class="btn btn-warning shadow-0">Desbloquear solicitud</a>
-                    <button type="button" class="btn btn-secondary" data-mdb-ripple-init
-                            data-mdb-dismiss="modal">Cerrar
+                    <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Cerrar
                     </button>
                 </div>
             </div>
@@ -858,8 +893,7 @@
                             class="fas fa-check me-2"></i>Confirmar espacios
                     </button>
                     <button data-mdb-dismiss="modal" type="button" id="selection"
-                            class="btn btn-lg btn-rounded btn-danger shadow-0 w-100"><i
-                            class="fas fa-ban me-2"></i>Cancelar
+                            class="btn btn-lg btn-rounded btn-danger shadow-0 w-100"><i class="fas fa-ban me-2"></i>Cancelar
                     </button>
                 </div>
             </div>
