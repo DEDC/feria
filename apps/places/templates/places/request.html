@@ -122,40 +122,9 @@
 
             document.addEventListener('DOMContentLoaded', () => {
                 // Selecciona el botón y los elementos destino
-                const btnEfectivo = document.getElementById("btnEfectivo");
-                const btnTpay = document.getElementById("btnTpay");
-                const imagen = document.getElementById("iframe");
-                const texto = document.getElementById("type_pago");
-                const tpayComponent = document.getElementById("tpay-component");
                 const btn_close = document.querySelector('#btnClose');
                 const modal_select = document.querySelector('#modal-iframe');
                 const instance_select_modal = new mdb.Modal(modal_select);
-
-                // Función para manejar el evento click
-                btnEfectivo.addEventListener("click", function () {
-                    // Extraer los atributos data del botón
-                    const nuevoSrc = this.getAttribute("data-url");
-                    const nuevoTexto = this.getAttribute("data-type");
-
-                    // Asignar el nuevo src a la imagen
-                    imagen.src = nuevoSrc;
-
-                    // Actualizar el contenido del párrafo
-                    texto.textContent = nuevoTexto;
-                });
-
-                // Función para manejar el evento click
-                btnTpay.addEventListener("click", function () {
-                    // Extraer los atributos data del botón
-                    const nuevoSrc = this.getAttribute("data-url");
-                    const nuevoTexto = this.getAttribute("data-type");
-
-                    // Asignar el nuevo src a la imagen
-                    imagen.src = nuevoSrc;
-
-                    // Actualizar el contenido del párrafo
-                    texto.textContent = nuevoTexto;
-                });
 
                 btn_close.addEventListener('click', (e) => {
                     instance_select_modal.hide()
