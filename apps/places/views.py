@@ -131,7 +131,7 @@ class Request(UserPermissions, DetailView):
                         request_.nombre, request_.curp_txt, request_.calle,
                         request_.colonia, request_.codigo_postal, request_.estado, request_.municipio
                     )
-                    lug.tpay_folio = lineapago["data"]["folioSeguimiento"]["_text"]
+                    lug.tpay_folio = lineapago["data"]["lineaCaptura"]["_text"].split('|')[1]
                     lug.data_tpay = {
                         "fechaVencimiento": lineapago["data"]["fechaVencimiento"]["_text"],
                         "folioControlEstado": lineapago["data"]["folioControlEstado"]["_text"],

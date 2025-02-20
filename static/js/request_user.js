@@ -37,8 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
     tpay_place.forEach(element => {
         element.addEventListener('click', (e) => {
             tpayPlace(element.dataset.uuid).then((resp) => {
+                console.log(resp);
                 let contentTPay = document.getElementById("content-tpay");
-                contentTPay.appendChild(createTPay(resp))
+                contentTPay.appendChild(createTPay(resp.data))
             }).catch((error) => {
                 console.log(error);
             });

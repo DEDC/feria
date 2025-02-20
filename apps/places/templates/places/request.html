@@ -46,18 +46,60 @@
             background-color: #9FA6B2 !important;
         }
 
+        /* Computadoras y pantallas grandes (1025px en adelante) */
+        @media (min-width: 1025px) {
+            .topheader {
+                margin-top: -25%;
+            }
+        }
+
     </style>
     {% if object.data_tpay %}
         <script async defer src="{{ tpay_ruta }}api/v1/component/js/orden?clientid={{ tpay_apikey }}"></script>
         <script async defer src="{{ tpay_ruta }}api/v1/component/js/object?clientid={{ tpay_apikey }}"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.js"
+                integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous">
+        </script>
         <script>
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
 
+            function money_parse(text) {
+                return parseFloat(text, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString()
+            }
+
+            const csrftoken = getCookie('csrftoken');
             var data_pago = 'iniciando';
 
             function dataFront(respuesta) {
                 try {
                     data_pago = respuesta;
                     console.log('****_', data_pago);
+                    $.ajax({
+                        'url': `/api/places/tpay/${data_pago.data.prodrecibido}`,
+                        'data': data_pago,
+                        'type': "POST",
+                        headers: {
+                            'X-CSRFToken': csrftoken  // Añadir el token CSRF en los headers
+                        },
+                        success: function (data) {
+                            console.log(data);
+                        }
+                    })
+
                     // Procesar la respuesta
                 } catch {
                     data_pago = 'Error data';
@@ -564,7 +606,7 @@
                                         <td>{{ sp.fecha_reg }}</td>
                                         {% if not payment %}
                                             <td>
-                                                {% if sp.data_tpay %}
+                                                {% if sp.data_tpay and not sp.tpay_pagado %}
                                                     <a class="ms-3 tpay-place" data-uuid="{{ sp.uuid }}"
                                                        data-mdb-toggle="modal"
                                                        data-mdb-target="#modal-tpay"
@@ -578,10 +620,13 @@
                                                         <i class="fas fa-file fa-lg text-warning"></i>
                                                     </a>
                                                 {% endif %}
-                                                <a class="ms-3 del-place" data-uuid="{{ sp.uuid }}" data-type="place"
-                                                   role="button">
-                                                    <i class="fas fa-xmark fa-lg text-danger"></i>
-                                                </a>
+                                                {% if not sp.tpay_pagado %}
+                                                    <a class="ms-3 del-place" data-uuid="{{ sp.uuid }}"
+                                                       data-type="place"
+                                                       role="button">
+                                                        <i class="fas fa-xmark fa-lg text-danger"></i>
+                                                    </a>
+                                                {% endif %}
                                             </td>
                                         {% endif %}
                                     </tr>
@@ -636,27 +681,14 @@
                                 <form method="post">
                                     {% csrf_token %}
                                     <div class="d-flex justify-content-center">
-                                        {% if object.data_tpay %}
-                                            <button type="button" data-mdb-toggle="modal" data-mdb-target="#modal-tpay"
-                                                    class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50 tpay">
-                                                <i class="far fa-credit-card me-2"></i>
-                                                Pagar en linea
-                                            </button>
-                                            <button type="button" data-mdb-toggle="modal"
-                                                    data-mdb-target="#modal-iframe"
-                                                    class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50 tpay">
-                                                <i class="far fa-money-bill-1 me-2"></i>
-                                                Pagar en efectivo
-                                            </button>
-                                        {% else %}
-                                            {# <button name="create-payment" #}
+                                        {# <button name="create-payment" #}
+                                        {% if not object.data_tpay %}
                                             <button name="create-payment"
                                                     class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 w-50">
                                                 <i class="far fa-credit-card me-2"></i>
                                                 Solicitar Pago
                                             </button>
                                         {% endif %}
-
                                         <button name="cancel-pay"
                                                 class="btn btn-danger btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
                                             <i class="fas fa-close me-2"></i>

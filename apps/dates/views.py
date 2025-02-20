@@ -1,6 +1,7 @@
 # Django
 from django.utils import formats
 from django.http import HttpResponse
+from django.views import View
 # DjangoRestFramework
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -68,7 +69,7 @@ def get_curp_service(request, curp):
     return Response(response)
 
 
-class PDFLineaCapturaView(APIView):
+class PDFLineaCapturaView(View):
     def get(self, request, *args, **kwargs):
         # URL desde donde se obtiene el PDF
         pdf_url = Lugares.objects.filter(uuid=self.kwargs["pk"]).first()
@@ -106,7 +107,7 @@ class TpayLineaCapturaView(APIView):
                     "lineaCaptura": lugar.data_tpay["lineaCaptura"].split("|")[1],
                     "deviceUuid": lugar.uuid,# UUID por solicitudCaptura por id usuario
                     "userId": 3,
-                    "sistemaId": settings.TPAY_PROJECT_ID,
+                    "sistemaId": int(settings.TPAY_PROJECT_ID),
                     "platform": settings.TPAY_PROJECT,
                     "newCharge": {
                         "amount": lugar.data_tpay["importe"],
@@ -126,6 +127,20 @@ class TpayLineaCapturaView(APIView):
             }
         except requests.RequestException as e:
             return Response({"error": f"Error al obtener el PDF: {str(e)}"}, status=400)
+        return Response(data=response)
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        lugar = Lugares.objects.filter(tpay_folio=self.kwargs["pk"]).first()
+        response = {
+            "data": {
+                "resultado": 0,#(0: éxito, 1: error)
+                "message": "Ok",# (notificación exitosa o Descripción del error)
+            }
+        }
+        if not lugar:
+            lugar.tpay_pagado = True
+            lugar.save()
         return Response(data=response)
 
 
