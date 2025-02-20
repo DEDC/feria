@@ -12,7 +12,7 @@ import requests
 from apps.dates.tools import get_dates_from_range, get_times_from_range
 from apps.dates.models import CitasAgendadas
 
-all_dates = get_dates_from_range('2025-02-28', settings.END_DATES)
+all_dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 all_hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
 
 @api_view(['GET'])
