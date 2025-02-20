@@ -1,4 +1,7 @@
 # Django
+import datetime
+import json
+
 from django.utils import formats
 from django.http import HttpResponse
 from django.views import View
@@ -14,6 +17,7 @@ import requests
 from apps.dates.tools import get_dates_from_range, get_times_from_range
 from apps.dates.models import CitasAgendadas
 from apps.places.models import Lugares
+from apps.tpay.tools import solicitar_linea_captura, generarToken
 
 all_dates = get_dates_from_range('2025-02-28', settings.END_DATES)
 all_hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
@@ -102,6 +106,33 @@ class TpayLineaCapturaView(APIView):
 
         try:
             # Obtener el PDF usando requests
+            user_data = json.dumps({
+                "user": lugar.solicitud.nombre,
+                "email": lugar.solicitud.usuario.email
+            }, separators=(",", ":")
+            )
+            token, error = generarToken(user_data)
+
+            if not error:
+                lineapago = solicitar_linea_captura(
+                    token, "{}-{}".format(lugar.solicitud.folio, datetime.datetime.now().strftime("%H%M%S")),
+                    lugar.tramite_id,
+                    lugar.solicitud.nombre, lugar.solicitud.curp_txt, lugar.solicitud.calle,
+                    lugar.solicitud.colonia, lugar.solicitud.codigo_postal, lugar.solicitud.estado, lugar.solicitud.municipio
+                )
+                lugar.tpay_folio = lineapago["data"]["lineaCaptura"]["_text"].split('|')[1]
+                lugar.data_tpay = {
+                    "fechaVencimiento": lineapago["data"]["fechaVencimiento"]["_text"],
+                    "folioControlEstado": lineapago["data"]["folioControlEstado"]["_text"],
+                    "urlFormatoPago": lineapago["data"]["urlFormatoPago"]["_text"],
+                    "lineaCaptura": lineapago["data"]["lineaCaptura"]["_text"],
+                    "folioSeguimiento": lineapago["data"]["folioSeguimiento"]["_text"],
+                    "importe": lineapago["data"]["importe"]["_text"],
+                }
+                solicitud = lugar.solicitud
+                solicitud.data_tpay = lugar.data_tpay
+                solicitud.save()
+                lugar.save()
             response = {
                 "query": False,
                 "dataOrden": {
