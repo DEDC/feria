@@ -71,16 +71,16 @@ def get_curp_service(request, curp):
 class PDFLineaCapturaView(APIView):
     def get(self, request, *args, **kwargs):
         # URL desde donde se obtiene el PDF
-        pdf_url = Lugares.objects.filter(pk=self.kwargs["pk"]).first()
+        pdf_url = Lugares.objects.filter(uuid=self.kwargs["pk"]).first()
 
         if not pdf_url:
             return Response({"error": "No se proporcionó la URL del PDF"}, status=400)
 
         try:
             # Obtener el PDF usando requests
-            r = requests.get(pdf_url.tpay_data["urlFormatoPago"])
+            r = requests.get(pdf_url.data_tpay["urlFormatoPago"])
             r.raise_for_status()  # Levanta una excepción para códigos de error HTTP
-        except requests.RequestException as e:
+        except Exception as e:
             return Response({"error": f"Error al obtener el PDF: {str(e)}"}, status=400)
 
         # Retornar el contenido del PDF con el Content-Type adecuado
@@ -93,7 +93,7 @@ class PDFLineaCapturaView(APIView):
 class TpayLineaCapturaView(APIView):
     def get(self, request, *args, **kwargs):
         # URL desde donde se obtiene el PDF
-        lugar: Lugares = Lugares.objects.filter(pk=self.kwargs["pk"]).first()
+        lugar: Lugares = Lugares.objects.filter(uuid=self.kwargs["pk"]).first()
         response = None
         if not lugar:
             return Response({"error": "No se proporcionó la información requerida"}, status=400)
@@ -114,7 +114,7 @@ class TpayLineaCapturaView(APIView):
                     }
                 },
                 "key": settings.TPAY_APIKEY,
-                "key_session_boardin": settings.TPAY_SESSION_BOARDIN,
+                "key_session_boardin": settings.TPAY_SESSION_ABORDAJE,
                 "key_session_passport": settings.TPAY_SESSION_ACCESS,
                 "key_channel_service": "scriptComponent",
                 "socketId": settings.TPAY_SOCKET,

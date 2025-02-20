@@ -31,8 +31,8 @@ export const pdfPlace = async (uuid, data) => {
     return response;
 }
 
-export const tpayPlace = async (uuid, data) => {
-    const response = await getAPICall(`/api/places/tpay/${uuid}`, data);
+export const tpayPlace = async (uuid) => {
+    const response = await getAPICall(`/api/places/tpay/${uuid}`);
     return response;
 }
 
