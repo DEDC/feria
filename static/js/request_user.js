@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         unsetPlaceTemp(request_uuid.value, data).then((resp) => {
             console.log(resp)
         }).then(() => {
-            mdb.Alert.getInstance(document.getElementById('alert-warning')).show();
+            // mdb.Alert.getInstance(document.getElementById('alert-warning')).show();
             places.forEach(element => {
                 element.classList.remove('selected')
             });
@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
-            //mdb.Alert.getInstance(document.getElementById('alert-success')).show();
+            mdb.Alert.getInstance(document.getElementById('alert-success')).show();
         }).catch((error) => {
             console.log(error);
         });

@@ -62,8 +62,8 @@
                             Validar
                         </button>
                         <button name="validated-payment" type="submit" data-mdb-ripple-init data-mdb-ripple-color="dark"
-                            class="btn btn-lg btn-rounded btn-outline-success shadow-0 w-100 my-3">
-                            <i class="fas fa-check-square me-2"></i>
+                            class="btn btn-lg btn-rounded btn-outline-success shadow-0 w-100 mt-3">
+                            <i class="fas fa-people-arrows me-2"></i>
                             Validar Directo
                         </button>
                         <button name="pending" type="submit"
@@ -76,6 +76,9 @@
                         </button>
                         {% elif object.estatus == 'validated' %}
                         <h1 class="text-center"><span class="badge rounded-pill badge-success">Validado</span>
+                        </h1>
+                        {% elif object.estatus == 'validated-direct' %}
+                        <h1 class="text-center"><span class="badge rounded-pill badge-success">Validación directa</span>
                         </h1>
                         {% elif object.estatus == 'rejected' %}
                         <h1 class="text-center"><span class="badge rounded-pill badge-danger">Rechazado</span>
@@ -786,6 +789,8 @@
                             <td>
                                 {% if vl.estatus == 'validated' %}
                                 <span class="badge rounded-pill badge-success">Validado</span>
+                                {% elif vl.estatus == 'validated-direct' %}
+                                <span class="badge rounded-pill badge-success">Validación directa</span>
                                 {% elif vl.estatus == 'rejected' %}
                                 <span class="badge rounded-pill badge-danger">Rechazado</span>
                                 {% elif vl.estatus == 'pending' %}
