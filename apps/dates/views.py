@@ -19,7 +19,7 @@ from apps.dates.models import CitasAgendadas
 from apps.places.models import Lugares
 from apps.tpay.tools import solicitar_linea_captura, generarToken
 
-all_dates = get_dates_from_range('2025-02-28', settings.END_DATES)
+all_dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 all_hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
 
 

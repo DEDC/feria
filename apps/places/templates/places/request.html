@@ -157,8 +157,11 @@
                         <h5 class="mb-0">Citas Agendadas</h5>
                     </div>
                     <div class="p-4">
+                        <div class="alert" role="alert" data-mdb-color="info">
+                            Seleccione una cita para descargar el PDF
+                        </div>
                         {% for dt in dates %}
-                            <a href="#" role="button" class="btn btn-link btn-rounded w-100 text-start text-capitalize">
+                            <a href="{% url 'places:download_date' object.uuid dt.uuid %}" role="button" class="btn btn-link btn-rounded w-100 text-start text-capitalize">
                                 {{ dt.folio }} - {{ dt.fecha }} - {{ dt.hora }} horas
                             </a>
                         {% empty %}

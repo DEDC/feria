@@ -17,10 +17,13 @@
                     <h5 class="mb-0">Citas Asignadas</h5>
                 </div>
                 <div class="p-4">
+                    <div class="alert" role="alert" data-mdb-color="info">
+                        Ingrese a la Solicitud que corresponde para descargar el PDF que presentará al validador o validadora
+                    </div>
                     {% for dt in dates %}
-                    <a href="#" role="button" class="btn btn-link btn-rounded w-100 text-start text-capitalize">
+                    <span role="button" class="btn btn-link btn-rounded w-100 text-start text-capitalize">
                         {{dt.folio}} - {{dt.fecha}} - {{dt.hora}} horas
-                    </a>
+                    </span>
                     {% empty %}
                     <div class="alert" role="alert" data-mdb-color="warning">
                         Aún no tiene <b>Citas</b> asignadas
