@@ -120,7 +120,7 @@ class TpayLineaCapturaView(APIView):
                     lugar.solicitud.nombre, lugar.solicitud.curp_txt, lugar.solicitud.calle,
                     lugar.solicitud.colonia, lugar.solicitud.codigo_postal, lugar.solicitud.estado, lugar.solicitud.municipio
                 )
-                lugar.tpay_folio = lineapago["data"]["lineaCaptura"]["_text"].split('|')[1]
+                lugar.tpay_folio = lineapago["data"]["lineaCaptura"]["_text"].split('|')[0]
                 lugar.data_tpay = {
                     "fechaVencimiento": lineapago["data"]["fechaVencimiento"]["_text"],
                     "folioControlEstado": lineapago["data"]["folioControlEstado"]["_text"],
@@ -136,14 +136,14 @@ class TpayLineaCapturaView(APIView):
             response = {
                 "query": False,
                 "dataOrden": {
-                    "lineaCaptura": lugar.data_tpay["lineaCaptura"].split("|")[1],
+                    "lineaCaptura": lugar.data_tpay["lineaCaptura"].split("|")[0],
                     "deviceUuid": lugar.uuid,# UUID por solicitudCaptura por id usuario
                     "userId": 3,
                     "sistemaId": int(settings.TPAY_PROJECT_ID),
                     "platform": settings.TPAY_PROJECT,
                     "newCharge": {
                         "amount": lugar.data_tpay["importe"],
-                        "orderId": lugar.data_tpay["folioControlEstado"]
+                        "orderId": "2025-{}".format(lugar.data_tpay["lineaCaptura"].split("|")[0])
                     }
                 },
                 "key": settings.TPAY_APIKEY,
