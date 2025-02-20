@@ -1,4 +1,15 @@
-import { getPlaces, setPlaceTemp, unsetPlaceTemp, setPlace, addTerraza, addAlcohol, addBigTerraza, deleteItem, deletePlace } from "../js/api/utilities.js";
+import {
+    getPlaces,
+    setPlaceTemp,
+    unsetPlaceTemp,
+    setPlace,
+    addTerraza,
+    addAlcohol,
+    addBigTerraza,
+    deleteItem,
+    deletePlace,
+    pdfPlace, tpayPlace
+} from "../js/api/utilities.js";
 import { url_nave_2 } from '../js/api/endpoints.js'
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -207,6 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function get_places_zone(url) {
         btn_preselect.disabled = true
+        console.log(url);
         getPlaces(url).then((resp) => {
             table_places.textContent = '';
             zone_title.textContent = resp.data.title;

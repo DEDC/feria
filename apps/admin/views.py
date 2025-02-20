@@ -405,7 +405,7 @@ def set_place_temp(request, uuid, zone):
         for p in places:
             for p2 in places_dict[zone]['places']:
                 if p2['uuid'] == str(p):
-                    objects.append(Lugares(uuid_place=p, solicitud=request_, usuario=request_.usuario, estatus='temp', zona=zone, precio=p2['price'], m2=p2['m2'], nombre=p2['text']))
+                    objects.append(Lugares(uuid_place=p, tramite_id=p2["concept"], solicitud=request_, usuario=request_.usuario, estatus='temp', zona=zone, precio=p2['price'], m2=p2['m2'], nombre=p2['text']))
         try:
             obj = Lugares.objects.bulk_create(objects)
             for o in obj:

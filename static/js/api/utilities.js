@@ -26,6 +26,16 @@ export const unsetPlaceTemp = async (uuid, data) => {
     return response;
 }
 
+export const pdfPlace = async (uuid, data) => {
+    const response = await getAPICall(`/api/places/pdfcpatura/${uuid}`);
+    return response;
+}
+
+export const tpayPlace = async (uuid, data) => {
+    const response = await getAPICall(`/api/places/tpay/${uuid}`, data);
+    return response;
+}
+
 export const setPlace = async (uuid, data) => {
     const response = await postAPICall(`/admin/solicitud/${uuid}/lugar/set`, data);
     return response;

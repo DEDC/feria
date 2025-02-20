@@ -117,7 +117,7 @@ class Lugares(ControlInfo):
     identifier='PLC'
     uuid_place = models.UUIDField(editable=False, unique=True)
     estatus = models.CharField(max_length=20, choices=(('temp', 'Temporal'), ('assign', 'Asignado')), default='temp')
-    zona = models.CharField(max_length=20, choices=(('z_a', 'Zona A'), ('z_b', 'Zona B'), ('z_c', 'Zona C'), ('z_d', 'Zona D'), ('n_1', 'Nave 1'), ('n_3', 'Nave 3')), null=True)
+    zona = models.CharField(max_length=20, choices=(('z_a', 'Zona A'), ('z_b', 'Zona B'), ('z_c', 'Zona C'), ('z_d', 'Zona D'), ('n_1', 'Nave 1'), ('n_2', 'Nave 2'), ('n_3', 'Nave 3')), null=True)
     precio = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     m2 = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     nombre = models.CharField(max_length=10, default='')
@@ -125,6 +125,8 @@ class Lugares(ControlInfo):
     usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='usuario_lugar')
     solicitud = models.ForeignKey(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='solicitud_lugar')
     data_tpay = models.JSONField(null=True, blank=True)
+    tpay_folio = models.CharField(max_length=150, null=True, blank=True)
+    tpay_pagado = models.BooleanField(default=False)
 
 
 class ProductosExtras(ControlInfo):

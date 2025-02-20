@@ -131,7 +131,17 @@ class Request(UserPermissions, DetailView):
                         request_.nombre, request_.curp_txt, request_.calle,
                         request_.colonia, request_.codigo_postal, request_.estado, request_.municipio
                     )
-                    lug.data_tpay = lineapago
+                    lug.tpay_folio = lineapago["data"]["folioSeguimiento"]["_text"]
+                    lug.data_tpay = {
+                        "fechaVencimiento": lineapago["data"]["fechaVencimiento"]["_text"],
+                        "folioControlEstado": lineapago["data"]["folioControlEstado"]["_text"],
+                        "urlFormatoPago": lineapago["data"]["urlFormatoPago"]["_text"],
+                        "lineaCaptura": lineapago["data"]["lineaCaptura"]["_text"],
+                        "folioSeguimiento": lineapago["data"]["folioSeguimiento"]["_text"],
+                        "importe": lineapago["data"]["importe"]["_text"],
+                    }
+                    request_.data_tpay = lug.data_tpay
+                    request_.save()
                     lug.save()
             else:
                 messages.error(request, f"{token}")
@@ -167,30 +177,13 @@ class Request(UserPermissions, DetailView):
         context['tpay_access'] = settings.TPAY_SESSION_ACCESS
         context['tpat_sistema'] = settings.TPAY_SISTEMA
         if self.object.data_tpay:
-            user_data = json.dumps({
-                "user": self.object.nombre,
-                "email": self.object.usuario.email
-            }, separators=(",", ":")
-            )
-            token, error = generarToken(user_data)
-            sol = self.object
-
-            if not error:
-                lineapago = solicitar_linea_captura(
-                    token, "{}-{}".format(self.object.folio, datetime.datetime.now().strftime("%H%M%S")), "A", self.object.nombre,
-                    self.object.curp_txt, self.object.calle,
-                    self.object.colonia, self.object.codigo_postal, self.object.estado, self.object.municipio
-                )
-                sol.data_tpay = lineapago
-                sol.save()
-            tpay = sol.data_tpay
+            tpay = self.object.data_tpay
             if tpay:
                 try:
                     context["pdf_url"] = tpay["data"]["urlFormatoPago"]["_text"]
                     context["tpay_importe"] = tpay["data"]["importe"]["_text"]
                     context["tpay_captura"] = tpay["data"]["lineaCaptura"]["_text"].split('|')[1]
                     context["tpay_folio"] = tpay["data"]["folioControlEstado"]["_text"]
-                    context["tpay_url"] = f"https://tpayqa.tabasco.gob.mx/tpay/?linea_captura={tpay['data']['lineaCaptura']['_text'].split('|')[1]}"
                 except Exception as e:
                     print(e)
         return context
