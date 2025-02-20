@@ -1,6 +1,7 @@
 # Django
 import datetime
 import json
+import time
 
 from django.views.generic import TemplateView, CreateView, DetailView, RedirectView
 from django.urls import reverse_lazy, reverse
@@ -131,8 +132,19 @@ class Request(UserPermissions, DetailView):
                         request_.nombre, request_.curp_txt, request_.calle,
                         request_.colonia, request_.codigo_postal, request_.estado, request_.municipio
                     )
-                    lug.data_tpay = lineapago
+                    lug.tpay_folio = lineapago["data"]["lineaCaptura"]["_text"].split('|')[1]
+                    lug.data_tpay = {
+                        "fechaVencimiento": lineapago["data"]["fechaVencimiento"]["_text"],
+                        "folioControlEstado": lineapago["data"]["folioControlEstado"]["_text"],
+                        "urlFormatoPago": lineapago["data"]["urlFormatoPago"]["_text"],
+                        "lineaCaptura": lineapago["data"]["lineaCaptura"]["_text"],
+                        "folioSeguimiento": lineapago["data"]["folioSeguimiento"]["_text"],
+                        "importe": lineapago["data"]["importe"]["_text"],
+                    }
+                    request_.data_tpay = lug.data_tpay
+                    request_.save()
                     lug.save()
+                    time.sleep(2)
             else:
                 messages.error(request, f"{token}")
 
@@ -151,6 +163,27 @@ class Request(UserPermissions, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         places = self.object.solicitud_lugar.filter(estatus='assign')
+        validados = places.filter(tpay_pagado=True).count()
+        total_tpay = places.exclude(tramite_id=0).count()
+        if validados == total_tpay:
+            if self.object.estatus == 'validated' and not self.object.estatus == 'validated-direct':
+                if not Pagos.objects.filter(solicitud=self.object):
+                    Pagos.objects.get_or_create(
+                        solicitud=self.object, usuario=self.object.usuario, tipo='tpay', pagado=True,
+                        validador=self.object.usuario.get_full_name()
+                    )
+                    if not self.request.user.citas.exists():
+                        # assing date
+                        assign = False
+                        for d in dates:
+                            if assign: break
+                            for h in hours:
+                                assigned_dates = CitasAgendadas.objects.filter(fecha=d, hora=h)
+                                if assigned_dates.count() < settings.ATTENTION_MODULES:
+                                    CitasAgendadas.objects.create(fecha=d, hora=h, usuario=self.request.user)
+                                    assign = True
+                                    messages.success(self.request, 'Cita asignada exitosamente.')
+                                    break
         context['total_places'] = places.aggregate(price=Sum('precio'))['price'] or 0
         context['total_extras'] = places.aggregate(price=Sum('extras__precio'))['price'] or 0
         context['total'] = context['total_extras'] + context['total_places']
@@ -167,30 +200,13 @@ class Request(UserPermissions, DetailView):
         context['tpay_access'] = settings.TPAY_SESSION_ACCESS
         context['tpat_sistema'] = settings.TPAY_SISTEMA
         if self.object.data_tpay:
-            user_data = json.dumps({
-                "user": self.object.nombre,
-                "email": self.object.usuario.email
-            }, separators=(",", ":")
-            )
-            token, error = generarToken(user_data)
-            sol = self.object
-
-            if not error:
-                lineapago = solicitar_linea_captura(
-                    token, "{}-{}".format(self.object.folio, datetime.datetime.now().strftime("%H%M%S")), "A", self.object.nombre,
-                    self.object.curp_txt, self.object.calle,
-                    self.object.colonia, self.object.codigo_postal, self.object.estado, self.object.municipio
-                )
-                sol.data_tpay = lineapago
-                sol.save()
-            tpay = sol.data_tpay
+            tpay = self.object.data_tpay
             if tpay:
                 try:
                     context["pdf_url"] = tpay["data"]["urlFormatoPago"]["_text"]
                     context["tpay_importe"] = tpay["data"]["importe"]["_text"]
                     context["tpay_captura"] = tpay["data"]["lineaCaptura"]["_text"].split('|')[1]
                     context["tpay_folio"] = tpay["data"]["folioControlEstado"]["_text"]
-                    context["tpay_url"] = f"https://tpayqa.tabasco.gob.mx/tpay/?linea_captura={tpay['data']['lineaCaptura']['_text'].split('|')[1]}"
                 except Exception as e:
                     print(e)
         return context

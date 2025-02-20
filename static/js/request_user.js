@@ -1,4 +1,15 @@
-import { getPlaces, setPlaceTemp, unsetPlaceTemp, setPlace, addTerraza, addAlcohol, addBigTerraza, deleteItem, deletePlace } from "../js/api/utilities.js";
+import {
+    getPlaces,
+    setPlaceTemp,
+    unsetPlaceTemp,
+    setPlace,
+    addTerraza,
+    addAlcohol,
+    addBigTerraza,
+    deleteItem,
+    deletePlace,
+    tpayPlace,
+} from "../js/api/utilities.js";
 import { url_nave_1, url_nave_2, url_nave_3 } from '../js/api/endpoints.js'
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -19,6 +30,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const add_big_terraza = document.querySelector('#add-big-terraza')
     const delete_pdt = document.querySelectorAll('.del-pdt')
     const delete_place = document.querySelectorAll('.del-place')
+
+    const tpay_place = document.querySelectorAll('.tpay-place')
+    const pdf_place = document.querySelectorAll('.pdf-place')
+
+    tpay_place.forEach(element => {
+        element.addEventListener('click', (e) => {
+            tpayPlace(element.dataset.uuid).then((resp) => {
+                //console.log(resp);
+                let contentTPay = document.getElementById("content-tpay");
+                contentTPay.html = "";
+                contentTPay.appendChild(createTPay(resp.data))
+            }).catch((error) => {
+                console.log(error);
+            });
+        })
+    });
+
+    pdf_place.forEach(element => {
+        element.addEventListener('click', (e) => {
+            const pdf_iframe = document.querySelector('#iframe');
+            pdf_iframe.src = `/api/places/pdfcpatura/${element.dataset.uuid}`;
+        })
+    });
 
     delete_pdt.forEach(element => {
         element.addEventListener('click', (e) => {
@@ -223,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function get_places_zone(url) {
         btn_preselect.disabled = true
+        // console.log(url);
         getPlaces(url).then((resp) => {
             table_places.textContent = '';
             zone_title.textContent = resp.data.title;
