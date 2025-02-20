@@ -531,7 +531,7 @@ class UnlockRequest(AdminPermissions, RedirectView):
             raise Http404()
 
 
-class UserDates(AdminPermissions, TemplateView):
+class UserDates(AdminStaffPermissions, TemplateView):
     template_name = 'admin/user_dates.html'
 
     def get_context_data(self, **kwargs):
