@@ -69,7 +69,7 @@ def get_curp_service(request, curp):
     return Response(response)
 
 
-class PDFLineaCapturaView(View):
+class PDFLineaCapturaView(APIView):
     def get(self, request, *args, **kwargs):
         # URL desde donde se obtiene el PDF
         pdf_url = Lugares.objects.filter(uuid=self.kwargs["pk"]).first()
@@ -129,6 +129,8 @@ class TpayLineaCapturaView(APIView):
             return Response({"error": f"Error al obtener el PDF: {str(e)}"}, status=400)
         return Response(data=response)
 
+    @renderer_classes((JSONRenderer,))
+    @permission_classes([IsAuthenticated])
     def post(self, request, *args, **kwargs):
         data = request.data
         lugar = Lugares.objects.filter(tpay_folio=self.kwargs["pk"]).first()
@@ -141,6 +143,29 @@ class TpayLineaCapturaView(APIView):
         if not lugar:
             lugar.tpay_pagado = True
             lugar.save()
+        return Response(data=response)
+
+
+class TpayValidadoView(APIView):
+    def get(self, request, *args, **kwargs):
+        data = request.data
+        lugar = Lugares.objects.filter(tpay_folio=self.kwargs["pk"]).first()
+        response = {
+            "data": {
+                "resultado": 0,#(0: éxito, 1: error)
+                "message": "Ok",# (notificación exitosa o Descripción del error)
+            }
+        }
+        if lugar:
+            lugar.tpay_pagado = True
+            lugar.save()
+        else:
+            response = {
+                "data": {
+                    "resultado": 1,  # (0: éxito, 1: error)
+                    "message": "No se encontro un folio para el lugar",  # (notificación exitosa o Descripción del error)
+                }
+            }
         return Response(data=response)
 
 

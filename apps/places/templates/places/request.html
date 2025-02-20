@@ -61,6 +61,7 @@
                 integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous">
         </script>
         <script>
+            var modalImprimir = null;
             function getCookie(name) {
                 let cookieValue = null;
                 if (document.cookie && document.cookie !== '') {
@@ -88,17 +89,19 @@
                 try {
                     data_pago = respuesta;
                     console.log('****_', data_pago);
-                    $.ajax({
-                        'url': `/api/places/tpay/${data_pago.data.prodrecibido}`,
-                        'data': data_pago,
-                        'type': "POST",
-                        headers: {
-                            'X-CSRFToken': csrftoken  // Añadir el token CSRF en los headers
-                        },
-                        success: function (data) {
-                            console.log(data);
-                        }
-                    })
+                    if(data_pago.respuesta){
+                        $.ajax({
+                            url: `/api/places/tpayval/${data_pago.data.prodrecibido}`,
+                            type: 'GET',
+                            headers: {
+                                'X-CSRFToken': csrftoken  // Añadir el token CSRF en los headers
+                            },
+                            success: function (data) {
+                                console.log(data);
+                                location.reload();
+                            }
+                        })
+                    }
 
                     // Procesar la respuesta
                 } catch {
