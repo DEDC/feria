@@ -61,6 +61,7 @@ class Main(AdminStaffPermissions, TemplateView):
         context['users'] = users.count()
         context['validations'] = validations.count()
         context['branches'] = branches.count()
+        context['places'] = places.count()
         context['requests_today'] = requests.filter(fecha_reg__date=today).count()
         context['dates_today'] = dates.filter(fecha_reg__date=today).count()
         context['users_today'] = users.filter(date_joined__date=today).count()
