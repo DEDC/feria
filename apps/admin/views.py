@@ -55,6 +55,7 @@ class Main(AdminStaffPermissions, TemplateView):
         users = Usuarios.objects.all()
         validations = Validaciones.objects.all()
         branches = Comercios.objects.all()
+        places = Lugares.objects.all()
         context['requests'] = requests.count()
         context['dates'] = dates.count()
         context['users'] = users.count()
@@ -65,6 +66,7 @@ class Main(AdminStaffPermissions, TemplateView):
         context['users_today'] = users.filter(date_joined__date=today).count()
         context['validations_today'] = validations.filter(fecha_reg__date=today).count()
         context['branches_today'] = branches.filter(fecha_reg__date=today).count()
+        context['places_today'] = places.filter(fecha_reg__date=today).count()
         return context
 
 
