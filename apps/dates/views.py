@@ -248,7 +248,7 @@ class WebHookTapyApiView(APIView):
 
     def post(self, request, *args, **kwargs):
         data = request.data
-        logger.info("{}".format(data))
+        logger.error("{}".format(data))
         response = {
             "data": {
                 "resultado": 0,  # (0: éxito, 1: error)
@@ -260,6 +260,7 @@ class WebHookTapyApiView(APIView):
         if lugar:
             lugar.tpay_pagado = True
             lugar.tpay_web = True
+            lugar.tpay_val = data
             lugar.save()
 
             if not lugar.tpay_service:
