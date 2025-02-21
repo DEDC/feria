@@ -165,7 +165,7 @@ class Request(UserPermissions, DetailView):
         places = self.object.solicitud_lugar.filter(estatus='assign')
         validados = places.filter(tpay_pagado=True).count()
         total_tpay = places.exclude(tramite_id=0).count()
-        if validados == total_tpay:
+        if places.count() > 0 and validados == total_tpay:
             if self.object.estatus == 'validated' and not self.object.estatus == 'validated-direct':
                 if not Pagos.objects.filter(solicitud=self.object):
                     Pagos.objects.get_or_create(
