@@ -219,7 +219,7 @@ class TpayValidadoView(APIView):
                     }
 
                     validacion = validar_linea_captura(token, data)
-
+                    print(validacion)
                     if validacion["resultado"]:
                         lugar.tpay_service = True
                         lugar.tpay_val = validacion
@@ -281,6 +281,7 @@ class WebHookTapyApiView(APIView):
 
                     validacion = validar_linea_captura(token, data)
 
+                    print(validacion)
                     if validacion["resultado"]:
                         lugar.tpay_service = True
                         lugar.tpay_val = validacion
