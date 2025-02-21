@@ -493,7 +493,7 @@
                         espacios.</b>
                     </div>
                     <input type="hidden" id="request-uuid" value="{{ object.uuid }}">
-                    {% if not payment %}
+                    {% if not payment and not ocultar %}
                         <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
                              id="places">
                             <h4 class="mb-0 fw-bold">
@@ -542,7 +542,7 @@
                         </div>
                     {% endif %}
                 {% endif %}
-                {% if selected_places %}
+                {% if selected_places and not ocultar %}
                     <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
                          id="places">
                         <h4 class="mb-0 fw-bold">
