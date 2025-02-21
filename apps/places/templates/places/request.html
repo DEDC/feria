@@ -127,6 +127,30 @@
                 btn_close.addEventListener('click', (e) => {
                     instance_select_modal.hide()
                 })
+
+                dataFront({
+                    "respuesta": true,
+                    "data": {
+                        "transaccion": "763256",
+                        "orderId": "15392",
+                        "ordenUuid": "021-2025-202551541437274",
+                        "monto": "10000.00",
+                        "fechaTrans": "2025-02-21T02:31:39.213Z",
+                        "resultadoTrans": {
+                            "pcve_ejercicio_carrito": 2025,
+                            "pordenp_ref": "202551541437274",
+                            "pcve_instrumento_pago": "BBVAMULTI",
+                            "pnum_autorizacion": "763256",
+                            "pnum_operacion": "0015121198000000000000763256",
+                            "preferencia_operacion": "021-2025-202551541437274",
+                            "nombreCPago": "Crhistian Perez"
+                        },
+                        "prodrecibido": "202551541437274",
+                        "prodrecibido2": null,
+                        "estatusTrans": "completed",
+                        "tipo_pago": 1
+                    }
+                })
             });
         </script>
     {% endif %}

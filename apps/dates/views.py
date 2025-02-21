@@ -1,7 +1,7 @@
 # Django
 import datetime
 import json
-
+import logging
 from django.utils import formats
 from django.http import HttpResponse
 from django.views import View
@@ -21,6 +21,9 @@ from apps.tpay.tools import solicitar_linea_captura, generarToken, validar_linea
 
 all_dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 all_hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
+
+# Obtén el logger (en este caso se usa el logger raíz)
+logger = logging.getLogger(__name__)
 
 
 @api_view(['GET'])
@@ -208,7 +211,7 @@ class TpayValidadoView(APIView):
 
                 if not error:
 
-                    data = {
+                    data = json.dumps({
                         "data": {
                             "AuthS701": data["data"]["transaccion"],
                             "referenceKey": data["data"]["resultadoTrans"]["pordenp_ref"],
@@ -216,10 +219,11 @@ class TpayValidadoView(APIView):
                             "EstablishNum": "7681",
                             "BranchSource": "7681",
                         }
-                    }
+                    }, separators=(",", ":"))
 
                     validacion = validar_linea_captura(token, data)
-                    print(validacion)
+
+                    logger.info("{}".format(validacion))
                     if validacion["resultado"]:
                         lugar.tpay_service = True
                         lugar.tpay_val = validacion
@@ -244,7 +248,7 @@ class WebHookTapyApiView(APIView):
 
     def post(self, request, *args, **kwargs):
         data = request.data
-        print(data)
+        logger.info("{}".format(data))
         response = {
             "data": {
                 "resultado": 0,  # (0: éxito, 1: error)
@@ -269,7 +273,7 @@ class WebHookTapyApiView(APIView):
 
                 if not error:
 
-                    data = {
+                    data = json.dumps({
                         "data": {
                             "AuthS701": data["data"]["transaccion"],
                             "referenceKey": data["data"]["resultadoTrans"]["pordenp_ref"],
@@ -277,11 +281,11 @@ class WebHookTapyApiView(APIView):
                             "EstablishNum": "7681",
                             "BranchSource": "7681",
                         }
-                    }
+                    }, separators=(",", ":"))
 
                     validacion = validar_linea_captura(token, data)
 
-                    print(validacion)
+                    logger.info("{}".format(validacion))
                     if validacion["resultado"]:
                         lugar.tpay_service = True
                         lugar.tpay_val = validacion
