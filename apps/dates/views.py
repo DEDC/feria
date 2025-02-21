@@ -17,7 +17,7 @@ import requests
 from apps.dates.tools import get_dates_from_range, get_times_from_range
 from apps.dates.models import CitasAgendadas
 from apps.places.models import Lugares
-from apps.tpay.tools import solicitar_linea_captura, generarToken
+from apps.tpay.tools import solicitar_linea_captura, generarToken, validar_linea_captura
 
 all_dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 all_hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
@@ -182,7 +182,7 @@ class TpayLineaCapturaView(APIView):
 
 
 class TpayValidadoView(APIView):
-    def get(self, request, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
         data = request.data
         lugar = Lugares.objects.filter(tpay_folio=self.kwargs["pk"]).first()
         response = {
@@ -196,17 +196,38 @@ class TpayValidadoView(APIView):
             lugar.tpay_socket = True
             lugar.save()
 
-            data = {
-                "data": {
-                    "AuthS701": "180403",
-                    "referenceKey": "20231399258334681271",
-                    "AccessUser": "BBV",
-                    "EstablishNum": "7681",
-                    "BranchSource": "7681",
-                }
-            }
+            if not lugar.tpay_service:
 
-            # validacion = solicitar_linea_captura(token, data)
+                # Obtener el PDF usando requests
+                user_data = json.dumps({
+                    "user": lugar.solicitud.nombre,
+                    "email": lugar.solicitud.usuario.email
+                }, separators=(",", ":")
+                )
+                token, error = generarToken(user_data)
+
+                if not error:
+
+                    data = {
+                        "data": {
+                            "AuthS701": data["data"]["transaccion"],
+                            "referenceKey": data["data"]["resultadoTrans"]["pordenp_ref"],
+                            "AccessUser": data["data"]["resultadoTrans"]["pcve_instrumento_pago"],
+                            "EstablishNum": "7681",
+                            "BranchSource": "7681",
+                        }
+                    }
+
+                    validacion = validar_linea_captura(token, data)
+
+                    if validacion["resultado"]:
+                        lugar.tpay_service = True
+                        lugar.tpay_val = validacion
+                        lugar.save()
+                    else:
+                        lugar.tpay_val = validacion
+                        lugar.save()
+
         else:
             response = {
                 "data": {
@@ -236,6 +257,37 @@ class WebHookTapyApiView(APIView):
             lugar.tpay_pagado = True
             lugar.tpay_web = True
             lugar.save()
+
+            if not lugar.tpay_service:
+                # Obtener el PDF usando requests
+                user_data = json.dumps({
+                    "user": lugar.solicitud.nombre,
+                    "email": lugar.solicitud.usuario.email
+                }, separators=(",", ":")
+                )
+                token, error = generarToken(user_data)
+
+                if not error:
+
+                    data = {
+                        "data": {
+                            "AuthS701": data["data"]["transaccion"],
+                            "referenceKey": data["data"]["resultadoTrans"]["pordenp_ref"],
+                            "AccessUser": data["data"]["resultadoTrans"]["pcve_instrumento_pago"],
+                            "EstablishNum": "7681",
+                            "BranchSource": "7681",
+                        }
+                    }
+
+                    validacion = validar_linea_captura(token, data)
+
+                    if validacion["resultado"]:
+                        lugar.tpay_service = True
+                        lugar.tpay_val = validacion
+                        lugar.save()
+                    else:
+                        lugar.tpay_val = validacion
+                        lugar.save()
             response = {
                 "data": {
                     "resultado": 0,  # (0: éxito, 1: error)

@@ -130,7 +130,7 @@ def solicitar_linea_captura(token, folio, tramite_id, nombre, curp, calle, colon
 def validar_linea_captura(token, data):
     try:
 
-        folioEncriptado = encriptarData(folio)
+        folioEncriptado = encriptarData(data)
         header = {
             "Content-Type": "application/json",
             "Access-Control-Allow-Methods": "GET, POST",
@@ -140,11 +140,14 @@ def validar_linea_captura(token, data):
             "X-CHANNEL-SERVICE": settings.TPAY_CAPTURA,
             "Authorization": f"Bearer {token}"
         }
-        parms = {"query": folioEncriptado}
 
-        response = requests.get(
-            f"{settings.TPAY_RUTA}/api/v1/gateway/servInfApi1/pagos/bancoOnline?query={folioEncriptado}",
-            headers=header
+        data_val = {"data": folioEncriptado}
+
+        param = {"query": False}
+
+        response = requests.post(
+            f"{settings.TPAY_RUTA}/api/v1/gateway/servInfApi1/pagos/bancoOnline",
+            headers=header, params=param, data=data_val
         )
         respLinea = desencriptado(response.text)
         data = json.loads(respLinea)

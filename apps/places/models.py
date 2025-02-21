@@ -125,6 +125,7 @@ class Lugares(ControlInfo):
     usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='usuario_lugar')
     solicitud = models.ForeignKey(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='solicitud_lugar')
     data_tpay = models.JSONField(null=True, blank=True)
+    tpay_val = models.JSONField(null=True, blank=True)
     tpay_folio = models.CharField(max_length=150, null=True, blank=True)
     tpay_pagado = models.BooleanField(default=False)
     tpay_web = models.BooleanField(default=False)

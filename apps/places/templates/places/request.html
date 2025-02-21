@@ -63,13 +63,14 @@
         <script>
             var modalImprimir = null;
 
+            // Función para obtener el token CSRF de la cookie
             function getCookie(name) {
                 let cookieValue = null;
                 if (document.cookie && document.cookie !== '') {
                     const cookies = document.cookie.split(';');
                     for (let i = 0; i < cookies.length; i++) {
                         const cookie = cookies[i].trim();
-                        // Does this cookie string begin with the name we want?
+                        // Verifica si esta cookie empieza con el nombre requerido
                         if (cookie.substring(0, name.length + 1) === (name + '=')) {
                             cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                             break;
@@ -77,10 +78,6 @@
                     }
                 }
                 return cookieValue;
-            }
-
-            function money_parse(text) {
-                return parseFloat(text, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString()
             }
 
             const csrftoken = getCookie('csrftoken');
@@ -91,17 +88,18 @@
                     data_pago = respuesta;
                     console.log('****_', data_pago);
                     if (data_pago.respuesta) {
-                        $.ajax({
-                            url: `/api/places/tpayval/${data_pago.data.prodrecibido}`,
-                            type: 'GET',
+                        axios.put(`/api/places/tpayval/${data_pago.data.prodrecibido}`, data_pago, {
                             headers: {
-                                'X-CSRFToken': csrftoken  // Añadir el token CSRF en los headers
-                            },
-                            success: function (data) {
-                                console.log(data);
-                                location.reload();
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrftoken  // Se incluye el token CSRF
                             }
                         })
+                        .then(response => {
+                            console.log('Actualización exitosa:', response.data);
+                        })
+                        .catch(error => {
+                            console.error('Error en la actualización:', error);
+                        });
                     }
 
                     // Procesar la respuesta
@@ -161,7 +159,8 @@
                             Seleccione una cita para descargar el PDF
                         </div>
                         {% for dt in dates %}
-                            <a href="{% url 'places:download_date' object.uuid dt.uuid %}" role="button" class="btn btn-link btn-rounded w-100 text-start text-capitalize">
+                            <a href="{% url 'places:download_date' object.uuid dt.uuid %}" role="button"
+                               class="btn btn-link btn-rounded w-100 text-start text-capitalize">
                                 {{ dt.folio }} - {{ dt.fecha }} - {{ dt.hora }} horas
                             </a>
                         {% empty %}
@@ -514,13 +513,13 @@
                             <button id="n-3" type="button" class="btn btn-light">Nave 3<i
                                     class="fas fa-arrows-rotate ms-2"></i></button>
                             <button id="z-a" type="button" class="btn btn-light">Zona A<i
-                                class="fas fa-arrows-rotate ms-2"></i></button>
+                                    class="fas fa-arrows-rotate ms-2"></i></button>
                             <button id="z-b" type="button" class="btn btn-light">Zona B<i
-                                class="fas fa-arrows-rotate ms-2"></i></button>
+                                    class="fas fa-arrows-rotate ms-2"></i></button>
                             <button id="z-c" type="button" class="btn btn-light">Zona C<i
-                                class="fas fa-arrows-rotate ms-2"></i></button>
+                                    class="fas fa-arrows-rotate ms-2"></i></button>
                             <button id="z-d" type="button" class="btn btn-light">Zona D<i
-                                class="fas fa-arrows-rotate ms-2"></i></button>
+                                    class="fas fa-arrows-rotate ms-2"></i></button>
                         </div>
                         <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
                             <input type="hidden" name="limit_places" value="{{ object.cantidad_espacios }}">
@@ -692,7 +691,8 @@
                             <b>{{ payment.validador }}</b>{% endif %}.
                         </p>
                         <div class="d-flex justify-content-end">
-                            <button name="reverse-pay" style="display: none" class="btn btn-danger btn-sm btn-rounded shadow-0">
+                            <button name="reverse-pay" style="display: none"
+                                    class="btn btn-danger btn-sm btn-rounded shadow-0">
                                 <i class="fas fa-close me-2"></i>
                                 Revertir compra
                             </button>
