@@ -182,7 +182,7 @@ class TpayLineaCapturaView(APIView):
 
 
 class TpayValidadoView(APIView):
-    def post(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         data = request.data
         lugar = Lugares.objects.filter(tpay_folio=self.kwargs["pk"]).first()
         response = {
