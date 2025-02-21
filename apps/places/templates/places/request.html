@@ -575,7 +575,8 @@
                             <th scope="col">Precio</th>
                             <th scope="col">Fecha de asignación</th>
                             {% if not payment %}
-                                <th></th>
+                                <th>Pagar</th>
+                                <th>Eliminar</th>
                             {% endif %}
                         </tr>
                         </thead>
@@ -596,25 +597,20 @@
                                 {% if not payment %}
                                     <td>
                                         {% if not sp.tpay_pagado and sp.tramite_id != 0 %}
-                                            <a class="ms-3 tpay-place" data-uuid="{{ sp.uuid }}"
-                                               data-mdb-toggle="modal"
-                                               data-mdb-target="#modal-tpay"
-                                               data-type="place" role="button">
-                                                <i class="fas fa-credit-card fa-lg text-success"></i>
-                                            </a>
-                                            <a class="ms-3 pdf-place" data-uuid="{{ sp.uuid }}"
-                                               data-mdb-toggle="modal"
-                                               data-mdb-target="#modal-iframe"
-                                               data-type="place" role="button">
-                                                <i class="fas fa-file fa-lg text-warning"></i>
-                                            </a>
+                                            <button class="btn btn-rounded btn-success tpay-place" data-uuid="{{ sp.uuid }}">
+                                                <i class="fas fa-credit-card fa-lg text-white"></i>
+                                            </button>
+                                        {% else %}
+                                            <span class="badge rounded-pill badge-success">Pagado</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if not sp.tpay_pagado and sp.tramite_id != 0 %}
                                             <a class="ms-3 del-place" data-uuid="{{ sp.uuid }}"
                                                data-type="place"
                                                role="button">
                                                 <i class="fas fa-xmark fa-lg text-danger"></i>
                                             </a>
-                                        {% else %}
-                                            <span class="badge rounded-pill badge-success">Pagado</span>
                                         {% endif %}
                                     </td>
                                 {% endif %}

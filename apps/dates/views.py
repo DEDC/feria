@@ -288,7 +288,7 @@ class WebHookTapyApiView(APIView):
 
                     logger.info("{}".format(validacion))
                     if validacion:
-                        lugar.tpay_service = True
+                        # lugar.tpay_service = True
                         # lugar.tpay_val = validacion
                         lugar.save()
                     else:

@@ -129,7 +129,6 @@ def solicitar_linea_captura(token, folio, tramite_id, nombre, curp, calle, colon
 
 def validar_linea_captura(token, data):
     try:
-
         folioEncriptado = encriptarData(data)
         header = {
             "Content-Type": "application/json",
