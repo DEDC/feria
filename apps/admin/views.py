@@ -514,7 +514,7 @@ class DownloadRequestsReport(AdminPermissions, RedirectView):
             return redirect('admin:main')
 
 
-class UnlockRequest(AdminPermissions, RedirectView):
+class UnlockRequest(AdminStaffPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
         try:
             request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
