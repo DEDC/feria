@@ -211,6 +211,12 @@ LOGGING = {
             'filename': os.path.join(BASE_DIR, 'logs', 'django_app.log'),
             'formatter': 'verbose',
         },
+        # Handler para imprimir en consola
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
         # Puedes agregar otros handlers (por ejemplo, para enviar mails a admin)
     },
     'loggers': {
