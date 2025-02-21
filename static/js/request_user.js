@@ -10,12 +10,16 @@ import {
     deletePlace,
     tpayPlace,
 } from "../js/api/utilities.js";
-import { url_nave_1, url_nave_2, url_nave_3 } from '../js/api/endpoints.js'
+import { url_nave_1, url_nave_2, url_nave_3, url_zona_a, url_zona_b, url_zona_c, url_zona_d } from '../js/api/endpoints.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     const n_1_btn = document.querySelector('#n-1')
     const n_2_btn = document.querySelector('#n-2')
     const n_3_btn = document.querySelector('#n-3')
+    const z_a_btn = document.querySelector('#z-a')
+    const z_b_btn = document.querySelector('#z-b')
+    const z_c_btn = document.querySelector('#z-c')
+    const z_d_btn = document.querySelector('#z-d')
     const zone_title = document.querySelector('#zone_title')
     const table_places = document.querySelector('.table-places')
     const type_pago = document.querySelector('.type_pago')
@@ -161,6 +165,34 @@ document.addEventListener('DOMContentLoaded', () => {
         n_3_btn.addEventListener('click', (e) => {
             get_places_zone(url_nave_3)
             current_zone = 'n_3'
+        })
+    }
+
+    if (z_a_btn) {
+        z_a_btn.addEventListener('click', (e) => {
+            get_places_zone(url_zona_a)
+            current_zone = 'z_a'
+        })
+    }
+
+    if (z_b_btn) {
+        z_b_btn.addEventListener('click', (e) => {
+            get_places_zone(url_zona_b)
+            current_zone = 'z_b'
+        })
+    }
+
+    if (z_c_btn) {
+        z_c_btn.addEventListener('click', (e) => {
+            get_places_zone(url_zona_c)
+            current_zone = 'z_c'
+        })
+    }
+
+    if (z_d_btn) {
+        z_d_btn.addEventListener('click', (e) => {
+            get_places_zone(url_zona_d)
+            current_zone = 'z_d'
         })
     }
 
