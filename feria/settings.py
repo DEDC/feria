@@ -227,10 +227,10 @@ LOGGING = {
             'propagate': True,
         },
         # Logger personalizado para nuestra aplicación (opcional)
-        'mi_app': {
+        'dates': {
             'handlers': ['file'],
             'level': 'DEBUG',
-            'propagate': False,
+            'propagate': True,
         },
     },
 }
