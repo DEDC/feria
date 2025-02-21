@@ -264,9 +264,7 @@ class Request(AdminStaffPermissions, DetailView):
                     messages.success(request, 'Se confirma el pago en efectivo')
         elif 'transfer-paid' in request.POST:
             if request_.estatus == 'validated-direct':
-                Pagos.objects.get_or_create(solicitud=request_, usuario=request_.usuario, tipo='transferencia', pagado=True,
-                                            validador=request.user.get_full_name())
-                messages.success(request, 'Se confirma el pago con transferencia')
+                messages.success(request, 'Se confirma para que el usuario pueda realizar los pagos')
         if 'validated' in request.POST:
 
             request_.estatus = 'validated'
