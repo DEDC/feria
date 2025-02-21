@@ -223,10 +223,10 @@ class TpayValidadoView(APIView):
 
                     validacion = validar_linea_captura(token, data)
 
-                    logger.info("{}".format(validacion))
+                    logger.debug("{}".format(validacion))
                     if validacion:
                         lugar.tpay_service = True
-                        lugar.tpay_val = validacion
+                        lugar.tpay_val = {"val": '{}'.format(validacion)}
                         lugar.save()
                     else:
                         lugar.tpay_val = validacion
@@ -289,7 +289,7 @@ class WebHookTapyApiView(APIView):
                     logger.info("{}".format(validacion))
                     if validacion:
                         lugar.tpay_service = True
-                        lugar.tpay_val = validacion
+                        # lugar.tpay_val = validacion
                         lugar.save()
                     else:
                         lugar.tpay_val = validacion
