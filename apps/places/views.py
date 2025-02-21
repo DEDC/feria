@@ -166,7 +166,7 @@ class Request(UserPermissions, DetailView):
         validados = places.filter(tpay_pagado=True).count()
         total_tpay = places.exclude(tramite_id=0).count()
         if places.count() > 0 and validados == total_tpay:
-            if self.object.estatus == 'validated' and not self.object.estatus == 'validated-direct':
+            if self.object.estatus == 'validated' and self.object.estatus == 'validated-direct':
                 if not Pagos.objects.filter(solicitud=self.object):
                     Pagos.objects.get_or_create(
                         solicitud=self.object, usuario=self.object.usuario, tipo='tpay', pagado=True,
