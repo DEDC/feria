@@ -127,6 +127,9 @@ class Lugares(ControlInfo):
     data_tpay = models.JSONField(null=True, blank=True)
     tpay_folio = models.CharField(max_length=150, null=True, blank=True)
     tpay_pagado = models.BooleanField(default=False)
+    tpay_web = models.BooleanField(default=False)
+    tpay_socket = models.BooleanField(default=False)
+    tpay_service = models.BooleanField(default=False)
 
 
 class ProductosExtras(ControlInfo):

@@ -125,3 +125,33 @@ def solicitar_linea_captura(token, folio, tramite_id, nombre, curp, calle, colon
         logging.error(f"error desencriptado: {e}")
         logging.warning("----------------------------------")
         return e
+
+
+def validar_linea_captura(token, data):
+    try:
+
+        folioEncriptado = encriptarData(folio)
+        header = {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Methods": "GET, POST",
+            "X-API-KEY": settings.TPAY_APIKEY,
+            "X-SESSION-KEY": settings.TPAY_SESSION_ACCESS,
+            "X-SISTEMA-KEY": settings.TPAY_SISTEMA,
+            "X-CHANNEL-SERVICE": settings.TPAY_CAPTURA,
+            "Authorization": f"Bearer {token}"
+        }
+        parms = {"query": folioEncriptado}
+
+        response = requests.get(
+            f"{settings.TPAY_RUTA}/api/v1/gateway/servInfApi1/pagos/bancoOnline?query={folioEncriptado}",
+            headers=header
+        )
+        respLinea = desencriptado(response.text)
+        data = json.loads(respLinea)
+        return data
+    except Exception as e:
+        logging.warning("------------------ERROR desencriptado----------------")
+        logging.warning(f"Fecha: {datetime.now()}")
+        logging.error(f"error desencriptado: {e}")
+        logging.warning("----------------------------------")
+        return e

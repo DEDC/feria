@@ -38,7 +38,8 @@ def get_available_dates(request):
                     hours_completed += 1
             if hours_completed == len(all_hours):
                 exclude_dates.append(sch['fecha'].strftime('%Y-%m-%d'))
-    fdates = [{'short_format': d.strftime('%Y-%m-%d'), 'text_format': formats.date_format(d, "j \d\e F \d\e Y")} for d in all_dates if d.strftime('%Y-%m-%d') not in exclude_dates]
+    fdates = [{'short_format': d.strftime('%Y-%m-%d'), 'text_format': formats.date_format(d, "j \d\e F \d\e Y")} for d
+              in all_dates if d.strftime('%Y-%m-%d') not in exclude_dates]
     return Response(fdates)
 
 
@@ -68,7 +69,8 @@ def get_curp_service(request, curp):
         'curp': curp
     }
     print(headersAuth)
-    resp = requests.post(f"{settings.URL_CURP}consulta-curp", json=data, headers=headersAuth, verify=False, stream=False)
+    resp = requests.post(f"{settings.URL_CURP}consulta-curp", json=data, headers=headersAuth, verify=False,
+                         stream=False)
     if resp.status_code == 200:
         response = resp.json()
     return Response(response)
@@ -118,7 +120,8 @@ class TpayLineaCapturaView(APIView):
                     token, "{}-{}".format(lugar.solicitud.folio, datetime.datetime.now().strftime("%H%M%S")),
                     lugar.tramite_id,
                     lugar.solicitud.nombre, lugar.solicitud.curp_txt, lugar.solicitud.calle,
-                    lugar.solicitud.colonia, lugar.solicitud.codigo_postal, lugar.solicitud.estado, lugar.solicitud.municipio
+                    lugar.solicitud.colonia, lugar.solicitud.codigo_postal, lugar.solicitud.estado,
+                    lugar.solicitud.municipio
                 )
                 lugar.tpay_folio = lineapago["data"]["lineaCaptura"]["_text"].split('|')[0]
                 lugar.data_tpay = {
@@ -137,7 +140,7 @@ class TpayLineaCapturaView(APIView):
                 "query": False,
                 "dataOrden": {
                     "lineaCaptura": lugar.data_tpay["lineaCaptura"].split("|")[0],
-                    "deviceUuid": lugar.uuid,# UUID por solicitudCaptura por id usuario
+                    "deviceUuid": lugar.uuid,  # UUID por solicitudCaptura por id usuario
                     "userId": 3,
                     "sistemaId": int(settings.TPAY_PROJECT_ID),
                     "platform": settings.TPAY_PROJECT,
@@ -168,8 +171,8 @@ class TpayLineaCapturaView(APIView):
         lugar = Lugares.objects.filter(tpay_folio=self.kwargs["pk"]).first()
         response = {
             "data": {
-                "resultado": 0,#(0: éxito, 1: error)
-                "message": "Ok",# (notificación exitosa o Descripción del error)
+                "resultado": 0,  # (0: éxito, 1: error)
+                "message": "Ok",  # (notificación exitosa o Descripción del error)
             }
         }
         if not lugar:
@@ -179,23 +182,37 @@ class TpayLineaCapturaView(APIView):
 
 
 class TpayValidadoView(APIView):
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         data = request.data
         lugar = Lugares.objects.filter(tpay_folio=self.kwargs["pk"]).first()
         response = {
             "data": {
-                "resultado": 0,#(0: éxito, 1: error)
-                "message": "Ok",# (notificación exitosa o Descripción del error)
+                "resultado": 0,  # (0: éxito, 1: error)
+                "message": "Ok",  # (notificación exitosa o Descripción del error)
             }
         }
         if lugar:
             lugar.tpay_pagado = True
+            lugar.tpay_socket = True
             lugar.save()
+
+            data = {
+                "data": {
+                    "AuthS701": "180403",
+                    "referenceKey": "20231399258334681271",
+                    "AccessUser": "BBV",
+                    "EstablishNum": "7681",
+                    "BranchSource": "7681",
+                }
+            }
+
+            # validacion = solicitar_linea_captura(token, data)
         else:
             response = {
                 "data": {
                     "resultado": 1,  # (0: éxito, 1: error)
-                    "message": "No se encontro un folio para el lugar",  # (notificación exitosa o Descripción del error)
+                    "message": "No se encontro un folio para el lugar",
+                    # (notificación exitosa o Descripción del error)
                 }
             }
         return Response(data=response)
@@ -209,28 +226,29 @@ class WebHookTapyApiView(APIView):
         print(data)
         response = {
             "data": {
-                "resultado": 0, #(0: éxito, 1: error)
-                "message": "Ok", # (notificación exitosa o Descripción del error)
+                "resultado": 0,  # (0: éxito, 1: error)
+                "message": "Ok",  # (notificación exitosa o Descripción del error)
             }
         }
         # URL desde donde se obtiene el PDF
         lugar: Lugares = Lugares.objects.filter(tpay_folio=data.get("preferencia_operacion")).first()
         if lugar:
             lugar.tpay_pagado = True
+            lugar.tpay_web = True
             lugar.save()
             response = {
                 "data": {
                     "resultado": 0,  # (0: éxito, 1: error)
-                    "message": "Informacion registrada satisfactoriamente",  # (notificación exitosa o Descripción del error)
+                    "message": "Informacion registrada satisfactoriamente",
+                    # (notificación exitosa o Descripción del error)
                 }
             }
         else:
             response = {
                 "data": {
                     "resultado": 1,  # (0: éxito, 1: error)
-                    "message": "No existe registro del folio de seguimiento para el pago",  # (notificación exitosa o Descripción del error)
+                    "message": "No existe registro del folio de seguimiento para el pago",
+                    # (notificación exitosa o Descripción del error)
                 }
             }
         return Response(data=response)
-
-
