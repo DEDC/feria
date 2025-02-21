@@ -95,6 +95,7 @@
                             }
                         })
                         .then(response => {
+                            location.reload();
                             console.log('Actualización exitosa:', response.data);
                         })
                         .catch(error => {
