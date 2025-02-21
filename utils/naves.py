@@ -4995,15 +4995,105 @@ zona_d = {'rows': 23,
    'concept': '1017'}]}
 
 
-sabor_tabasco = {
-    'rows': 1,
-   'columns': 1,
-   'title': 'Sabor a Tabasco',
-   'places': [
-       {'text': 'ST', 'm2': 0, 'price': 0, 'coords': '1:1', 'uuid': '', 'concept': ''}, 
-   ] 
-}
-
+sabor_tabasco = {'rows': 8,
+ 'columns': 6,
+ 'title': 'Sabor a Tabasco',
+ 'places': [{'text': '01',
+   'm2': 6,
+   'price': 15000,
+   'coords': '8:6',
+   'uuid': '19858a73-69c9-450f-aefe-070097ac848d',
+   'concept': '1017'},
+  {'text': '02',
+   'm2': 6,
+   'price': 15000,
+   'coords': '7:6',
+   'uuid': '866aeec2-3e50-4e5c-bf3a-5243d21355bd',
+   'concept': '1017'},
+  {'text': '03',
+   'm2': 6,
+   'price': 15000,
+   'coords': '6:6',
+   'uuid': '39ce0f12-f47d-43e2-981d-7db48085bd0d',
+   'concept': '1017'},
+  {'text': '04',
+   'm2': 6,
+   'price': 15000,
+   'coords': '5:6',
+   'uuid': '79702b37-e0c7-465a-9e49-f16398344f9c',
+   'concept': '1017'},
+  {'text': '05',
+   'm2': 6,
+   'price': 15000,
+   'coords': '4:6',
+   'uuid': '5cf9e241-d129-4bd5-9b5d-b8a067ead417',
+   'concept': '1017'},
+  {'text': '06',
+   'm2': 6,
+   'price': 15000,
+   'coords': '3:6',
+   'uuid': '89b423ae-5d73-415d-a258-291f9c651bfb',
+   'concept': '1017'},
+  {'text': '07',
+   'm2': 6,
+   'price': 15000,
+   'coords': '2:6',
+   'uuid': '5021032d-1c9f-424d-8379-982cfbc9d316',
+   'concept': '1017'},
+  {'text': '08',
+   'm2': 6,
+   'price': 15000,
+   'coords': '1:6',
+   'uuid': 'b669aab9-d8af-4008-9960-c4992bdb1afa',
+   'concept': '1017'},
+  {'text': '09',
+   'm2': 6,
+   'price': 15000,
+   'coords': '1:1',
+   'uuid': '4b696764-6baf-4030-8a67-c087cf9c8e59',
+   'concept': '1017'},
+  {'text': '10',
+   'm2': 6,
+   'price': 15000,
+   'coords': '2:1',
+   'uuid': '9aba7dfe-db45-47b8-b774-84d079b494d7',
+   'concept': '1017'},
+  {'text': '11',
+   'm2': 6,
+   'price': 15000,
+   'coords': '3:1',
+   'uuid': '9b0580ce-5f32-4e73-ae5d-9ec27bb06621',
+   'concept': '1017'},
+  {'text': '12',
+   'm2': 6,
+   'price': 15000,
+   'coords': '4:1',
+   'uuid': '8a68e0d6-6f0a-4b14-bc4a-79efaa3b6f31',
+   'concept': '1017'},
+  {'text': '13',
+   'm2': 6,
+   'price': 15000,
+   'coords': '5:1',
+   'uuid': 'e9f65e3a-a3a3-4dd3-b6f9-824a1e6e17fc',
+   'concept': '1017'},
+  {'text': '14',
+   'm2': 6,
+   'price': 15000,
+   'coords': '6:1',
+   'uuid': 'a6cbae21-37a7-47e0-bc86-246e82cfd7c9',
+   'concept': '1017'},
+  {'text': '15',
+   'm2': 6,
+   'price': 15000,
+   'coords': '7:1',
+   'uuid': 'bf3ac939-54c0-4789-98a8-05922c1b3ba4',
+   'concept': '1017'},
+  {'text': '16',
+   'm2': 6,
+   'price': 15000,
+   'coords': '8:1',
+   'uuid': 'a80d52b8-8596-4bcf-a30b-6c48d50835d5',
+   'concept': '1017'}]}
 
 teatro = {'rows': 7,
  'columns': 13,
@@ -5134,29 +5224,6 @@ teatro = {'rows': 7,
    'coords': '1:1',
    'uuid': '4a864ac6-41b1-4b60-b778-1122f46eb757',
    'concept': ''}]}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # row first
