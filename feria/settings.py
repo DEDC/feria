@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -189,3 +190,41 @@ EMAIL_HOST_USER = config('EMAIL_USER')  # Tu correo
 EMAIL_HOST_PASSWORD = config('EMAIL_PASS')  # Tu contraseña (usa variables de entorno para más seguridad)
 DEFAULT_FROM_EMAIL = config('EMAIL_USER')  # Nombre que aparecerá en los correos enviados
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,  # Mantener los loggers existentes
+    'formatters': {
+        'verbose': {
+            'format': '{asctime} [{levelname}] {name}: {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '[{levelname}] {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',  # Nivel de log deseado
+            'class': 'logging.FileHandler',
+            # Puedes ajustar la ruta de archivo según permisos o conveniencia
+            'filename': os.path.join(BASE_DIR, 'logs', 'django_app.log'),
+            'formatter': 'verbose',
+        },
+        # Puedes agregar otros handlers (por ejemplo, para enviar mails a admin)
+    },
+    'loggers': {
+        # Logger para la aplicación Django (se puede crear uno propio para cada módulo)
+        'django': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        # Logger personalizado para nuestra aplicación (opcional)
+        'mi_app': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
