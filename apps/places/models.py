@@ -133,6 +133,7 @@ class Lugares(ControlInfo):
     tpay_web = models.BooleanField(default=False)
     tpay_socket = models.BooleanField(default=False)
     tpay_service = models.BooleanField(default=False)
+    tpay_descuento = models.BooleanField(default=False)
 
 
 class ProductosExtras(ControlInfo):

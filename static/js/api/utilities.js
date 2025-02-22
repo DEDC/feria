@@ -51,6 +51,11 @@ export const addTerraza = async (uuid, uuid_place, data) => {
     return response;
 }
 
+export const addDescuento = async (uuid, uuid_place, data) => {
+    const response = await postAPICall(`/admin/solicitud/${uuid}/lugar/${uuid_place}/descuento/agregar`, data);
+    return response;
+}
+
 export const addBigTerraza = async (uuid, uuid_place, data) => {
     const response = await postAPICall(`/admin/solicitud/${uuid}/lugar/${uuid_place}/terraza_grande/agregar`, data);
     return response;

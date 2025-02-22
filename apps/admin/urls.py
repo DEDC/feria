@@ -1,12 +1,13 @@
 # Django
 from django.urls import path
 # admin
-from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, UpdateShop, DownloadDateDoc, 
-                              ListRequests, ListUsers, UnlockRequest, UpdateUser, UserDates, ListDates, 
-                              DownloadContract, DownloadGafate, DownloadSuministros, DownloadReport, DownloadRequestsReport, ListParking,
+from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, UpdateShop, DownloadDateDoc,
+                              ListRequests, ListUsers, UnlockRequest, UpdateUser, UserDates, ListDates,
+                              DownloadContract, DownloadGafate, DownloadSuministros, DownloadReport,
+                              DownloadRequestsReport, ListParking,
                               DownloadTarjeton, UpdateParking,
                               set_place_temp, unset_place_temp, set_place,
-                              add_alcohol, add_terraza, add_big_terraza, delete_item, delete_place)
+                              add_alcohol, add_terraza, add_big_terraza, delete_item, delete_place, add_descuento)
 app_name = 'admin'
 
 urlpatterns = [
@@ -32,6 +33,7 @@ urlpatterns = [
     # products
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/alcohol/agregar', add_alcohol),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/terraza/agregar', add_terraza),
+    path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/descuento/agregar', add_descuento),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/terraza_grande/agregar', add_big_terraza),
     path('solicitud/<uuid:uuid>/item/<uuid:uuid_pdt>/eliminar', delete_item),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/eliminar', delete_place),

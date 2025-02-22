@@ -1,4 +1,15 @@
-import { getPlaces, setPlaceTemp, unsetPlaceTemp, setPlace, addTerraza, addAlcohol, addBigTerraza, deleteItem, deletePlace } from "../js/api/utilities.js";
+import {
+    getPlaces,
+    setPlaceTemp,
+    unsetPlaceTemp,
+    setPlace,
+    addTerraza,
+    addAlcohol,
+    addBigTerraza,
+    deleteItem,
+    deletePlace,
+    addDescuento
+} from "../js/api/utilities.js";
 import { url_nave_1, url_nave_2, url_nave_3, url_zona_a, url_zona_b, url_zona_c, url_zona_d, url_sabor_tabasco, url_teatro } from '../js/api/endpoints.js'
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -72,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             chks.forEach(element => {
                 const data = new FormData();
                 data.append('terraza', element.value);
-                addTerraza(request_uuid.value, element.value, data).then((resp) => {
+                addDescuento(request_uuid.value, element.value, data).then((resp) => {
                     location.reload()
                 }).catch((error) => {
                     console.log(error);

@@ -1,4 +1,6 @@
 # Django
+from decimal import Decimal
+
 from django.views.generic import TemplateView, DetailView, UpdateView, RedirectView, ListView
 from django.shortcuts import redirect
 from django.contrib import messages
@@ -39,6 +41,13 @@ from utils.email import send_html_mail
 from datetime import datetime
 
 places_dict = {'n_1': nave1, 'n_2': nave2, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b, 'z_c': zona_c, 'z_d': zona_d, 's_t': sabor_tabasco, 'teatro': teatro}
+place_concept_des = {
+    "1045": [1069, 90000], "1046": [1070, 83700], "1047": [1071, 81000], "1048": [1072, 72000], "1049": [1073, 63000],
+    "1050": [1074, 54000], "1051": [1075, 45000], "1052": [1076, 31500], "1053": [1077, 30150], "1054": [1078, 27000],
+    "1055": [1079, 23400], "1056": [1080, 22500], "1057": [1081, 20500], "1058": [1082, 18000], "1059": [1083, 15300],
+    "1060": [1084, 13500], "1061": [1085, 12600], "1062": [1086, 11250], "1063": [1087, 9000], "1064": [1088, 7200],
+    "1065": [1089, 6300], "1066": [1090, 3150], "1067": [1091, 2700], "1068": [1092, 2250]
+}
 
 dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
@@ -565,6 +574,23 @@ def add_terraza(request, uuid, uuid_place):
         request_ = Solicitudes.objects.get(uuid=uuid)
         place = Lugares.objects.get(uuid=request.POST.get('terraza'))
         ProductosExtras.objects.create(lugar=place, tipo='terraza', precio=terraza_price, m2=9, to_places=place.folio)
+        return Response({})
+    except Exception as e:
+        return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([IsAuthenticated,])
+def add_descuento(request, uuid, uuid_place):
+    try:
+        request_ = Solicitudes.objects.get(uuid=uuid)
+        place = Lugares.objects.get(uuid=request.POST.get('terraza'))
+        if place.tramite_id:
+            place.precio = Decimal(place_concept_des[place.tramite_id.__str__()][1])
+            place.tramite_id = place_concept_des[place.tramite_id.__str__()][0]
+            place.tpay_descuento = True
+            place.save()
         return Response({})
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
