@@ -8,7 +8,7 @@ import {
     addBigTerraza,
     deleteItem,
     deletePlace,
-    tpayPlace,
+    tpayPlace, statusPlace, consultaTpayPlace,
 } from "../js/api/utilities.js";
 import { url_nave_1, url_nave_2, url_nave_3, url_zona_a, url_zona_b, url_zona_c, url_zona_d } from '../js/api/endpoints.js'
 
@@ -41,10 +41,19 @@ document.addEventListener('DOMContentLoaded', () => {
     tpay_place.forEach(element => {
         element.addEventListener('click', (e) => {
             tpayPlace(element.dataset.uuid).then((resp) => {
-                //console.log(resp);
-                let contentTPay = document.getElementById("content-tpay");
-                contentTPay.html = "";
-                contentTPay.appendChild(createTPay(resp.data))
+                console.log(resp);
+                if(resp.pagado == true){
+                    Swal.fire({
+                      title: "Pago Realizado!",
+                      text: "El pago fue procesado con existo.",
+                      icon: "success"
+                    });
+                }else{
+                    let contentTPay = document.getElementById("content-tpay");
+                    contentTPay.html = "";
+                    contentTPay.appendChild(createTPay(resp.data))
+                }
+
             }).catch((error) => {
                 console.log(error);
             });
@@ -53,8 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     pdf_place.forEach(element => {
         element.addEventListener('click', (e) => {
-            const pdf_iframe = document.querySelector('#iframe');
-            pdf_iframe.src = `/api/places/pdfcpatura/${element.dataset.uuid}`;
+            consultaTpayPlace(element.dataset.uuid).then((resp) => {
+                console.log(resp);
+            }).catch((error) => {
+                console.log(error);
+            });
         })
     });
 

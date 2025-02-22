@@ -16,8 +16,9 @@ import requests
 # dates
 from apps.dates.tools import get_dates_from_range, get_times_from_range
 from apps.dates.models import CitasAgendadas
-from apps.places.models import Lugares
-from apps.tpay.tools import solicitar_linea_captura, generarToken, validar_linea_captura
+from apps.places.models import Lugares, HistorialTapy
+from apps.tpay.tools import solicitar_linea_captura, generarToken, validar_linea_captura, status_linea_captura, \
+    consulta_linea_captura
 
 all_dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 all_hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
@@ -101,6 +102,73 @@ class PDFLineaCapturaView(View):
         return response
 
 
+class TpayStatusLineaCapturaView(APIView):
+    def get(self, request, *args, **kwargs):
+        # URL desde donde se obtiene el PDF
+        lugar: Lugares = Lugares.objects.filter(uuid=self.kwargs["pk"]).first()
+        response = None
+        if not lugar:
+            return Response({"error": "No se proporcionó la información requerida"}, status=400)
+
+        try:
+
+            # Obtener el PDF usando requests
+            user_data = json.dumps({
+                "user": lugar.solicitud.nombre,
+                "email": lugar.solicitud.usuario.email
+            }, separators=(",", ":")
+            )
+            token, error = generarToken(user_data)
+
+            if not error:
+                data = json.dumps({
+                    "orderId": "2025-{}".format(lugar.tpay_folio),
+                    "sistemaId": settings.TPAY_SISTEMA,
+                    "proyecto": settings.TPAY_PROJECT,
+                    "monto": lugar.data_tpay["importe"]
+                }, separators=(",", ":")
+                )
+                status = status_linea_captura(token, data)
+                lugar.tpay_status = status
+                lugar.save()
+
+        except requests.RequestException as e:
+            return Response({"error": f"Error al obtener el PDF: {str(e)}"}, status=400)
+        return Response(data=response)
+
+
+class TpayConsultaLineaCapturaView(APIView):
+    def get(self, request, *args, **kwargs):
+        # URL desde donde se obtiene el PDF
+        lugar: Lugares = Lugares.objects.filter(uuid=self.kwargs["pk"]).first()
+        response = None
+        if not lugar:
+            return Response({"error": "No se proporcionó la información requerida"}, status=400)
+
+        try:
+            if not lugar.tpay_status:
+                # Obtener el PDF usando requests
+                user_data = json.dumps({
+                    "user": lugar.solicitud.nombre,
+                    "email": lugar.solicitud.usuario.email
+                }, separators=(",", ":")
+                )
+                token, error = generarToken(user_data)
+
+                if not error:
+                    folio = f"/?folioSeguimiento={lugar.data_tpay['folioSeguimiento']}&idTramite={lugar.tramite_id}&folioControlEstado={lugar.data_tpay['folioControlEstado']}"
+                    status = consulta_linea_captura(token, folio)
+                    if "resultado" in status:
+                        lugar.tpay_status = status
+                        lugar.recibo_url = status["data"]['urlReciboPago']["_text"]
+                        lugar.save()
+            response = {"url_recibo": lugar.tpay_status["data"]['urlReciboPago']["_text"]}
+
+        except requests.RequestException as e:
+            return Response({"error": f"Error al obtener el PDF: {str(e)}"}, status=400)
+        return Response(data=response)
+
+
 class TpayLineaCapturaView(APIView):
     def get(self, request, *args, **kwargs):
         # URL desde donde se obtiene el PDF
@@ -110,6 +178,28 @@ class TpayLineaCapturaView(APIView):
             return Response({"error": "No se proporcionó la información requerida"}, status=400)
 
         try:
+            if lugar.data_tpay:
+                user_data = json.dumps({
+                    "user": lugar.solicitud.nombre,
+                    "email": lugar.solicitud.usuario.email
+                }, separators=(",", ":")
+                )
+                token, error = generarToken(user_data)
+
+                if not error:
+                    folio = f"/?folioSeguimiento={lugar.data_tpay['folioSeguimiento']}&idTramite={lugar.tramite_id}&folioControlEstado={lugar.data_tpay['folioControlEstado']}"
+                    status = consulta_linea_captura(token, folio)
+                    if "resultado" in status:
+                        lugar.tpay_status = status
+                        lugar.tpay_pagado = True
+                        lugar.tpay_service = True
+                        lugar.save()
+                        return Response(data={"pagado": True})
+
+                HistorialTapy.objects.create(
+                    lugar=lugar, data_tpay=lugar.data_tpay
+                )
+
             # Obtener el PDF usando requests
             user_data = json.dumps({
                 "user": lugar.solicitud.nombre,
@@ -212,21 +302,20 @@ class TpayValidadoView(APIView):
                 if not error:
 
                     data = json.dumps({
-                        "data": {
-                            "AuthS701": data["data"]["transaccion"],
-                            "referenceKey": data["data"]["resultadoTrans"]["pordenp_ref"],
-                            "AccessUser": data["data"]["resultadoTrans"]["pcve_instrumento_pago"],
-                            "EstablishNum": "7681",
-                            "BranchSource": "7681",
-                        }
-                    }, separators=(",", ":"))
+                        "AuthS701": data["data"]["transaccion"],
+                        "referenceKey": data["data"]["resultadoTrans"]["pordenp_ref"],
+                        "AccessUser": 'BBV',#data["data"]["resultadoTrans"]["pcve_instrumento_pago"],
+                        "EstablishNum": "7681",
+                        "BranchSource": "7681",
+                    }, separators=(",", ":")
+                    )
 
                     validacion = validar_linea_captura(token, data)
 
                     logger.debug("{}".format(validacion))
-                    if validacion:
+                    if "res" in validacion:
                         lugar.tpay_service = True
-                        lugar.tpay_val = {"val": '{}'.format(validacion)}
+                        lugar.tpay_val = validacion
                         lugar.save()
                     else:
                         lugar.tpay_val = validacion

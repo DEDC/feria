@@ -121,11 +121,13 @@ class Lugares(ControlInfo):
     precio = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     m2 = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     nombre = models.CharField(max_length=10, default='')
+    recibo_url = models.TextField(null=True, blank=True)
     tramite_id = models.IntegerField(default=0)
     usuario = models.ForeignKey(Usuarios, editable=False, on_delete=models.PROTECT, related_name='usuario_lugar')
     solicitud = models.ForeignKey(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='solicitud_lugar')
     data_tpay = models.JSONField(null=True, blank=True)
     tpay_val = models.JSONField(null=True, blank=True)
+    tpay_status = models.JSONField(null=True, blank=True)
     tpay_folio = models.CharField(max_length=150, null=True, blank=True)
     tpay_pagado = models.BooleanField(default=False)
     tpay_web = models.BooleanField(default=False)
@@ -176,3 +178,12 @@ class Estacionamiento(ControlInfo):
     marca = models.CharField('Marca', max_length=12)
     color = models.CharField('Color', max_length=12)
     placa = models.CharField('Placa', max_length=12, unique=True)
+
+
+class HistorialTapy(ControlInfo):
+    identifier = 'TPAY'
+    lugar = models.ForeignKey(Lugares, editable=False, on_delete=models.PROTECT)
+    data_tpay = models.JSONField(null=True, blank=True)
+    tpay_val = models.JSONField(null=True, blank=True)
+    tpay_status = models.JSONField(null=True, blank=True)
+
