@@ -199,16 +199,7 @@ class Request(UserPermissions, DetailView):
         context['tpay_boardin'] = settings.TPAY_SESSION_ABORDAJE
         context['tpay_access'] = settings.TPAY_SESSION_ACCESS
         context['tpat_sistema'] = settings.TPAY_SISTEMA
-        if self.object.data_tpay:
-            tpay = self.object.data_tpay
-            if tpay:
-                try:
-                    context["pdf_url"] = tpay["data"]["urlFormatoPago"]["_text"]
-                    context["tpay_importe"] = tpay["data"]["importe"]["_text"]
-                    context["tpay_captura"] = tpay["data"]["lineaCaptura"]["_text"].split('|')[1]
-                    context["tpay_folio"] = tpay["data"]["folioControlEstado"]["_text"]
-                except Exception as e:
-                    print(e)
+        context["tpay_activo"] = False
         return context
 
 

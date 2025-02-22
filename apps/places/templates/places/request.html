@@ -8,8 +8,6 @@
     <script type="text/JavaScript" src="https://MomentJS.com/downloads/moment.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.min.css">
-    <script src="{% static 'js/request_user.js' %}" type="module" defer></script>
-    <script src="{% static 'js/easytimer.min.js' %}" defer></script>
     <style>
         input[type="file"]::file-selector-button {
             background-color: #1c3e95 !important;
@@ -133,6 +131,9 @@
             });
         </script>
     {% endif %}
+
+    <script src="{% static 'js/request_user.js' %}" type="module" defer></script>
+    <script src="{% static 'js/easytimer.min.js' %}" defer></script>
 {% endblock head %}
 {% block main %}
     <div class="container-fluid p-5">
@@ -451,7 +452,7 @@
                     {% endif %}
                 </div>
                 <!-- Final Bloque Comercio -->
-                {% if object.estatus == "validated" or object.estatus == "validated-direct" %}
+                {% if tpay_activo and object.estatus == "validated" or object.estatus == "validated-direct" %}
                     <!-- Mensaje Provisional -->
                     <div class="alert alert-dismissible fade show" role="alert" data-mdb-color="success"><i
                             class="fas fa-check-circle me-3"></i>Su Solicitud con folio <b>{{ object.folio }}</b> ha
@@ -542,7 +543,7 @@
                         </div>
                     {% endif %}
                 {% endif %}
-                {% if selected_places %}
+                {% if selected_places and tpay_activo %}
                     <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
                          id="places">
                         <h4 class="mb-0 fw-bold">
