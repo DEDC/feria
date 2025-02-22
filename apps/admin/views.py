@@ -27,7 +27,7 @@ from apps.users.forms import UserUpdateForm
 # dates
 from apps.dates.models import CitasAgendadas
 # utils
-from utils.naves import nave1, nave2, nave3, zona_a, zona_b, zona_c, zona_d
+from utils.naves import nave1, nave2, nave3, zona_a, zona_b, zona_c, zona_d, sabor_tabasco, teatro
 from utils.permissions import AdminPermissions, AdminStaffPermissions
 from utils.date import get_date_constancy
 from utils.gafete import get_gafete
@@ -38,7 +38,7 @@ from utils.reports import get_report, get_requests_report
 from utils.email import send_html_mail
 from datetime import datetime
 
-places_dict = {'n_1': nave1, 'n_2': nave2, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b, 'z_c': zona_c, 'z_d': zona_d}
+places_dict = {'n_1': nave1, 'n_2': nave2, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b, 'z_c': zona_c, 'z_d': zona_d, 's_t': sabor_tabasco, 'teatro': teatro}
 
 dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
@@ -55,16 +55,19 @@ class Main(AdminStaffPermissions, TemplateView):
         users = Usuarios.objects.all()
         validations = Validaciones.objects.all()
         branches = Comercios.objects.all()
+        places = Lugares.objects.all()
         context['requests'] = requests.count()
         context['dates'] = dates.count()
         context['users'] = users.count()
         context['validations'] = validations.count()
         context['branches'] = branches.count()
+        context['places'] = places.count()
         context['requests_today'] = requests.filter(fecha_reg__date=today).count()
         context['dates_today'] = dates.filter(fecha_reg__date=today).count()
         context['users_today'] = users.filter(date_joined__date=today).count()
         context['validations_today'] = validations.filter(fecha_reg__date=today).count()
         context['branches_today'] = branches.filter(fecha_reg__date=today).count()
+        context['places_today'] = places.filter(fecha_reg__date=today).count()
         return context
 
 
@@ -399,7 +402,7 @@ def set_place_temp(request, uuid, zone):
     places = request.POST.getlist('places')
     request_ = Solicitudes.objects.get(uuid=uuid)
     objects = []
-    if zone in ['n_2']:
+    if zone in ['n_1', 'n_2', 'n_3', 'z_a', 'z_b', 'z_c', 'z_d', 's_t', 'teatro']:
         for p in places:
             for p2 in places_dict[zone]['places']:
                 if p2['uuid'] == str(p):
@@ -512,7 +515,7 @@ class DownloadRequestsReport(AdminPermissions, RedirectView):
             return redirect('admin:main')
 
 
-class UnlockRequest(AdminPermissions, RedirectView):
+class UnlockRequest(AdminStaffPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
         try:
             request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])

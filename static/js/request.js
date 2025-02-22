@@ -1,5 +1,5 @@
 import { getPlaces, setPlaceTemp, unsetPlaceTemp, setPlace, addTerraza, addAlcohol, addBigTerraza, deleteItem, deletePlace } from "../js/api/utilities.js";
-import { url_nave_1, url_nave_2, url_nave_3, url_zona_a, url_zona_b, url_zona_c, url_zona_d } from '../js/api/endpoints.js'
+import { url_nave_1, url_nave_2, url_nave_3, url_zona_a, url_zona_b, url_zona_c, url_zona_d, url_sabor_tabasco, url_teatro } from '../js/api/endpoints.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     const n_1_btn = document.querySelector('#n-1')
@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const z_b_btn = document.querySelector('#z-b')
     const z_c_btn = document.querySelector('#z-c')
     const z_d_btn = document.querySelector('#z-d')
+    const z_sabor_btn = document.querySelector('#s-t')
+    const z_teatro_btn = document.querySelector('#teatro')
     const zone_title = document.querySelector('#zone_title')
     const table_places = document.querySelector('.table-places')
     const reload_places = document.querySelector('#reload-places')
@@ -159,6 +161,20 @@ document.addEventListener('DOMContentLoaded', () => {
         z_d_btn.addEventListener('click', (e) => {
             get_places_zone(url_zona_d)
             current_zone = 'z_d'
+        })
+    }
+
+    if (z_sabor_btn) {
+        z_sabor_btn.addEventListener('click', (e) => {
+            get_places_zone(url_sabor_tabasco)
+            current_zone = 's_t'
+        })
+    }
+
+    if (z_teatro_btn) {
+        z_teatro_btn.addEventListener('click', (e) => {
+            get_places_zone(url_teatro)
+            current_zone = 'teatro'
         })
     }
 
