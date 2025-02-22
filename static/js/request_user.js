@@ -44,13 +44,15 @@ document.addEventListener('DOMContentLoaded', () => {
         element.addEventListener('click', (e) => {
             tpayPlace(element.dataset.uuid).then((resp) => {
                 console.log(resp);
-                if(resp.pagado == true){
+                if(resp.pagado){
+                    console.log("Resp", resp.pagado);
                     Swal.fire({
                       title: "Pago Realizado!",
                       text: "El pago fue procesado con existo.",
                       icon: "success"
                     });
-                }else{
+                }
+                else{
                     let contentTPay = document.getElementById("content-tpay");
                     contentTPay.html = "";
                     contentTPay.appendChild(createTPay(resp.data))
@@ -64,11 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     pdf_place.forEach(element => {
         element.addEventListener('click', (e) => {
-            consultaTpayPlace(element.dataset.uuid).then((resp) => {
-                console.log(resp);
-            }).catch((error) => {
-                console.log(error);
-            });
+            let reciboTPay = document.getElementById("iframe");
+            reciboTPay.src =  element.dataset.url;
+            const modal_select = document.querySelector('#modal-iframe');
+            const instance_select_modal = new mdb.Modal(modal_select);
+            instance_select_modal.show()
         })
     });
 

@@ -120,8 +120,6 @@
             document.addEventListener('DOMContentLoaded', () => {
                 // Selecciona el botón y los elementos destino
                 const btn_close = document.querySelector('#btnClose');
-                const modal_select = document.querySelector('#modal-iframe');
-                const instance_select_modal = new mdb.Modal(modal_select);
 
                 btn_close.addEventListener('click', (e) => {
                     instance_select_modal.hide()
@@ -583,6 +581,8 @@
                             {% if not payment %}
                                 <th>Pagar</th>
                                 <th>Eliminar</th>
+                            {% else %}
+                                <th>Recibo</th>
                             {% endif %}
                         </tr>
                         </thead>
@@ -618,10 +618,18 @@
                                                 <i class="fas fa-xmark fa-lg text-danger"></i>
                                             </a>
                                         {% else %}
-                                            <button class="btn btn-rounded btn-warning pdf-place" data-uuid="{{ sp.uuid }}">
+                                            <button data-url="{{ sp.recibo_url }}"
+                                                    class="btn btn-rounded btn-warning pdf-place" data-uuid="{{ sp.uuid }}">
                                                 <i class="fas fa-file fa-lg text-white"></i>
                                             </button>
                                         {% endif %}
+                                    </td>
+                                {% else %}
+                                    <td>
+                                        <button data-url="{{ sp.recibo_url }}"
+                                                class="btn btn-rounded btn-warning pdf-place" data-uuid="{{ sp.uuid }}">
+                                            <i class="fas fa-file fa-lg text-white"></i>
+                                        </button>
                                     </td>
                                 {% endif %}
                             </tr>

@@ -190,11 +190,14 @@ class TpayLineaCapturaView(APIView):
                     folio = f"/?folioSeguimiento={lugar.data_tpay['folioSeguimiento']}&idTramite={lugar.tramite_id}&folioControlEstado={lugar.data_tpay['folioControlEstado']}"
                     status = consulta_linea_captura(token, folio)
                     if "resultado" in status:
-                        lugar.tpay_status = status
-                        lugar.tpay_pagado = True
-                        lugar.tpay_service = True
-                        lugar.save()
-                        return Response(data={"pagado": True})
+                        if status["resultado"]:
+                            if status["data"]["codigoEstatus"]["_text"] == "00":
+                                lugar.recibo_url = status["data"]["urlReciboPago"]["_text"]
+                                lugar.tpay_status = status
+                                lugar.tpay_pagado = True
+                                lugar.tpay_service = True
+                                lugar.save()
+                                return Response(data={"pagado": True})
 
                 HistorialTapy.objects.create(
                     lugar=lugar, data_tpay=lugar.data_tpay
