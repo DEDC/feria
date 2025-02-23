@@ -136,7 +136,7 @@ def validar_linea_captura(token, data):
             "X-API-KEY": settings.TPAY_APIKEY,
             "X-SESSION-KEY": settings.TPAY_SESSION_ACCESS,
             "X-SISTEMA-KEY": settings.TPAY_SISTEMA,
-            "X-CHANNEL-SERVICE": settings.TPAY_CAPTURA,
+            "X-CHANNEL-SERVICE": settings.TPAY_CHANNEL_INFO,
             "Authorization": f"Bearer {token}"
         }
 
@@ -145,8 +145,70 @@ def validar_linea_captura(token, data):
         param = {"query": False}
 
         response = requests.post(
-            f"{settings.TPAY_RUTA}/api/v1/gateway/servInfApi1/pagos/bancoOnline",
-            headers=header, params=param, data=data_val
+            f"{settings.TPAY_RUTA}api/v1/gateway/servInfApi1/pagos/bancoOnline",
+            headers=header, params=param, json=data_val
+        )
+        respLinea = desencriptado(response.text)
+        data = json.loads(respLinea)
+        return data
+    except Exception as e:
+        logging.warning("------------------ERROR desencriptado----------------")
+        logging.warning(f"Fecha: {datetime.now()}")
+        logging.error(f"error desencriptado: {e}")
+        logging.warning("----------------------------------")
+        return e
+
+
+def status_linea_captura(token, data):
+    try:
+        folioEncriptado = encriptarData(data)
+        header = {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Methods": "GET, POST",
+            "X-API-KEY": settings.TPAY_APIKEY,
+            "X-SESSION-KEY": settings.TPAY_SESSION_ABORDAJE,
+            "X-SISTEMA-KEY": settings.TPAY_SISTEMA,
+            "X-CHANNEL-SERVICE": settings.TPAY_CHANNEL_GESTOR,
+            "Authorization": f"Bearer {token}"
+        }
+
+        data_val = {"data": folioEncriptado}
+
+        param = {"query": False}
+
+        response = requests.post(
+            f"{settings.TPAY_RUTA}api/v1/gateway/gestorApi1/transactions/statusN",
+            headers=header, params=param, json=data_val
+        )
+        respLinea = desencriptado(response.text)
+        data = json.loads(respLinea)
+        return data
+    except Exception as e:
+        logging.warning("------------------ERROR desencriptado----------------")
+        logging.warning(f"Fecha: {datetime.now()}")
+        logging.error(f"error desencriptado: {e}")
+        logging.warning("----------------------------------")
+        return e
+
+
+def consulta_linea_captura(token, folio):
+    try:
+        folioEncriptado = encriptarData(folio)
+        header = {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Methods": "GET, POST",
+            "X-API-KEY": settings.TPAY_APIKEY,
+            "X-SESSION-KEY": settings.TPAY_SESSION_ACCESS,
+            "X-SISTEMA-KEY": settings.TPAY_SISTEMA,
+            "X-CHANNEL-SERVICE": settings.TPAY_CAPTURA,
+            "Authorization": f"Bearer {token}"
+        }
+
+        param = {"query": folioEncriptado}
+
+        response = requests.get(
+            f"{settings.TPAY_RUTA}api/v1/gateway/servExtApi1/externo/consultar-pago?query={folioEncriptado}",
+            headers=header
         )
         respLinea = desencriptado(response.text)
         data = json.loads(respLinea)

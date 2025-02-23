@@ -603,9 +603,9 @@
                 <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
                     {% if not payment %}
                     <div class="d-flex justify-content-end">
-                        <button id="add-terraza" disabled type="button" style="display: none"
+                        <button id="add-terraza" type="button"
                             class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
-                                class="fas fa-plus me-2"></i>Agregar terraza
+                                class="fas fa-plus me-2"></i>Aplicar 10 % de descuento
                         </button>
                         <button id="add-big-terraza" disabled type="button" style="display: none"
                             class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
@@ -634,11 +634,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for sp in selected_places %}
+                                {% for sp in selected_places  %}
                                 <tr>
                                     <td>
+                                    {% if not sp.tpay_descuento %}
                                         <input class="form-check-input config-chk" type="checkbox" value="{{ sp.uuid }}"
                                             data-m2="{{ sp.m2 }}" data-folio="{{ sp.folio }}" />
+                                    {% endif %} 
                                     </td>
                                     <th scope="row">{{ sp.folio }}</th>
                                     <td>{{ sp.nombre }}</td>
