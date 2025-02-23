@@ -450,7 +450,7 @@
                     {% endif %}
                 </div>
                 <!-- Final Bloque Comercio -->
-                {% if tpay_activo and object.estatus == "validated" or object.estatus == "validated-direct" %}
+                {% if object.estatus == "validatedx" or object.estatus == "validated-directx" %}
                     <!-- Mensaje Provisional -->
                     <div class="alert alert-dismissible fade show" role="alert" data-mdb-color="success"><i
                             class="fas fa-check-circle me-3"></i>Su Solicitud con folio <b>{{ object.folio }}</b> ha
