@@ -27,6 +27,46 @@ all_hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, setti
 logger = logging.getLogger(__name__)
 
 
+class JsProxyView(APIView):
+    """
+    APIView que actúa como proxy para cargar un archivo JS desde otra URL,
+    enviando un header 'Origin' con un subdominio personalizado.
+    """
+
+    def get(self, request, **kwargs):
+        # URL del archivo JavaScript a cargar
+
+        tipo = "orden"  # Reemplaza con la URL real
+
+        if self.kwargs["pk"] == 2:
+            tipo = "object"
+
+        # Define el header Origin con el subdominio que deseas enviar
+        headers = {
+            "Origin": "https://comercializacionferia.tabasco.gob.mx"  # Modifica según necesites
+        }
+
+        try:
+            js_url = f"{settings.TPAY_RUTA}api/v1/component/js/{tipo}?clientid={settings.TPAY_APIKEY}"
+            # Realiza la petición GET con el header personalizado
+            response = requests.get(js_url, headers=headers)
+
+            # Verifica que la respuesta haya sido exitosa
+            if response.status_code == 200:
+                # Retorna el contenido del JS con el MIME type adecuado
+                return HttpResponse(response.content, content_type="text/javascript")
+            else:
+                return Response(
+                    {"error": "No se pudo cargar el archivo JS"},
+                    status=response.status_code
+                )
+        except requests.RequestException as e:
+            return Response(
+                {"error": f"Error al realizar la solicitud: {str(e)}"},
+                status=500
+            )
+
+
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([IsAuthenticated])

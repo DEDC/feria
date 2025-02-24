@@ -1,6 +1,7 @@
 from django.urls import path
 from apps.dates.views import get_available_dates, get_available_times, get_curp_service, PDFLineaCapturaView, \
-    TpayLineaCapturaView, TpayValidadoView, WebHookTapyApiView, TpayStatusLineaCapturaView, TpayConsultaLineaCapturaView
+    TpayLineaCapturaView, TpayValidadoView, WebHookTapyApiView, TpayStatusLineaCapturaView, \
+    TpayConsultaLineaCapturaView, JsProxyView
 # admin
 from apps.admin.views import render_place
 
@@ -10,6 +11,7 @@ urlpatterns = [
     path('get-curp-service/<str:curp>', get_curp_service),
     path('places/<str:key>/data', render_place),
     path('places/pdfcpatura/<str:pk>', PDFLineaCapturaView.as_view(), name='pdfcpatura'),
+    path('places/tpay/js/<int:pk>', JsProxyView.as_view(), name='tpay-js'),
     path('places/tpay/<str:pk>', TpayLineaCapturaView.as_view(), name='tpay-captura'),
     path('places/tpayval/<str:pk>', TpayValidadoView.as_view(), name='tpay-valid'),
     path('places/tpaystatus/<str:pk>', TpayStatusLineaCapturaView.as_view(), name='tpay-status'),

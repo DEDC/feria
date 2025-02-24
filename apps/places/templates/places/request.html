@@ -53,8 +53,10 @@
 
     </style>
     {% if object.data_tpay %}
-        <script async defer src="{{ tpay_ruta }}api/v1/component/js/orden?clientid={{ tpay_apikey }}"></script>
-        <script async defer src="{{ tpay_ruta }}api/v1/component/js/object?clientid={{ tpay_apikey }}"></script>
+{#        <script async defer src="{{ tpay_ruta }}api/v1/component/js/orden?clientid={{ tpay_apikey }}"></script>#}
+{#        <script async defer src="{{ tpay_ruta }}api/v1/component/js/object?clientid={{ tpay_apikey }}"></script>#}
+        <script async defer src="{% url "tpay-js" 1 %}"></script>
+        <script async defer src="{% url "tpay-js" 2 %}"></script>
         <script src="https://code.jquery.com/jquery-3.7.1.js"
                 integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous">
         </script>
