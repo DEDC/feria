@@ -606,7 +606,7 @@
                                     <td>
                                     {% if sp.extras.all.count > 0 %}
                                         <p class="note note-warning mb-4">
-                                            Este local podra ser pagado hasta el <b>miercoles 25 de Febrero</b>,
+                                            Este local podra ser pagado hasta el <b>miercoles 26 de Febrero</b>,
                                             ya que tiene selecionado una licencia de alcohol.
                                         </p>
                                     {% else %}
@@ -782,7 +782,7 @@
                         </h4>
                     </div>
                     <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
-                        {% if payment.pagado %}
+                        {% if payment.pagado and contrato_activo %}
                             <div class="table-responsive">
                                 <table class="table">
                                     <tbody>
@@ -811,22 +811,26 @@
                                 </table>
                             </div>
                         {% else %}
-                            <p class="note note-warning mt-4">
-                                A la espera del comprobante de pago en efectivo para liberar los documentos de
-                                descarga
+{#                            <p class="note note-warning mt-4">#}
+{#                                A la espera del comprobante de pago en efectivo para liberar los documentos de#}
+{#                                descarga#}
+{#                            </p>#}
+{#                            <div class="d-flex justify-content-center">#}
+{#                                <button name="cash-paid"#}
+{#                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">#}
+{#                                    <i class="fas fa-money-bill-1 me-2"></i>#}
+{#                                    Pagado con efectivo#}
+{#                                </button>#}
+{#                                <button name="transfer-paid"#}
+{#                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">#}
+{#                                    <i class="fas fa-right-left me-2"></i>#}
+{#                                    Pagado con transferencia#}
+{#                                </button>#}
+{#                            </div>#}
+                            <p class="note note-info mb-4">
+                                En esta sección podrá descargar su contrato y otros documentos de acceso a partir del día de mañana.
+                                Esté pendiente de su correo electrónico para su notificación.
                             </p>
-                            <div class="d-flex justify-content-center">
-                                <button name="cash-paid"
-                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
-                                    <i class="fas fa-money-bill-1 me-2"></i>
-                                    Pagado con efectivo
-                                </button>
-                                <button name="transfer-paid"
-                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
-                                    <i class="fas fa-right-left me-2"></i>
-                                    Pagado con transferencia
-                                </button>
-                            </div>
                         {% endif %}
                     </div>
                 {% endif %}

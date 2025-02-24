@@ -201,6 +201,7 @@ class Request(UserPermissions, DetailView):
         context['tpay_access'] = settings.TPAY_SESSION_ACCESS
         context['tpat_sistema'] = settings.TPAY_SISTEMA
         context["tpay_activo"] = True
+        context["contrato_activo"] = False
         return context
 
 
