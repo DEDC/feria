@@ -26,7 +26,7 @@ def get_validar_pago(id, historico=False):
         return status
 
 
-def get_validar_pago(id, historico=False):
+def status_validar_pago(id, historico=False):
     lugar: Lugares = Lugares.objects.filter(pk=id).first()
     data_tpay = lugar.data_tpay
     if historico:
