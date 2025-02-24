@@ -358,7 +358,8 @@ class TpayValidadoView(APIView):
                     logger.debug("{}".format(validacion))
                     if "res" in validacion:
                         lugar.tpay_service = True
-                        lugar.tpay_val = validacion
+                        if not lugar.tpay_val:
+                            lugar.tpay_val = validacion
                         lugar.save()
                     else:
                         lugar.tpay_val = validacion
