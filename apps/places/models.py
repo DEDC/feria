@@ -185,6 +185,7 @@ class HistorialTapy(ControlInfo):
     identifier = 'TPAY'
     lugar = models.ForeignKey(Lugares, editable=False, on_delete=models.PROTECT)
     data_tpay = models.JSONField(null=True, blank=True)
+    tpay_folio = models.CharField(max_length=150, null=True, blank=True)
     tpay_val = models.JSONField(null=True, blank=True)
     tpay_status = models.JSONField(null=True, blank=True)
 

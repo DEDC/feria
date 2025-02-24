@@ -240,7 +240,7 @@ class TpayLineaCapturaView(APIView):
                                 return Response(data={"pagado": True})
 
                 HistorialTapy.objects.create(
-                    lugar=lugar, data_tpay=lugar.data_tpay
+                    lugar=lugar, data_tpay=lugar.data_tpay, tpay_folio=lugar.tpay_folio
                 )
 
             # Obtener el PDF usando requests
