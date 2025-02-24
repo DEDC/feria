@@ -612,7 +612,7 @@
                                     {% else %}
                                         {% if not sp.tpay_pagado and sp.tramite_id != 0 %}
                                             <button class="btn btn-rounded btn-success tpay-place" data-uuid="{{ sp.uuid }}">
-                                                <i class="fas fa-credit-card fa-lg text-white"></i>
+                                                Pagar
                                             </button>
                                         {% else %}
                                             <span class="badge rounded-pill badge-success">Pagado</span>
@@ -632,7 +632,7 @@
                                         {% else %}
                                             <button data-url="{{ sp.recibo_url }}"
                                                     class="btn btn-rounded btn-warning pdf-place" data-uuid="{{ sp.uuid }}">
-                                                <i class="fas fa-file fa-lg text-white"></i>
+                                                Recibo
                                             </button>
                                         {% endif %}
                                     {% endif %}
@@ -642,7 +642,7 @@
                                     <td>
                                         <button data-url="{{ sp.recibo_url }}"
                                                 class="btn btn-rounded btn-warning pdf-place" data-uuid="{{ sp.uuid }}">
-                                            <i class="fas fa-file fa-lg text-white"></i>
+                                            Recibo
                                         </button>
                                     </td>
                                 {% endif %}
