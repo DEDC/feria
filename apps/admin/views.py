@@ -629,7 +629,8 @@ def add_alcohol(request, uuid, uuid_place):
             alcohol_price = 260568
         if places:
             to_places = ','.join(places.values_list('folio', flat=True))
-            ProductosExtras.objects.create(lugar=places[0], tipo='licencia_alcohol', precio=alcohol_price, m2=mt2, to_places=to_places)
+            # ProductosExtras.objects.create(lugar=places[0], tipo='licencia_alcohol', precio=alcohol_price, m2=mt2, to_places=to_places)
+            ProductosExtras.objects.create(lugar=places[0], tipo='licencia_alcohol', m2=mt2, to_places=to_places)
             return Response({})
         else:
             return Response({'message': 'not-places-existing'})

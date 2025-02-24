@@ -12,7 +12,7 @@ from django.shortcuts import redirect
 from django.db.models import Sum, Q
 from django.conf import settings
 # places
-from apps.places.models import Solicitudes, Comercios, Validaciones, Pagos, Lugares
+from apps.places.models import Solicitudes, Comercios, Validaciones, Pagos, Lugares, ProductosExtras
 from apps.places.forms import RequestForm, ShopForm
 # dates
 from apps.dates.models import CitasAgendadas
@@ -165,6 +165,7 @@ class Request(UserPermissions, DetailView):
         places = self.object.solicitud_lugar.filter(estatus='assign')
         validados = places.filter(tpay_pagado=True).count()
         total_tpay = places.exclude(tramite_id=0).count()
+        alcohol = ProductosExtras.objects.filter(lugar__in=places, tipo__in="licencia_alcohol")
         if places.count() > 0 and validados == total_tpay:
             if self.object.estatus == 'validated' or self.object.estatus == 'validated-direct':
                 if not Pagos.objects.filter(solicitud=self.object):
@@ -199,7 +200,7 @@ class Request(UserPermissions, DetailView):
         context['tpay_boardin'] = settings.TPAY_SESSION_ABORDAJE
         context['tpay_access'] = settings.TPAY_SESSION_ACCESS
         context['tpat_sistema'] = settings.TPAY_SISTEMA
-        context["tpay_activo"] = False
+        context["tpay_activo"] = True
         return context
 
 

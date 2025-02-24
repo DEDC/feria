@@ -450,7 +450,7 @@
                     {% endif %}
                 </div>
                 <!-- Final Bloque Comercio -->
-                {% if object.estatus == "validatedx" or object.estatus == "validated-directx" %}
+                {% if object.estatus == "validated" or object.estatus == "validated-direct" %}
                     <!-- Mensaje Provisional -->
                     <div class="alert alert-dismissible fade show" role="alert" data-mdb-color="success"><i
                             class="fas fa-check-circle me-3"></i>Su Solicitud con folio <b>{{ object.folio }}</b> ha
@@ -560,10 +560,10 @@
                                     class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
                                     class="fas fa-plus me-2"></i>Agregar terraza grande
                             </button>
-                            <button id="add-alcohol" disabled type="button" style="display: none;"
-                                    class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3"><i
-                                    class="fas fa-plus me-2"></i>Agregar
-                                licencia de alcohol
+                            <button id="add-alcohol" disabled type="button"
+                                    class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3">
+                                <i class="fas fa-plus me-2"></i>
+                                Agregar licencia de alcohol
                             </button>
                         </div>
                     {% endif %}
@@ -590,9 +590,11 @@
                         {% for sp in selected_places %}
                             <tr>
                                 <td>
+                                {% if not sp.tpay_pagado %}
                                     <input class="form-check-input config-chk" type="checkbox"
-                                           value="{{ sp.uuid }}"
-                                           data-m2="{{ sp.m2 }}" data-folio="{{ sp.folio }}"/>
+                                       value="{{ sp.uuid }}"
+                                       data-m2="{{ sp.m2 }}" data-folio="{{ sp.folio }}"/>
+                                {% endif %}
                                 </td>
                                 <th scope="row">{{ sp.folio }}</th>
                                 <td>{{ sp.nombre }}</td>
@@ -602,6 +604,12 @@
                                 <td>{{ sp.fecha_reg }}</td>
                                 {% if not payment %}
                                     <td>
+                                    {% if sp.extras.all.count > 0 %}
+                                        <p class="note note-warning mb-4">
+                                            Este local podra ser pagado hasta el <b>miercoles 25 de Febrero</b>,
+                                            ya que tiene selecionado una licencia de alcohol.
+                                        </p>
+                                    {% else %}
                                         {% if not sp.tpay_pagado and sp.tramite_id != 0 %}
                                             <button class="btn btn-rounded btn-success tpay-place" data-uuid="{{ sp.uuid }}">
                                                 <i class="fas fa-credit-card fa-lg text-white"></i>
@@ -609,8 +617,12 @@
                                         {% else %}
                                             <span class="badge rounded-pill badge-success">Pagado</span>
                                         {% endif %}
+                                    {% endif %}
                                     </td>
                                     <td>
+                                    {% if sp.extras.all.count > 0 %}
+
+                                    {% else %}
                                         {% if not sp.tpay_pagado and sp.tramite_id != 0 %}
                                             <a class="ms-3 del-place" data-uuid="{{ sp.uuid }}"
                                                data-type="place"
@@ -623,6 +635,8 @@
                                                 <i class="fas fa-file fa-lg text-white"></i>
                                             </button>
                                         {% endif %}
+                                    {% endif %}
+
                                     </td>
                                 {% else %}
                                     <td>
@@ -660,7 +674,8 @@
                                             el/los espacio(s)
                                             ({{ px.to_places }}):
                                         </h5>
-                                        <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>
+{#                                        <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>#}
+                                        <h5 class="m-0 ms-5"></h5>
                                     {% endif %}
                                     {% if not payment %}
 
