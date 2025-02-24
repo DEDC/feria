@@ -296,6 +296,7 @@ class Request(AdminStaffPermissions, DetailView):
             messages.success(request, 'Estatus asignado exitosamente.')
 
         elif 'rejected' in request.POST:
+            reject_message = request.POST.get('reject-comments', 'Sin comentarios')
             request_.estatus = 'rejected'
             lookup = (~Q(estatus='rejected'))
             sib_req = Solicitudes.objects.filter(lookup, usuario=request_.usuario).exclude(uuid=request_.uuid)
@@ -306,7 +307,7 @@ class Request(AdminStaffPermissions, DetailView):
                     messages.warning(request, 'La Cita {} - {} fue liberada.'.format(date.fecha, date.hora))
                     date.delete()
             request_.save()
-            Validaciones.objects.create(solicitud=request_, estatus='rejected', validador=request.user.get_full_name())
+            Validaciones.objects.create(solicitud=request_, estatus='rejected', validador=request.user.get_full_name(), comentarios=reject_message)
             messages.success(request, 'Estatus asignado exitosamente.')
             send_html_mail(request_.usuario.email, request_.usuario.get_full_name, request_.folio, estatus='Rechazado')
         elif 'pending' in request.POST:
