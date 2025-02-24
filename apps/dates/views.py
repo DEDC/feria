@@ -388,7 +388,7 @@ class WebHookTapyApiView(APIView):
             }
         }
         # URL desde donde se obtiene el PDF
-        lugar: Lugares = Lugares.objects.filter(tpay_folio=data.get("preferencia_operacion")).first()
+        lugar: Lugares = Lugares.objects.filter(tpay_folio=data["data"]["pordenp_ref"]).first()
         if lugar:
             lugar.tpay_pagado = True
             lugar.tpay_web = True
