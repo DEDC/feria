@@ -32,7 +32,7 @@ def escribir_log(mensaje, archivo_log="logs/feria.log"):
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         # Crear la carpeta si el archivo está dentro de una ruta que no existe
-        os.makedirs(os.path.dirname(archivo_log), exist_ok=True)
+        os.makedirs(os.path.dirname(f"{settings.BASE_DIR}/{archivo_log}"), exist_ok=True)
 
         # Abrir el archivo en modo append ('a') para agregar líneas sin sobrescribir
         with open(archivo_log, "a", encoding="utf-8") as f:
