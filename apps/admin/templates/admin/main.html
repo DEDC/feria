@@ -1,4 +1,5 @@
 {% extends 'places/base.html' %}
+{% load humanize %}
 {% load static %}
 {% block main %}
 <div class="container-fluid p-5">
@@ -18,7 +19,7 @@
                                 <div class="flex-grow-1 ms-4">
                                     <p class="text-muted mb-1">Solicitudes</p>
                                     <h2 class="mb-0">
-                                        {{requests}}
+                                        {{requests|intcomma}}
                                         <span class="text-success" style="font-size: 0.875rem"><i
                                                 class="fas fa-arrow-up fa-sm"></i>
                                             <span> {{requests_today}}</span> hoy</span>
@@ -48,7 +49,7 @@
                                 <div class="flex-grow-1 ms-4">
                                     <p class="text-muted mb-1">Usuarios</p>
                                     <h2 class="mb-0">
-                                        {{users}}
+                                        {{users|intcomma}}
                                         <span class="text-success" style="font-size: 0.875rem"><i
                                                 class="fas fa-arrow-up fa-sm"></i>
                                             <span> {{users_today}}</span> hoy</span>
@@ -75,7 +76,7 @@
                                 <div class="flex-grow-1 ms-4">
                                     <p class="text-muted mb-1">Citas Agendadas</p>
                                     <h2 class="mb-0">
-                                        {{dates}}
+                                        {{dates|intcomma}}
                                         <span class="text-success" style="font-size: 0.875rem"><i
                                                 class="fas fa-arrow-up fa-sm"></i>
                                             <span> {{dates_today}}</span> hoy</span>
@@ -106,7 +107,7 @@
                                 <div class="flex-grow-1 ms-4">
                                     <p class="text-muted mb-1">Validaciones efectuadas</p>
                                     <h2 class="mb-0">
-                                        {{validations}}
+                                        {{validations|intcomma}}
                                         <span class="text-success" style="font-size: 0.875rem"><i
                                                 class="fas fa-arrow-up fa-sm"></i>
                                             <span> {{validations_today}}</span> hoy</span>
@@ -129,7 +130,7 @@
                                 <div class="flex-grow-1 ms-4">
                                     <p class="text-muted mb-1">Comercios</p>
                                     <h2 class="mb-0">
-                                        {{branches}}
+                                        {{branches|intcomma}}
                                         <span class="text-success" style="font-size: 0.875rem"><i
                                                 class="fas fa-arrow-up fa-sm"></i>
                                             <span> {{branches_today}}</span> hoy</span>
@@ -152,7 +153,7 @@
                                 <div class="flex-grow-1 ms-4">
                                     <p class="text-muted mb-1">Locales ocupados</p>
                                     <h2 class="mb-0">
-                                        {{places}}
+                                        {{places|intcomma}}
                                         <span class="text-success" style="font-size: 0.875rem"><i
                                                 class="fas fa-arrow-up fa-sm"></i>
                                             <span>{{places_today}}</span> hoy</span>
@@ -201,7 +202,7 @@
                                 <div class="flex-grow-1 ms-4">
                                     <h4>Monto actual</h4>
                                     <h2 class="mb-0">
-                                        {{payments.monto|default:"0"}}
+                                        {{payments.monto|default:"0"|intcomma}}
                                         <span class="text-success" style="font-size: 0.875rem"><i
                                                 class="fas fa-arrow-up fa-sm"></i>
                                             <span>{{payments_done}}</span> Efecuados</span>
