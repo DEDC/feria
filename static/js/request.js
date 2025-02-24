@@ -8,7 +8,7 @@ import {
     addBigTerraza,
     deleteItem,
     deletePlace,
-    addDescuento
+    addDescuento, statusPlace
 } from "../js/api/utilities.js";
 import { url_nave_1, url_nave_2, url_nave_3, url_zona_a, url_zona_b, url_zona_c, url_zona_d, url_sabor_tabasco, url_teatro } from '../js/api/endpoints.js'
 
@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const add_big_terraza = document.querySelector('#add-big-terraza')
     const delete_pdt = document.querySelectorAll('.del-pdt')
     const delete_place = document.querySelectorAll('.del-place')
+    const status_place = document.querySelectorAll('.status-place')
 
     delete_pdt.forEach(element => {
         element.addEventListener('click', (e) => {
@@ -56,6 +57,18 @@ document.addEventListener('DOMContentLoaded', () => {
             data.append('place', element.dataset.uuid);
             deletePlace(request_uuid.value, element.dataset.uuid, data).then((resp) => {
                 location.reload()
+            }).catch((error) => {
+                console.log(error);
+            });
+        })
+    });
+
+    status_place.forEach(element => {
+        element.addEventListener('click', (e) => {
+            const data = new FormData();
+            data.append('place', element.dataset.uuid);
+            statusPlace(element.dataset.uuid).then((resp) => {
+                console.log(resp)
             }).catch((error) => {
                 console.log(error);
             });

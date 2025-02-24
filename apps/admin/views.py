@@ -45,7 +45,7 @@ places_dict = {'n_1': nave1, 'n_2': nave2, 'n_3': nave3, 'z_a': zona_a, 'z_b': z
 place_concept_des = {
     "1045": [1069, 90000], "1046": [1070, 83700], "1047": [1071, 81000], "1048": [1072, 72000], "1049": [1073, 63000],
     "1050": [1074, 54000], "1051": [1075, 45000], "1052": [1076, 31500], "1053": [1077, 30150], "1054": [1078, 27000],
-    "1055": [1079, 23400], "1056": [1080, 22500], "1057": [1081, 20500], "1058": [1082, 18000], "1059": [1083, 15300],
+    "1055": [1079, 23400], "1056": [1080, 22500], "1057": [1081, 20250], "1058": [1082, 18000], "1059": [1083, 15300],
     "1060": [1084, 13500], "1061": [1085, 12600], "1062": [1086, 11250], "1063": [1087, 9000], "1064": [1088, 7200],
     "1065": [1089, 6300], "1066": [1090, 3150], "1067": [1091, 2700], "1068": [1092, 2250]
 }
@@ -338,6 +338,8 @@ class Request(AdminStaffPermissions, DetailView):
         context['total_extras'] = places.aggregate(price=Sum('extras__precio'))['price'] or 0
         context['total'] = context['total_extras'] + context['total_places']
         context['selected_places'] = places
+        context['tpay_places'] = places.exclude(data_tpay=None)
+        context['history_places'] = HistorialTapy.objects.filter(lugar__in=places).order_by("-fecha_reg")
         context['payment'] = self.object.solicitud_pagos.first()
         pagado = False
         if self.object.estatus == "validated-direct" and self.object.solicitud_lugar.first():

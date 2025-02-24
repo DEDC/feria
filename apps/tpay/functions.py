@@ -56,8 +56,8 @@ def status_validar_pago(id, historico=False):
         if not error:
             if not error:
                 data = json.dumps({
-                    "AuthS701": data["data"]["pnum_autorizacion"],
-                    "referenceKey": data["data"]["pordenp_ref"],
+                    "AuthS701": status["data"]["pnum_autorizacion"],
+                    "referenceKey": status["data"]["pordenp_ref"],
                     "AccessUser": 'BBV',  # data["data"]["resultadoTrans"]["pcve_instrumento_pago"],
                     "EstablishNum": "7681",
                     "BranchSource": "7681",

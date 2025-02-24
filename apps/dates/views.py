@@ -152,26 +152,17 @@ class TpayStatusLineaCapturaView(APIView):
 
         try:
 
-            # Obtener el PDF usando requests
-            user_data = json.dumps({
-                "user": lugar.solicitud.nombre,
-                "email": lugar.solicitud.usuario.email
+            data = json.dumps({
+                "orderId": "2025-{}".format(lugar.tpay_folio),
+                "sistemaId": 21,
+                "proyecto": settings.TPAY_PROJECT,
+                "monto": lugar.data_tpay["importe"]
             }, separators=(",", ":")
             )
-            token, error = generarToken(user_data)
-
-            if not error:
-                data = json.dumps({
-                    "orderId": "2025-{}".format(lugar.tpay_folio),
-                    "sistemaId": settings.TPAY_SISTEMA,
-                    "proyecto": settings.TPAY_PROJECT,
-                    "monto": lugar.data_tpay["importe"]
-                }, separators=(",", ":")
-                )
-                status = status_linea_captura(token, data)
-                lugar.tpay_status = status
-                lugar.save()
-
+            status = status_linea_captura("token", data)
+            lugar.tpay_status = status
+            lugar.save()
+            response = status
         except requests.RequestException as e:
             return Response({"error": f"Error al obtener el PDF: {str(e)}"}, status=400)
         return Response(data=response)
@@ -239,7 +230,8 @@ class TpayLineaCapturaView(APIView):
                                 lugar.save()
                                 return Response(data={"pagado": True})
                             elif status["data"]["codigoEstatus"]["_text"] == "01":
-                                return Response(data={"proceso": True})
+                                # return Response(data={"proceso": True})
+                                pass
 
                 HistorialTapy.objects.create(
                     lugar=lugar, data_tpay=lugar.data_tpay, tpay_folio=lugar.tpay_folio

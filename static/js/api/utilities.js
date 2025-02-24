@@ -26,7 +26,7 @@ export const unsetPlaceTemp = async (uuid, data) => {
     return response;
 }
 
-export const statusPlace = async (uuid, data) => {
+export const statusPlace = async (uuid) => {
     const response = await getAPICall(`/api/places/tpaystatus/${uuid}`);
     return response;
 }
