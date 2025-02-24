@@ -72,7 +72,17 @@ document.addEventListener('DOMContentLoaded', () => {
     pdf_place.forEach(element => {
         element.addEventListener('click', (e) => {
             let reciboTPay = document.getElementById("iframe");
-            reciboTPay.src =  element.dataset.url;
+            if(element.dataset.url != "None"){
+                reciboTPay.src =  element.dataset.url;
+            }else{
+                consultaTpayPlace(element.dataset.uuid).then((resp) => {
+                    console.log(resp)
+                    reciboTPay.src = resp.data.url_recibo;
+                }).catch((error) => {
+                    console.log(error);
+                });
+            }
+
             const modal_select = document.querySelector('#modal-iframe');
             const instance_select_modal = new mdb.Modal(modal_select);
             instance_select_modal.show()
