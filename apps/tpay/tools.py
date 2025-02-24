@@ -8,6 +8,9 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 
 from feria import settings
+import os
+from datetime import datetime
+
 
 keyAES = settings.kEYAES
 ivAES = settings.IVAES
@@ -15,6 +18,28 @@ tramites = {
     "A": "6171", "B": "6172", "C": "6173", "D": "6174", "N1": "6175",
     "N2": "6176", "N3": "6177", "N4": "6178", "N5": "6179"
 }
+
+
+def escribir_log(mensaje, archivo_log="logs/feria.log"):
+    """
+    Escribe una línea en un archivo de log. Si no existe, lo crea.
+
+    :param mensaje: Texto a escribir en el log.
+    :param archivo_log: Nombre o ruta del archivo de log (por defecto "app.log").
+    """
+    try:
+        # Obtener la fecha y hora actual
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        # Crear la carpeta si el archivo está dentro de una ruta que no existe
+        os.makedirs(os.path.dirname(archivo_log), exist_ok=True)
+
+        # Abrir el archivo en modo append ('a') para agregar líneas sin sobrescribir
+        with open(archivo_log, "a", encoding="utf-8") as f:
+            f.write(f"{timestamp} - {mensaje}\n")
+
+    except Exception as e:
+        print(f"Error al escribir en el log: {e}")
 
 
 def encriptarData(data):
@@ -73,6 +98,10 @@ def generarToken(usuario):
         )
         respJson = json.loads(response.text)
         tokenDesencriptado = desencriptado(respJson["data"])
+
+        # Ejemplo de uso
+        escribir_log("JSON de Token.")
+        escribir_log(tokenDesencriptado)
         token = json.loads(tokenDesencriptado)
         return token["session"]["token_user"], False
     except Exception as e:
@@ -117,6 +146,10 @@ def solicitar_linea_captura(token, folio, tramite_id, nombre, curp, calle, colon
             headers=header
         )
         respLinea = desencriptado(response.text)
+
+        # Ejemplo de uso
+        escribir_log("JSON de Linea Captura.")
+        escribir_log(respLinea)
         data = json.loads(respLinea)
         return data
     except Exception as e:
@@ -149,6 +182,10 @@ def validar_linea_captura(token, data):
             headers=header, params=param, json=data_val
         )
         respLinea = desencriptado(response.text)
+
+        # Ejemplo de uso
+        escribir_log("JSON de Validar Captura.")
+        escribir_log(respLinea)
         data = json.loads(respLinea)
         return data
     except Exception as e:
@@ -181,6 +218,10 @@ def status_linea_captura(token, data):
             headers=header, params=param, json=data_val
         )
         respLinea = desencriptado(response.text)
+
+        # Ejemplo de uso
+        escribir_log("JSON de Status Captura.")
+        escribir_log(respLinea)
         data = json.loads(respLinea)
         return data
     except Exception as e:
@@ -211,6 +252,10 @@ def consulta_linea_captura(token, folio):
             headers=header
         )
         respLinea = desencriptado(response.text)
+
+        # Ejemplo de uso
+        escribir_log("JSON de Consulta Captura.")
+        escribir_log(respLinea)
         data = json.loads(respLinea)
         return data
     except Exception as e:
