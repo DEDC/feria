@@ -44,12 +44,22 @@ document.addEventListener('DOMContentLoaded', () => {
         element.addEventListener('click', (e) => {
             tpayPlace(element.dataset.uuid).then((resp) => {
                 console.log(resp);
-                if(resp.pagado){
+                if(resp.data.pagado){
                     console.log("Resp", resp.pagado);
                     Swal.fire({
                       title: "Pago Realizado!",
                       text: "El pago fue procesado con existo.",
                       icon: "success"
+                    }).then((result) => {
+                       location.reload();
+                    });
+                }
+                else if(resp.data.proceso){
+                    console.log("Resp", resp.pagado);
+                    Swal.fire({
+                      title: "Estatus del pago!",
+                      text: "El pago se encuentra en procesado de validacion, espere un momento.",
+                      icon: "warning"
                     });
                 }
                 else{

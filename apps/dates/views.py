@@ -238,6 +238,8 @@ class TpayLineaCapturaView(APIView):
                                 lugar.tpay_service = True
                                 lugar.save()
                                 return Response(data={"pagado": True})
+                            elif status["data"]["codigoEstatus"]["_text"] == "01":
+                                return Response(data={"proceso": True})
 
                 HistorialTapy.objects.create(
                     lugar=lugar, data_tpay=lugar.data_tpay, tpay_folio=lugar.tpay_folio
