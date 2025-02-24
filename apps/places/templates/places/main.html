@@ -34,14 +34,17 @@
         </div>
         <div class="col-xl-9 mb-4 mb-lg-0">
             <div class="alert text-center" role="alert" data-mdb-color="info" data-mdb-alert-init>
-                <h5 class="alert-heading"><i class="fas fa-chevron-circle-right me-3"></i>Descarga los costos de espacios de la Feria Tabasco 2025</h5>
-                </p>
-                <p class="mb-0">
+                <h5 class="alert-heading"><i class="fas fa-chevron-circle-right me-3"></i>Descarga los costos y el croquis de espacios de la Feria Tabasco 2025</h5>
+                <div class="d-grid gap-2 d-md-block mt-3">
                     <a class="btn text-white btn-primary" data-mdb-ripple-init href="{% static 'docs/COSTOS_ESPACIOS_FT2025.pdf' %}" role="button" download>
                         <i class="fas fa-download me-2 text-white"></i>
                         Descargar costos
                       </a>
-                </p>
+                      <a class="btn text-white btn-primary" data-mdb-ripple-init href="{% static 'docs/CROQUIS_ESPACIOS_FT2025.pdf' %}" role="button" download>
+                        <i class="fas fa-download me-2 text-white"></i>
+                        Descargar croquis
+                    </a>
+                </div>
             </div>
             {% include 'base/validations.html' %}
             {% if not requests %}
