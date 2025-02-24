@@ -90,6 +90,7 @@ class ListRequests(AdminStaffPermissions, ListView):
         requests = Solicitudes.objects.all()
         context['total'] = requests
         context['validated'] = requests.filter(estatus='validated')
+        context['direct_val'] = requests.filter(estatus='validated-direct')
         context['validated-direct'] = requests.filter(estatus='validated-direct')
         context['rejected'] = requests.filter(estatus='rejected')
         context['pending'] = requests.filter(estatus='pending')
