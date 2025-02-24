@@ -83,6 +83,7 @@ def generarToken(usuario):
         jsonData = json.dumps({"data": dataUser}, separators=(",", ":"))
 
         header = {
+            "Origin": "https://comercializacionferia.tabasco.gob.mx",  # Envía el subdominio en la cabecera Origin
             "Content-Type": "application/json",
             "Access-Control-Allow-Methods": "GET, POST",
             "X-API-KEY": settings.TPAY_APIKEY,
@@ -131,6 +132,7 @@ def solicitar_linea_captura(token, folio, tramite_id, nombre, curp, calle, colon
         # folio = f"/?folioSeguimiento={folio}&token={token}&nombre={nombre}&paterno={paterno}&materno={materno}&curp={curp}&calle={calle}&colonia={colonia}&cp={cp}&estado={estado}&municipio={municipio}"
         folioEncriptado = encriptarData(folio)
         header = {
+            "Origin": "https://comercializacionferia.tabasco.gob.mx",  # Envía el subdominio en la cabecera Origin
             "Content-Type": "application/json",
             "Access-Control-Allow-Methods": "GET, POST",
             "X-API-KEY": settings.TPAY_APIKEY,
@@ -164,6 +166,7 @@ def validar_linea_captura(token, data):
     try:
         folioEncriptado = encriptarData(data)
         header = {
+            "Origin": "https://comercializacionferia.tabasco.gob.mx/",  # Envía el subdominio en la cabecera Origin
             "Content-Type": "application/json",
             "Access-Control-Allow-Methods": "GET, POST",
             "X-API-KEY": settings.TPAY_APIKEY,
@@ -200,6 +203,7 @@ def status_linea_captura(token, data):
     try:
         folioEncriptado = encriptarData(data)
         header = {
+            "Origin": "https://comercializacionferia.tabasco.gob.mx",  # Envía el subdominio en la cabecera Origin
             "Content-Type": "application/json",
             "Access-Control-Allow-Methods": "GET, POST",
             "X-API-KEY": settings.TPAY_APIKEY,
@@ -236,6 +240,7 @@ def consulta_linea_captura(token, folio):
     try:
         folioEncriptado = encriptarData(folio)
         header = {
+            "Origin": "https://comercializacionferia.tabasco.gob.mx",  # Envía el subdominio en la cabecera Origin
             "Content-Type": "application/json",
             "Access-Control-Allow-Methods": "GET, POST",
             "X-API-KEY": settings.TPAY_APIKEY,
