@@ -18,7 +18,7 @@ from apps.dates.tools import get_dates_from_range, get_times_from_range
 from apps.dates.models import CitasAgendadas
 from apps.places.models import Lugares, HistorialTapy
 from apps.tpay.tools import solicitar_linea_captura, generarToken, validar_linea_captura, status_linea_captura, \
-    consulta_linea_captura
+    consulta_linea_captura, escribir_log
 
 all_dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 all_hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
@@ -387,58 +387,62 @@ class WebHookTapyApiView(APIView):
                 "message": "Ok",  # (notificación exitosa o Descripción del error)
             }
         }
-        # URL desde donde se obtiene el PDF
-        lugar: Lugares = Lugares.objects.filter(tpay_folio=data["data"]["pordenp_ref"]).first()
-        if lugar:
-            lugar.tpay_pagado = True
-            lugar.tpay_web = True
-            lugar.tpay_val = data
-            lugar.save()
+        try:
+            # URL desde donde se obtiene el PDF
+            lugar: Lugares = Lugares.objects.filter(tpay_folio=data["data"]["pordenp_ref"]).first()
+            if lugar:
+                lugar.tpay_pagado = True
+                lugar.tpay_web = True
+                lugar.tpay_val = data
+                lugar.save()
 
-            if not lugar.tpay_service:
-                # Obtener el PDF usando requests
-                user_data = json.dumps({
-                    "user": lugar.solicitud.nombre,
-                    "email": lugar.solicitud.usuario.email
-                }, separators=(",", ":")
-                )
-                token, error = generarToken(user_data)
+                if not lugar.tpay_service:
+                    # Obtener el PDF usando requests
+                    user_data = json.dumps({
+                        "user": lugar.solicitud.nombre,
+                        "email": lugar.solicitud.usuario.email
+                    }, separators=(",", ":")
+                    )
+                    token, error = generarToken(user_data)
 
-                if not error:
+                    if not error:
 
-                    data = json.dumps({
-                        "data": {
-                            "AuthS701": data["data"]["transaccion"],
-                            "referenceKey": data["data"]["resultadoTrans"]["pordenp_ref"],
-                            "AccessUser": data["data"]["resultadoTrans"]["pcve_instrumento_pago"],
-                            "EstablishNum": "7681",
-                            "BranchSource": "7681",
-                        }
-                    }, separators=(",", ":"))
+                        data = json.dumps({
+                            "data": {
+                                "AuthS701": data["data"]["transaccion"],
+                                "referenceKey": data["data"]["resultadoTrans"]["pordenp_ref"],
+                                "AccessUser": data["data"]["resultadoTrans"]["pcve_instrumento_pago"],
+                                "EstablishNum": "7681",
+                                "BranchSource": "7681",
+                            }
+                        }, separators=(",", ":"))
 
-                    validacion = validar_linea_captura(token, data)
+                        validacion = validar_linea_captura(token, data)
 
-                    logger.info("{}".format(validacion))
-                    if validacion:
-                        # lugar.tpay_service = True
-                        # lugar.tpay_val = validacion
-                        lugar.save()
-                    else:
-                        lugar.tpay_val = validacion
-                        lugar.save()
-            response = {
-                "data": {
-                    "resultado": 0,  # (0: éxito, 1: error)
-                    "message": "Informacion registrada satisfactoriamente",
-                    # (notificación exitosa o Descripción del error)
+                        logger.info("{}".format(validacion))
+                        if validacion:
+                            # lugar.tpay_service = True
+                            # lugar.tpay_val = validacion
+                            lugar.save()
+                        else:
+                            lugar.tpay_val = validacion
+                            lugar.save()
+                response = {
+                    "data": {
+                        "resultado": 0,  # (0: éxito, 1: error)
+                        "message": "Informacion registrada satisfactoriamente",
+                        # (notificación exitosa o Descripción del error)
+                    }
                 }
-            }
-        else:
-            response = {
-                "data": {
-                    "resultado": 1,  # (0: éxito, 1: error)
-                    "message": "No existe registro del folio de seguimiento para el pago",
-                    # (notificación exitosa o Descripción del error)
+            else:
+                response = {
+                    "data": {
+                        "resultado": 1,  # (0: éxito, 1: error)
+                        "message": "No existe registro del folio de seguimiento para el pago",
+                        # (notificación exitosa o Descripción del error)
+                    }
                 }
-            }
+        except Exception as e:
+            escribir_log("Error WebHookTapyApiView.")
+            escribir_log(f"{e}")
         return Response(data=response)
