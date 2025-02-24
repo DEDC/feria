@@ -189,6 +189,30 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="p-3 badge-info rounded-4">
+                                        <i class="fas fas fa-dollar-sign fa-2x fa-fw"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-4">
+                                    <h4>Monto actual</h4>
+                                    <h2 class="mb-0">
+                                        {{payments.monto|default:"0"}}
+                                        <span class="text-success" style="font-size: 0.875rem"><i
+                                                class="fas fa-arrow-up fa-sm"></i>
+                                            <span>{{payments_done}}</span> Efecuados</span>
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer border-0 bg-light p-2">
+                        </div>
+                    </div>
+                </div>
             </div>
             {% endif %}
         </section>

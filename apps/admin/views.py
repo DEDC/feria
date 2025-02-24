@@ -78,6 +78,8 @@ class Main(AdminStaffPermissions, TemplateView):
         context['validations_today'] = validations.filter(fecha_reg__date=today).count()
         context['branches_today'] = branches.filter(fecha_reg__date=today).count()
         context['places_today'] = places.filter(fecha_reg__date=today).count()
+        context['payments'] = places.filter(tpay_pagado=True).aggregate(monto=Sum('precio'))
+        context['payments_done'] = places.filter(tpay_pagado=True).count()
         return context
 
 
