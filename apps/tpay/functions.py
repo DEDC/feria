@@ -44,7 +44,7 @@ def status_validar_pago(id, historico=False):
     if not error:
         data = json.dumps({
             "orderId": "2025-{}".format(lugar.tpay_folio),
-            "sistemaId": settings.TPAY_SISTEMA,
+            "sistemaId": 21,
             "proyecto": settings.TPAY_PROJECT,
             "monto": lugar.data_tpay["importe"]
         }, separators=(",", ":")
@@ -52,3 +52,9 @@ def status_validar_pago(id, historico=False):
         status = status_linea_captura(token, data)
         lugar.tpay_status = status
         return status
+
+def updateFolioHistorial():
+    historial = HistorialTapy.objects.all()
+    for hist in historial:
+        hist.tpay_folio = hist.data_tpay["lineaCaptura"].split("|")[0]
+        hist.save()

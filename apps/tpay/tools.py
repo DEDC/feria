@@ -209,8 +209,7 @@ def status_linea_captura(token, data):
             "X-API-KEY": settings.TPAY_APIKEY,
             "X-SESSION-KEY": settings.TPAY_SESSION_ABORDAJE,
             "X-SISTEMA-KEY": settings.TPAY_SISTEMA,
-            "X-CHANNEL-SERVICE": settings.TPAY_CHANNEL_GESTOR,
-            "Authorization": f"Bearer {token}"
+            "X-CHANNEL-SERVICE": settings.TPAY_CHANNEL_GESTOR
         }
 
         data_val = {"data": folioEncriptado}
