@@ -43,7 +43,7 @@ def status_validar_pago(id, historico=False):
     }, separators=(",", ":")
     )
     status = status_linea_captura("", data)
-
+    print(status)
     if status["codigoEstatus"] == 0:
         # Obtener el PDF usando requests
         user_data = json.dumps({
