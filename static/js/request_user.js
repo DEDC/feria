@@ -72,12 +72,16 @@ document.addEventListener('DOMContentLoaded', () => {
     pdf_place.forEach(element => {
         element.addEventListener('click', (e) => {
             let reciboTPay = document.getElementById("iframe");
+
+            var title = "Mi recibo";           // Título de la ventana popup (puede ser cualquier cadena)
+            var settings = "width=600,height=400,scrollbars=yes,resizable=yes";
             if(element.dataset.url != "None"){
-                reciboTPay.src =  element.dataset.url;
+                  // Abre el popup
+                  window.open(element.dataset.url, title, settings);
             }else{
                 consultaTpayPlace(element.dataset.uuid).then((resp) => {
                     console.log(resp)
-                    reciboTPay.src = resp.data.url_recibo;
+                    window.open(resp.data.url_recibo, title, settings);
                 }).catch((error) => {
                     console.log(error);
                 });
@@ -85,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const modal_select = document.querySelector('#modal-iframe');
             const instance_select_modal = new mdb.Modal(modal_select);
-            instance_select_modal.show()
+            // instance_select_modal.show()
         })
     });
 
