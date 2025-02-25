@@ -795,7 +795,7 @@
                                 <tr>
                                     <th class="bg-light" style="width: 40%;">Contrato</th>
                                     <td><a class="btn btn-sm btn-success shadow-0"
-                                            href="{% url 'admin:download_contract' object.uuid %}">Descargar
+                                            href="#">Descargar
                                             Contrato</a></td>
                                 </tr>
                                 {% for place in selected_places %}
@@ -805,10 +805,10 @@
                                         ({{ place.folio }})
                                     </th>
                                     <td><a class="btn btn-sm btn-success shadow-0"
-                                            href="{% url 'admin:download_gafete' object.uuid place.uuid %}">Descargar
+                                            href="#">Descargar
                                             Gafete</a>
                                         <a class="btn btn-sm btn-primary shadow-0 ms-2"
-                                            href="{% url 'admin:download_suministros' object.uuid place.uuid %}">Descargar
+                                            href="#">Descargar
                                             Suministros</a>
                                     </td>
                                 </tr>
