@@ -120,7 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = new FormData();
             data.append('place', element.dataset.uuid);
             deletePlace(request_uuid.value, element.dataset.uuid, data).then((resp) => {
-                if(respp.data.eliminado){
+                console.log(resp);
+                if(resp.data.eliminado === true){
                     location.reload()
                 }else{
                     Swal.fire({
