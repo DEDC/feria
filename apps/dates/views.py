@@ -210,7 +210,7 @@ class TpayLineaCapturaView(APIView):
             return Response({"error": "No se proporcionó la información requerida"}, status=400)
 
         try:
-            if not lugar.data_tpay:
+            if lugar.data_tpay:
                 data = json.dumps({
                     "orderId": "2025-{}".format(lugar.tpay_folio),
                     "sistemaId": 21,
