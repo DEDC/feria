@@ -31,6 +31,11 @@ export const statusPlace = async (uuid) => {
     return response;
 }
 
+export const webhookPlace = async (data) => {
+    const response = await postAPICall(`/api/webhook/tpay`, data);
+    return response;
+}
+
 export const consultaTpayPlace = async (uuid, data) => {
     const response = await getAPICall(`/api/places/tpayconsulta/${uuid}`);
     return response;

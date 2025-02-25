@@ -26,6 +26,18 @@ def get_validar_pago(id, historico=False):
         return status
 
 
+def validar_pago(folio, importe):
+    data = json.dumps({
+        "orderId": "2025-{}".format(folio),
+        "sistemaId": 21,
+        "proyecto": settings.TPAY_PROJECT,
+        "monto": importe
+    }, separators=(",", ":")
+    )
+    status = status_linea_captura("", data)
+    print(status)
+
+
 def status_validar_pago(id, historico=False):
     lugar: Lugares = Lugares.objects.filter(pk=id).first()
     data_tpay = lugar.data_tpay

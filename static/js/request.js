@@ -8,9 +8,19 @@ import {
     addBigTerraza,
     deleteItem,
     deletePlace,
-    addDescuento, statusPlace
+    addDescuento, statusPlace, consultaTpayPlace, webhookPlace
 } from "../js/api/utilities.js";
-import { url_nave_1, url_nave_2, url_nave_3, url_zona_a, url_zona_b, url_zona_c, url_zona_d, url_sabor_tabasco, url_teatro } from '../js/api/endpoints.js'
+import {
+    url_nave_1,
+    url_nave_2,
+    url_nave_3,
+    url_zona_a,
+    url_zona_b,
+    url_zona_c,
+    url_zona_d,
+    url_sabor_tabasco,
+    url_teatro
+} from '../js/api/endpoints.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     const n_1_btn = document.querySelector('#n-1')
@@ -38,6 +48,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const delete_pdt = document.querySelectorAll('.del-pdt')
     const delete_place = document.querySelectorAll('.del-place')
     const status_place = document.querySelectorAll('.status-place')
+    const pdf_place = document.querySelectorAll('.pdf-place')
+
+
+    pdf_place.forEach(element => {
+        element.addEventListener('click', (e) => {
+            let reciboTPay = document.getElementById("iframe");
+
+            var title = "Mi recibo";           // Título de la ventana popup (puede ser cualquier cadena)
+            var settings = "width=600,height=400,scrollbars=yes,resizable=yes";
+            if (element.dataset.url != "None") {
+                // Abre el popup
+                window.open(element.dataset.url, title, settings);
+            } else {
+                consultaTpayPlace(element.dataset.uuid).then((resp) => {
+                    console.log(resp)
+                    window.open(resp.data.url_recibo, title, settings);
+                }).catch((error) => {
+                    console.log(error);
+                });
+            }
+
+            // const modal_select = document.querySelector('#modal-iframe');
+            // const instance_select_modal = new mdb.Modal(modal_select);
+            // instance_select_modal.show()
+        })
+    });
 
     delete_pdt.forEach(element => {
         element.addEventListener('click', (e) => {
@@ -69,6 +105,46 @@ document.addEventListener('DOMContentLoaded', () => {
             data.append('place', element.dataset.uuid);
             statusPlace(element.dataset.uuid).then((resp) => {
                 console.log(resp)
+                if (resp.data.codigoEstatus === 0) {
+                    Swal.fire({
+                        title: "Información de pago",
+                        text: "El pago se encuentra porcesado, desea guardar la información!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#44ec7e",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Aceptar",
+                        cancelButtonText: "Cancelar"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            /*webhookPlace(resp.data).then((resp) => {
+                                Swal.fire({
+                                    title: "Información de Pago",
+                                    text: "El pago ha sido registrado satissfactoriamente",
+                                    icon: "success"
+                                }).then((result) => {
+                                    location.reload()
+                                });
+                            }).catch((error) => {
+                                console.log(error);
+                            });*/
+
+                        } else {
+                            // Swal.fire({
+                            //     title: "The Internet?",
+                            //     text: "That thing is still around?",
+                            //     icon: "question"
+                            // });
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Informacion de pago",
+                        text: "El pago se encuentra en proceso de validación",
+                        icon: "warning"
+                    });
+                }
+
             }).catch((error) => {
                 console.log(error);
             });
@@ -239,9 +315,8 @@ document.addEventListener('DOMContentLoaded', () => {
             setPlaceTemp(request_uuid.value, data, current_zone).then((resp) => {
                 if (resp.data.status_code == 'saved') {
                     instance_select_modal.show()
-                    timer.start({ countdown: true, startValues: { minutes: 30 } });
-                }
-                else {
+                    timer.start({countdown: true, startValues: {minutes: 30}});
+                } else {
                     mdb.Alert.getInstance(document.getElementById('alert-notplaces')).show();
                 }
             }).catch((error) => {
