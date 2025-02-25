@@ -160,7 +160,7 @@ class TpayStatusLineaCapturaView(APIView):
             }, separators=(",", ":")
             )
             status = status_linea_captura("token", data)
-            lugar.tpay_status = status
+            lugar.tpay_val = status
             lugar.save()
             response = status
         except requests.RequestException as e:
@@ -190,9 +190,10 @@ class TpayConsultaLineaCapturaView(APIView):
                     folio = f"/?folioSeguimiento={lugar.data_tpay['folioSeguimiento']}&idTramite={lugar.tramite_id}&folioControlEstado={lugar.data_tpay['folioControlEstado']}"
                     status = consulta_linea_captura(token, folio)
                     if "resultado" in status:
-                        lugar.tpay_status = status
-                        lugar.recibo_url = status["data"]['urlReciboPago']["_text"]
-                        lugar.save()
+                        if status["codigoEstatus"]["_text"] == "00":
+                            lugar.tpay_status = status
+                            lugar.recibo_url = status["data"]['urlReciboPago']["_text"]
+                            lugar.save()
             response = {"url_recibo": lugar.tpay_status["data"]['urlReciboPago']["_text"]}
 
         except requests.RequestException as e:
@@ -210,28 +211,25 @@ class TpayLineaCapturaView(APIView):
 
         try:
             if lugar.data_tpay:
-                user_data = json.dumps({
-                    "user": lugar.solicitud.nombre,
-                    "email": lugar.solicitud.usuario.email
+                data = json.dumps({
+                    "orderId": "2025-{}".format(lugar.tpay_folio),
+                    "sistemaId": 21,
+                    "proyecto": settings.TPAY_PROJECT,
+                    "monto": lugar.data_tpay["importe"]
                 }, separators=(",", ":")
                 )
-                token, error = generarToken(user_data)
-
-                if not error:
-                    folio = f"/?folioSeguimiento={lugar.data_tpay['folioSeguimiento']}&idTramite={lugar.tramite_id}&folioControlEstado={lugar.data_tpay['folioControlEstado']}"
-                    status = consulta_linea_captura(token, folio)
-                    if "resultado" in status:
-                        if status["resultado"]:
-                            if status["data"]["codigoEstatus"]["_text"] == "00":
-                                lugar.recibo_url = status["data"]["urlReciboPago"]["_text"]
-                                lugar.tpay_status = status
-                                lugar.tpay_pagado = True
-                                lugar.tpay_service = True
-                                lugar.save()
-                                return Response(data={"pagado": True})
-                            elif status["data"]["codigoEstatus"]["_text"] == "01":
-                                # return Response(data={"proceso": True})
-                                pass
+                status = status_linea_captura("", data)
+                print(status)
+                if status["codigoEstatus"] == 0:
+                    lugar.recibo_url = status["data"]["urlReciboPago"]["_text"]
+                    lugar.tpay_status = status
+                    lugar.tpay_pagado = True
+                    lugar.tpay_service = True
+                    lugar.save()
+                    return Response(data={"pagado": True})
+                elif status["codigoEstatus"] == 1:
+                    return Response(data={"proceso": True})
+                    # pass
 
                 HistorialTapy.objects.create(
                     lugar=lugar, data_tpay=lugar.data_tpay, tpay_folio=lugar.tpay_folio

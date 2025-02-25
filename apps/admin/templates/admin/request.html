@@ -36,6 +36,8 @@
 </style>
 <script src="{% static 'js/validations.js' %}" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.all.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.min.css">
 <script src="{% static 'js/request.js' %}" type="module" defer></script>
 <script src="{% static 'js/easytimer.min.js' %}" defer></script>
 {% endblock head %}
@@ -755,9 +757,8 @@
                                         <th scope="col">Sección</th>
                                         <th scope="col">Folio TPAY</th>
                                         <th scope="col">Precio</th>
-                                        {% if not payment %}
                                         <th>Estatus</th>
-                                        {% endif %}
+                                        <th>Recibo</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -771,6 +772,12 @@
                                         <td>
                                             <button type="button" class="btn btn-rounded btn-warning status-place" data-uuid="{{ sp.uuid }}">
                                                 Estatus
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button data-url="{{ sp.recibo_url }}" type="button"
+                                                    class="btn btn-rounded btn-info pdf-place" data-uuid="{{ sp.uuid }}">
+                                                Recibo
                                             </button>
                                         </td>
                                     </tr>
