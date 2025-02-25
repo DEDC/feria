@@ -80,7 +80,7 @@ def status_validar_pago(id, historico=False):
                 print(validacion)
                 if "res" in validacion:
                     lugar.tpay_service = True
-    lugar.tpay_status = data_tpay
+                    # lugar.tpay_status = validacion
     lugar.data_tpay = data_tpay
     lugar.tpay_val = status
     lugar.tpay_pagado = True

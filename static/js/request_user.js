@@ -120,7 +120,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = new FormData();
             data.append('place', element.dataset.uuid);
             deletePlace(request_uuid.value, element.dataset.uuid, data).then((resp) => {
-                location.reload()
+                if(respp.data.eliminado){
+                    location.reload()
+                }else{
+                    Swal.fire({
+                      title: "Información del pago!",
+                      text: "El lugar cuenta con un proceso de pago no puede ser eliminado.",
+                      icon: "error"
+                    });
+                }
             }).catch((error) => {
                 console.log(error);
             });

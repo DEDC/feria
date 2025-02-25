@@ -676,10 +676,13 @@ def delete_place(request, uuid, uuid_place):
     try:
         request_ = Solicitudes.objects.get(uuid=uuid)
         place = Lugares.objects.get(uuid=request.POST.get('place'))
-        HistorialTapy.objects.filter(lugar=place).delete()
-        place.delete()
+        if not place.data_tpay:
+            HistorialTapy.objects.filter(lugar=place).delete()
+            place.delete()
 
-        Validaciones.objects.create(solicitud=request_, estatus=request_.estatus, atendido=True, comentarios='El validador eliminó un espacio de la compra', validador=request.user.get_full_name())
-        return Response({})
+            Validaciones.objects.create(solicitud=request_, estatus=request_.estatus, atendido=True, comentarios='El validador eliminó un espacio de la compra', validador=request.user.get_full_name())
+            return Response({"eliminado": True})
+
+        return Response({"eliminado": False})
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
