@@ -36,6 +36,7 @@ from utils.date import get_date_constancy
 from utils.gafete import get_gafete
 from utils.suministros import get_suministros
 from utils.tarjeton import get_tarjeton
+from utils.pase_caja import get_receipt
 from utils.word_writer import generate_physical_document
 from utils.reports import get_report, get_requests_report
 from utils.email import send_html_mail
@@ -530,6 +531,15 @@ class DownloadRequestsReport(AdminPermissions, RedirectView):
             print(e)
             return redirect('admin:main')
 
+class DownloadReceipt(AdminStaffPermissions, RedirectView):
+    def get(self, request, *args, **kwargs):
+        try:
+            request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
+            place = Lugares.objects.get(uuid=kwargs['uuid_place'])
+            receipt = get_receipt(place)
+            return receipt
+        except (Solicitudes.DoesNotExist, Lugares.DoesNotExist):
+            raise Http404()
 
 class UnlockRequest(AdminStaffPermissions, RedirectView):
     def get(self, request, *args, **kwargs):

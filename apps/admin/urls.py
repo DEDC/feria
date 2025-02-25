@@ -5,7 +5,7 @@ from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, Upda
                               ListRequests, ListUsers, UnlockRequest, UpdateUser, UserDates, ListDates,
                               DownloadContract, DownloadGafate, DownloadSuministros, DownloadReport,
                               DownloadRequestsReport, ListParking,
-                              DownloadTarjeton, UpdateParking,
+                              DownloadTarjeton, UpdateParking, DownloadReceipt,
                               set_place_temp, unset_place_temp, set_place,
                               add_alcohol, add_terraza, add_big_terraza, delete_item, delete_place, add_descuento)
 app_name = 'admin'
@@ -44,4 +44,5 @@ urlpatterns = [
     path('tarjeton/<uuid:uuid>/descargar', DownloadTarjeton.as_view(), name='download_tarjeton'),
     path('reportes/descargar', DownloadReport.as_view(), name='download_report'),
     path('solicitudes/reporte/descargar', DownloadRequestsReport.as_view(), name='download_requests_report'),
+    path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/pase_caja/descargar', DownloadReceipt.as_view(), name='download_receipt')
 ]
