@@ -774,15 +774,22 @@
                                         <td>{{ sp.tpay_folio }}</td>
                                         <td>${{ sp.precio|intcomma }}</td>
                                         <td>
-                                            <button type="button" class="btn btn-rounded btn-warning status-place" data-uuid="{{ sp.uuid }}">
-                                                Estatus
-                                            </button>
+                                            {% if sp.tpay_pagado %}
+                                                <span class="badge rounded-pill badge-success">Pagado</span>
+                                            {% else %}
+                                                <button type="button" class="btn btn-rounded btn-warning status-place" data-uuid="{{ sp.uuid }}">
+                                                    Validar
+                                                </button>
+                                            {% endif %}
                                         </td>
                                         <td>
-                                            <button data-url="{{ sp.recibo_url }}" type="button"
+                                            {% if sp.tpay_pagado %}
+                                                <button data-url="{{ sp.recibo_url }}" type="button"
                                                     class="btn btn-rounded btn-info pdf-place" data-uuid="{{ sp.uuid }}">
-                                                Recibo
-                                            </button>
+                                                    Recibo
+                                                </button>
+                                            {% endif %}
+                                            
                                         </td>
                                     </tr>
                                     {% endfor %}

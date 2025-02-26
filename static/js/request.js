@@ -107,10 +107,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(resp)
                 if (resp.data.codigoEstatus === 0) {
                     Swal.fire({
-                        title: "Información de pago",
-                        text: "El pago se encuentra porcesado, desea guardar la información!",
-                        icon: "warning",
-                        showCancelButton: true,
+                        title: "Pago exitoso",
+                        text: "El local ya se encuentra pagado!",
+                        icon: "success",
+                        showCancelButton: false,
                         confirmButtonColor: "#44ec7e",
                         cancelButtonColor: "#d33",
                         confirmButtonText: "Aceptar",
@@ -139,8 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 } else {
                     Swal.fire({
-                        title: "Informacion de pago",
-                        text: "El pago se encuentra en proceso de validación",
+                        title: "Información de pago",
+                        text: "El pago se encuentra en validación",
                         icon: "warning"
                     });
                 }
