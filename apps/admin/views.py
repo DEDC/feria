@@ -127,6 +127,7 @@ class ListRequests(AdminStaffPermissions, ListView):
             )
 
             queryset = queryset.filter(lookup)
+            queryset = queryset.distinct("folio")
         if e:
             if e == 'noassign':
                 queryset = queryset.filter(estatus='')
@@ -134,8 +135,10 @@ class ListRequests(AdminStaffPermissions, ListView):
                 queryset = queryset.filter(mas_espacios=True)
             elif e in ['validated', 'rejected', 'resolved', 'pending', 'validated-direct']:
                 queryset = queryset.filter(estatus=e)
-        return queryset.order_by('pk')
+        if not q:
+            queryset = queryset.order_by('pk')
 
+        return queryset
 
 class ListUsers(AdminStaffPermissions, ListView):
     model = Usuarios
@@ -553,6 +556,7 @@ class DownloadReceipt(AdminStaffPermissions, RedirectView):
             return receipt
         except (Solicitudes.DoesNotExist, Lugares.DoesNotExist):
             raise Http404()
+
 
 class UnlockRequest(AdminStaffPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
