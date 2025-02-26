@@ -679,9 +679,9 @@ def add_alcohol(request, uuid, uuid_place):
                     place = True
             return Response({"proceso": place})
         else:
-            return Response({'message': 'not-places-existing'})
+            return Response({'message': 'not-places-existing', "proceso": False})
     except Exception as e:
-        return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'message': str(e), "proceso": False}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['POST'])
