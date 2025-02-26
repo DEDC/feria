@@ -110,11 +110,16 @@ def get_report():
         ws.cell(row=counter, column=11).value = p.solicitud.usuario.email
         ws.cell(row=counter, column=12).value = p.solicitud.usuario.get_full_name()
         payment = p.solicitud.solicitud_pagos.first()
-        if payment:
-            ws.cell(row=counter, column=13).value = 'Pagado' if payment.pagado else 'No pagado'
-            ws.cell(row=counter, column=14).value = payment.get_tipo_display()
-            ws.cell(row=counter, column=15).value = payment.validador or 'No definido'
-        counter_column = 16
+        if p.tpay_pagado:
+            status = "TPAY"
+            if payment:
+                status = payment.get_tipo_display()
+            ws.cell(row=counter, column=13).value = 'Pagado' if p.tpay_pagado else 'No pagado'
+            ws.cell(row=counter, column=14).value = status
+            ws.cell(row=counter, column=15).value = p.fecha_mod.strftime("%Y-%m-%d") or 'No definido'
+            ws.cell(row=counter, column=16).value = p.fecha_mod.strftime("%H:%M:%S") or 'No definido'
+            ws.cell(row=counter, column=17).value = payment.validador if payment else 'No definido'
+        counter_column = 18
         for px in p.extras.all():
             ws.cell(row=counter, column=counter_column).value = px.get_tipo_display()
             counter_column += 1
