@@ -11,6 +11,11 @@ from reportlab.graphics import renderPDF
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.pagesizes import letter
 from django.contrib.humanize.templatetags.humanize import intcomma
+from django.utils.timezone import localtime
+from django.utils import timezone
+import pytz
+
+timezone.activate(pytz.timezone("America/Mexico_City"))
 
 def get_receipt(place):
     output = PdfWriter()
@@ -25,6 +30,9 @@ def get_receipt(place):
     pdf.drawString(475, 575, place.get_zona_display())
     pdf.drawString(165, 521, f'${intcomma(place.precio)}')
     pdf.drawString(400, 521, str(place.tramite_id))
+    pdf.setFont("Helvetica", 8)
+    pdf.drawString(260, 464, timezone.localtime(timezone.now()).strftime("%d-%m-%Y %H:%M"))
+    pdf.drawString(457, 464, timezone.localtime(timezone.now() + + timezone.timedelta(days=1)).strftime("%d-%m-%Y %H:%M"))
     # # QR
     # qr_text = str(place.folio)
     # qr_code = qr.QrCodeWidget(qr_text)
