@@ -130,10 +130,13 @@ class Lugares(ControlInfo):
     tpay_status = models.JSONField(null=True, blank=True)
     tpay_folio = models.CharField(max_length=150, null=True, blank=True)
     tpay_pagado = models.BooleanField(default=False)
+    caja_pago = models.BooleanField(default=False)
+    caja_folio = models.CharField(max_length=150, null=True, blank=True)
     tpay_web = models.BooleanField(default=False)
     tpay_socket = models.BooleanField(default=False)
     tpay_service = models.BooleanField(default=False)
     tpay_descuento = models.BooleanField(default=False)
+    tpay_alcohol = models.BooleanField(default=False)
 
 
 class ProductosExtras(ControlInfo):
@@ -143,6 +146,8 @@ class ProductosExtras(ControlInfo):
     precio = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     m2 = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     to_places = models.TextField(default='')
+    tramite_id = models.IntegerField(default=0)
+    precio_tpay = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
 
 
 class Pagos(ControlInfo):
@@ -158,6 +163,7 @@ class Pagos(ControlInfo):
         max_length=20, null=True,
         choices=(
             ('tpay', 'TPAY'),
+            ('caja', 'CAJA'),
             ('tarjeta', 'Tarjeta'),
             ('efectivo', 'Efectivo'),
             ('transferencia', 'Transferencia')

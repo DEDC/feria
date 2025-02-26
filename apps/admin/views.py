@@ -43,12 +43,21 @@ from utils.email import send_html_mail
 from datetime import datetime
 
 places_dict = {'n_1': nave1, 'n_2': nave2, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b, 'z_c': zona_c, 'z_d': zona_d, 's_t': sabor_tabasco, 'teatro': teatro}
+
 place_concept_des = {
     "1045": [1069, 90000], "1046": [1070, 83700], "1047": [1071, 81000], "1048": [1072, 72000], "1049": [1073, 63000],
     "1050": [1074, 54000], "1051": [1075, 45000], "1052": [1076, 31500], "1053": [1077, 30150], "1054": [1078, 27000],
     "1055": [1079, 23400], "1056": [1080, 22500], "1057": [1081, 20250], "1058": [1082, 18000], "1059": [1083, 15300],
     "1060": [1084, 13500], "1061": [1085, 12600], "1062": [1086, 11250], "1063": [1087, 9000], "1064": [1088, 7200],
     "1065": [1089, 6300], "1066": [1090, 3150], "1067": [1091, 2700], "1068": [1092, 2250]
+}
+
+place_concept_alcohol = {
+    "1045": [1093, 115000], "1046": [1094, 108000], "1047": [1095, 105000], "1048": [1096, 95000], "1049": [1097, 85000],
+    "1050": [1098, 75000], "1051": [1099, 65000], "1052": [1100, 45000], "1053": [0, 0], "1054": [1101, 40000],
+    "1055": [0, 0], "1056": [1101, 40000], "1057": [0, 0], "1058": [1102, 35000], "1059": [1104, 32000],
+    "1060": [1103, 30000], "1061": [1107, 22000], "1062": [1105, 25000], "1063": [0, 0], "1064": [1088, 7200],
+    "1065": [1108, 15000], "1066": [0, 3150], "1067": [0, 0], "1068": [0, 0]
 }
 
 dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
@@ -645,10 +654,22 @@ def add_alcohol(request, uuid, uuid_place):
         elif mt2 > 150:
             alcohol_price = 260568
         if places:
-            to_places = ','.join(places.values_list('folio', flat=True))
+            to_places = ''
+            place = False
             # ProductosExtras.objects.create(lugar=places[0], tipo='licencia_alcohol', precio=alcohol_price, m2=mt2, to_places=to_places)
-            ProductosExtras.objects.create(lugar=places[0], tipo='licencia_alcohol', m2=mt2, to_places=to_places)
-            return Response({})
+            for p in places:
+                to_places = "{}{},".format(to_places, p.folio)
+                if place_concept_alcohol[p.tramite_id.__str__()][0] != 0:
+                    ProductosExtras.objects.create(
+                        lugar=p, tipo='licencia_alcohol', m2=p.m2, to_places=p.folio,
+                        precio_tpay=p.precio, tramite_id=p.tramite_id
+                    )
+                    p.precio = Decimal(place_concept_alcohol[p.tramite_id.__str__()][1])
+                    p.tramite_id = place_concept_alcohol[p.tramite_id.__str__()][0]
+                    p.tpay_alcohol = True
+                    p.save()
+                    place = True
+            return Response({"proceso": place})
         else:
             return Response({'message': 'not-places-existing'})
     except Exception as e:
@@ -662,6 +683,11 @@ def delete_item(request, uuid, uuid_pdt):
     try:
         request_ = Solicitudes.objects.get(uuid=uuid)
         pdt = ProductosExtras.objects.get(uuid=request.POST.get('item'))
+        if pdt.tipo == 'licencia_alcohol':
+            place = pdt.lugar
+            place.tramite_id = pdt.tramite_id
+            place.precio = pdt.precio_tpay
+            place.save()
         pdt.delete()
         Validaciones.objects.create(solicitud=request_, estatus=request_.estatus, atendido=True, comentarios='El validador eliminó un producto de la compra', validador=request.user.get_full_name())
         return Response({})
@@ -684,5 +710,32 @@ def delete_place(request, uuid, uuid_place):
             return Response({"eliminado": True})
 
         return Response({"eliminado": False})
+    except Exception as e:
+        return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([IsAuthenticated,])
+def aplicar_pago_caja(request, uuid, uuid_place):
+    try:
+        registro = False
+        request_ = Solicitudes.objects.get(uuid=uuid)
+        place = Lugares.objects.get(uuid=uuid_place)
+        place.caja_folio = request.POST.get('folio')
+        place.caja_pago = True
+        place.save()
+        places = request_.solicitud_lugar.filter(estatus='assign')
+        validados = places.filter(caja_pago=True).count()
+        total_tpay = places.filter(tramite_id__gt=0).count()
+
+        if places.count() > 0 and validados == total_tpay:
+            if request_.estatus == 'validated' or request_.estatus == 'validated-direct':
+                if not Pagos.objects.filter(solicitud=request_):
+                    Pagos.objects.get_or_create(
+                        solicitud=request_, usuario=request_.usuario, tipo='caja', pagado=True,
+                        validador=request_.usuario.get_full_name()
+                    )
+        return Response({"proceso": True})
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)

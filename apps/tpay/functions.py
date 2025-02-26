@@ -1,6 +1,8 @@
 import json
+from decimal import Decimal
 
-from apps.places.models import Lugares, HistorialTapy
+from apps.admin.views import place_concept_alcohol
+from apps.places.models import Lugares, HistorialTapy, ProductosExtras
 from apps.tpay.tools import consulta_linea_captura, generarToken, status_linea_captura, validar_linea_captura
 from feria import settings
 
@@ -91,8 +93,24 @@ def status_validar_pago(id, historico=False):
     lugar.save()
     return status
 
+
 def updateFolioHistorial():
     historial = HistorialTapy.objects.all()
     for hist in historial:
         hist.tpay_folio = hist.data_tpay["lineaCaptura"].split("|")[0]
         hist.save()
+
+
+def process_licencia():
+    licencias = ProductosExtras.objects.filter(tipo='licencia_alcohol')
+    for lic in licencias:
+        p = lic.lugar
+        if not p.tpay_alcohol:
+            if place_concept_alcohol[p.tramite_id.__str__()][0] != 0:
+                lic.precio_tpay = p.precio
+                lic.tramite_id = p.tramite_id
+                lic.save()
+                p.precio = Decimal(place_concept_alcohol[p.tramite_id.__str__()][1])
+                p.tramite_id = place_concept_alcohol[p.tramite_id.__str__()][0]
+                p.tpay_alcohol = True
+                p.save()

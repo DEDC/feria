@@ -618,7 +618,7 @@
                                 <td>{{ sp.m2 }}</td>
                                 <td>${{ sp.precio|intcomma }}</td>
                                 <td>{{ sp.fecha_reg }}</td>
-                                {% if not payment %}
+                                {% if not sp.tpay_pagado and not sp.caja_pago %}
                                     <td>
                                     {% if sp.extras.all.count > 0 %}
                                         <p class="note note-warning mb-4">
@@ -656,10 +656,14 @@
                                     </td>
                                 {% else %}
                                     <td>
-                                        <button data-url="{{ sp.recibo_url }}"
-                                                class="btn btn-rounded btn-warning pdf-place" data-uuid="{{ sp.uuid }}">
-                                            Recibo
-                                        </button>
+                                        {% if sp.caja_pago %}
+                                            <span class="badge rounded-pill badge-success">Pagado en caja</span>
+                                        {% else %}
+                                            <button data-url="{{ sp.recibo_url }}"
+                                                    class="btn btn-rounded btn-warning pdf-place" data-uuid="{{ sp.uuid }}">
+                                                Recibo
+                                            </button>
+                                        {% endif %}
                                     </td>
                                 {% endif %}
                             </tr>
@@ -723,7 +727,7 @@
                                         Solicitar Pago
                                     </button>
                                 {% endif %}
-                                <button name="cancel-pay"
+                                <button name="cancel-pay" style="display: none"
                                         class="btn btn-danger btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
                                     <i class="fas fa-close me-2"></i>
                                     Cancelar compra

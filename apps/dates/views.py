@@ -374,6 +374,8 @@ class WebHookTapyApiView(APIView):
     def post(self, request, *args, **kwargs):
         data = request.data
         logger.error("{}".format(data))
+        escribir_log("WebHookTapyApiView.")
+        escribir_log(f"{data}")
         response = {
             "data": {
                 "resultado": 0,  # (0: éxito, 1: error)

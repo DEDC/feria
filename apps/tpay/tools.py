@@ -150,8 +150,8 @@ def solicitar_linea_captura(token, folio, tramite_id, nombre, curp, calle, colon
         respLinea = desencriptado(response.text)
 
         # Ejemplo de uso
-        # escribir_log("JSON de Linea Captura.")
-        # escribir_log(respLinea)
+        escribir_log("JSON de Linea Captura.")
+        escribir_log(respLinea)
         data = json.loads(respLinea)
         return data
     except Exception as e:
@@ -187,8 +187,8 @@ def validar_linea_captura(token, data):
         respLinea = desencriptado(response.text)
 
         # Ejemplo de uso
-        # escribir_log("JSON de Validar Captura.")
-        # escribir_log(respLinea)
+        escribir_log("JSON de Validar Captura.")
+        escribir_log(respLinea)
         data = json.loads(respLinea)
         return data
     except Exception as e:
@@ -223,8 +223,8 @@ def status_linea_captura(token, data):
         respLinea = desencriptado(response.text)
 
         # Ejemplo de uso
-        # escribir_log("JSON de Status Captura.")
-        # escribir_log(respLinea)
+        escribir_log("JSON de Status Captura.")
+        escribir_log(respLinea)
         data = json.loads(respLinea)
         return data
     except Exception as e:
@@ -258,8 +258,8 @@ def consulta_linea_captura(token, folio):
         respLinea = desencriptado(response.text)
 
         # Ejemplo de uso
-        # escribir_log("JSON de Consulta Captura.")
-        # escribir_log(respLinea)
+        escribir_log("JSON de Consulta Captura.")
+        escribir_log(respLinea)
         data = json.loads(respLinea)
         return data
     except Exception as e:

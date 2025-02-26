@@ -531,8 +531,8 @@
                         {% endif %}
                     </ul>
                 </div>
-                {% if object.estatus == 'validated-direct' %}
-                    {% if not payment %}
+                {% if object.estatus == 'validated-direct' or object.estatus == 'validated' %}
+                    {% if not payment and object.estatus == 'validated-direct' %}
                     <div data-mdb-alert-init="" class="alert fade alert-success alert-fixed" id="alert-success" role="alert"
                         data-mdb-color="success" data-mdb-position="top-center" data-mdb-stacking="true"
                         data-mdb-append-to-body="true" data-mdb-hidden="true" data-mdb-autohide="true" data-mdb-delay="1000"
@@ -611,7 +611,7 @@
                         </h4>
                     </div>
                     <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
-                        {% if not payment %}
+                        {% if not payment and object.estatus == 'validated-direct' %}
                         <div class="d-flex justify-content-end">
                             <button id="add-terraza" type="button"
                                 class="btn btn-sm shadow-0 btn-primary btn-rounded mb-3 me-2"><i
@@ -641,6 +641,7 @@
                                         {% if not payment %}
                                         <th></th>
                                         <th></th>
+                                        <th></th>
                                         {% endif %}
                                     </tr>
                                 </thead>
@@ -659,15 +660,34 @@
                                         <td>{{ sp.m2 }}</td>
                                         <td>${{ sp.precio|intcomma }}</td>
                                         <td>{{ sp.fecha_reg }}</td>
-                                        {% if not payment %}
+                                        {% if not sp.tpay_pagado and not sp.caja_pago %}
                                         <td>
-                                            <a href="{% url 'admin:download_receipt' object.uuid sp.uuid %}" type="button" class="btn btn-light btn-sm" data-mdb-ripple-init><i class="fas fa-download me-2"></i>Pase de caja</a>
+                                            <a href="{% url 'admin:download_receipt' object.uuid sp.uuid %}" 
+                                                type="button" class="btn btn-light btn-sm" data-mdb-ripple-init>
+                                                <i class="fas fa-download me-2"></i>
+                                                Pase de caja
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a type="button" data-uuid="{{ sp.uuid }}" 
+                                                class="btn btn-light btn-sm aplicar-pago">
+                                                <i class="fas fa-upload me-2"></i>
+                                                Aplicar Pago
+                                            </a>
                                         </td>
                                         <td>
                                             <a class="ms-3 del-place" data-uuid="{{ sp.uuid }}" data-type="place"
                                                 role="button">
                                                 <i class="fas fa-xmark fa-lg text-danger"></i>
                                             </a>
+                                        </td>
+                                        {% elif sp.caja_pago %}
+                                        <td colspan="3">
+                                            <span class="badge rounded-pill badge-success">Pagado en caja</span>
+                                        </td>
+                                        {% elif sp.tpay_pagado %}
+                                        <td colspan="3">
+                                            <span class="badge rounded-pill badge-success">Pagado por TPAY</span>
                                         </td>
                                         {% endif %}
                                     </tr>
@@ -723,7 +743,8 @@
                                 <b>{{ payment.validador }}</b>{% endif %}.
                             </p>
                             <div class="d-flex justify-content-end">
-                                <button name="reverse-pay" class="btn btn-danger btn-sm btn-rounded shadow-0">
+                                <button name="reverse-pay"  style="display: none"
+                                        class="btn btn-danger btn-sm btn-rounded shadow-0">
                                     <i class="fas fa-close me-2"></i>
                                     Revertir compra
                                 </button>
@@ -743,7 +764,7 @@
                         {% endif %}
                     {% endif %}
                 {% endif %}
-                {% if tpay_places and user.is_superuser %}
+                {% if tpay_places and user.is_superuser and object.estatus == 'validatedx' %}
                     <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
                         id="places">
                         <h4 class="mb-0 fw-bold">
@@ -845,7 +866,7 @@
                             <i class="fas fa-money-bill-1 me-2"></i>
                             Pagado con efectivo
                         </button>
-                        <button name="transfer-paid"
+                        <button name="transfer-paid" style="display: none"
                             class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">
                             <i class="fas fa-right-left me-2"></i>
                             Aplicar Pagos

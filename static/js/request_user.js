@@ -144,7 +144,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 data.append('alcohol', element.value);
             });
             addAlcohol(request_uuid.value, data.get('alcohol'), data).then((resp) => {
-                location.reload()
+                if(resp.data.proceso === true){
+                    location.reload()
+                }else{
+                    Swal.fire({
+                      title: "Licencia de alcohol",
+                      text: "Por el momento a uno o mas lugares no se le pueden asignar una licencia de alcohol",
+                      icon: "error"
+                    });
+                }
             }).catch((error) => {
                 console.log(error);
             });
