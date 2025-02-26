@@ -649,7 +649,7 @@
                                     {% for sp in selected_places  %}
                                     <tr>
                                         <td>
-                                        {% if not sp.tpay_descuento %}
+                                        {% if not sp.tpay_descuento and not sp.caja_pago and not sp.tpay_pagado %}
                                             <input class="form-check-input config-chk" type="checkbox" value="{{ sp.uuid }}"
                                                 data-m2="{{ sp.m2 }}" data-folio="{{ sp.folio }}" />
                                         {% endif %} 

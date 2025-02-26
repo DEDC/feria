@@ -118,10 +118,14 @@ class ListRequests(AdminStaffPermissions, ListView):
         q = self.request.GET.get('q', None)
         e = self.request.GET.get('e', None)
         if q:
-            lookup = (Q(pk__icontains=q)|Q(nombre__icontains=q)|Q(folio__icontains=q)|
-                      Q(comercio__nombre__icontains=q)|Q(usuario__first_name__icontains=q)|
-                      Q(usuario__last_name__icontains=q)|Q(usuario__email__icontains=q)|
-                      Q(usuario__phone_number__icontains=q)|Q(usuario__citas__folio=q))
+            lookup = (
+                Q(pk__icontains=q) | Q(nombre__icontains=q) | Q(folio__icontains=q) |
+                Q(comercio__nombre__icontains=q) | Q(usuario__first_name__icontains=q) |
+                Q(usuario__last_name__icontains=q) | Q(usuario__email__icontains=q) |
+                Q(usuario__phone_number__icontains=q) | Q(usuario__citas__folio=q) |
+                Q(solicitud_lugar__folio__icontains=q)
+            )
+
             queryset = queryset.filter(lookup)
         if e:
             if e == 'noassign':
