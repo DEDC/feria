@@ -620,12 +620,12 @@
                                 <td>{{ sp.fecha_reg }}</td>
                                 {% if not sp.tpay_pagado and not sp.caja_pago %}
                                     <td>
-                                    {% if sp.extras.all.count > 0 %}
-                                        <p class="note note-warning mb-4">
-                                            Este local podra ser pagado hasta el <b>miercoles 26 de Febrero</b>,
-                                            ya que tiene selecionado una licencia de alcohol.
-                                        </p>
-                                    {% else %}
+{#                                    {% if sp.extras.all.count > 0 %}#}
+{#                                        <p class="note note-warning mb-4">#}
+{#                                            Este local podra ser pagado hasta el <b>miercoles 26 de Febrero</b>,#}
+{#                                            ya que tiene selecionado una licencia de alcohol.#}
+{#                                        </p>#}
+{#                                    {% else %}#}
                                         {% if not sp.tpay_pagado and sp.tramite_id != 0 %}
                                             <button class="btn btn-rounded btn-success tpay-place" data-uuid="{{ sp.uuid }}">
                                                 Pagar
@@ -633,7 +633,7 @@
                                         {% else %}
                                             <span class="badge rounded-pill badge-success">Pagado</span>
                                         {% endif %}
-                                    {% endif %}
+{#                                    {% endif %}#}
                                     </td>
                                     <td>
                                     {% if sp.extras.all.count > 0 %}
