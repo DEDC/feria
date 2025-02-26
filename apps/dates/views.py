@@ -211,6 +211,7 @@ class TpayLineaCapturaView(APIView):
 
         try:
             if lugar.data_tpay:
+
                 data = json.dumps({
                     "orderId": "2025-{}".format(lugar.tpay_folio),
                     "sistemaId": 21,
@@ -289,6 +290,7 @@ class TpayLineaCapturaView(APIView):
                 "nomCSis": settings.TPAY_SISTEMA
             }
         except requests.RequestException as e:
+            escribir_log(f"{str(e)}", "logs/tpay.log")
             return Response({"error": f"Error al obtener el PDF: {str(e)}"}, status=400)
         return Response(data=response)
 

@@ -154,19 +154,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     aplicar_pago.forEach(element => {
         element.addEventListener('click', async (e) => {
-            const { value: folio } = await Swal.fire({
-              title: "Ingrese el folio de pago de caja",
-              input: "text",
-              inputLabel: "",
-              inputPlaceholder: "Ingrese el folio de pago",
-              inputAttributes: {
-                maxlength: "150",
-                autocapitalize: "off",
-                autocorrect: "off"
-              }
+            const {value: folio} = await Swal.fire({
+                title: "Ingrese el folio de pago de caja",
+                input: "text",
+                inputLabel: "",
+                inputPlaceholder: "Ingrese el folio de pago",
+                inputAttributes: {
+                    maxlength: "150",
+                    autocapitalize: "off",
+                    autocorrect: "off"
+                }
             });
             if (folio) {
-              //Swal.fire(`Entered password: ${password}`);
+                //Swal.fire(`Entered password: ${password}`);
                 const data = new FormData();
                 data.append('folio', folio);
                 aplicarPago(request_uuid.value, element.dataset.uuid, data).then((resp) => {
@@ -186,9 +186,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 data.append('alcohol', element.value);
             });
             addAlcohol(request_uuid.value, data.get('alcohol'), data).then((resp) => {
-                location.reload()
+                if (resp.data.proceso === true) {
+                    location.reload()
+                } else {
+                    Swal.fire({
+                        title: "Licencia de alcohol",
+                        text: "Por el momento a uno o mas lugares no se le pueden asignar una licencia de alcohol",
+                        icon: "error"
+                    });
+                }
             }).catch((error) => {
                 console.log(error);
+                Swal.fire({
+                    title: "Licencia de alcohol",
+                    text: "Por el momento a uno o mas lugares no se le pueden asignar una licencia de alcohol",
+                    icon: "error"
+                });
             });
         })
     }

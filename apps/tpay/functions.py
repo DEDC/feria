@@ -53,7 +53,7 @@ def status_validar_pago(id, historico=False):
         "orderId": "2025-{}".format(tpay_folio),
         "sistemaId": 21,
         "proyecto": settings.TPAY_PROJECT,
-        "monto": lugar.data_tpay["importe"]
+        "monto": int(lugar.precio)
     }, separators=(",", ":")
     )
     status = status_linea_captura("", data)
@@ -82,7 +82,8 @@ def status_validar_pago(id, historico=False):
                 print(validacion)
                 if "res" in validacion:
                     lugar.tpay_service = True
-                    # lugar.tpay_status = validacion
+                    # lugar.tpay_status = get_validar_pago(lugar.id)
+
     lugar.data_tpay = data_tpay
     lugar.tpay_val = status
     lugar.tpay_pagado = True
