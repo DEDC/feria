@@ -640,6 +640,7 @@
                                         <th scope="col">Fecha de asignación</th>
                                         {% if not payment %}
                                         <th></th>
+                                        <th></th>
                                         {% endif %}
                                     </tr>
                                 </thead>
@@ -659,6 +660,9 @@
                                         <td>${{ sp.precio|intcomma }}</td>
                                         <td>{{ sp.fecha_reg }}</td>
                                         {% if not payment %}
+                                        <td>
+                                            <a href="{% url 'admin:download_receipt' object.uuid sp.uuid %}" type="button" class="btn btn-light btn-sm" data-mdb-ripple-init><i class="fas fa-download me-2"></i>Pase de caja</a>
+                                        </td>
                                         <td>
                                             <a class="ms-3 del-place" data-uuid="{{ sp.uuid }}" data-type="place"
                                                 role="button">
