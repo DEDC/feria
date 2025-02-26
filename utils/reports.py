@@ -7,6 +7,11 @@ import os
 from apps.places.models import Lugares, Pagos, ProductosExtras, Solicitudes
 # openpyxl
 from openpyxl import load_workbook
+import pytz
+
+# Especificar la zona horaria deseada
+zona_horaria = pytz.timezone("America/Mexico_City")
+
 
 def get_docs():
     zf = zipfile.ZipFile(os.path.join('', 'SISCOMFERIA_DOCUMENTACION.zip'), 'w')
@@ -49,6 +54,7 @@ def get_docs():
                 print(e)
         counter+=1
     zf.close()
+
 
 def get_requests_report():
     wb = load_workbook('static/docs/reporte_solicitudes.xlsx')
@@ -94,7 +100,7 @@ def get_requests_report():
 def get_report():
     wb = load_workbook('static/docs/layout_feria.xlsx')
     ws = wb.get_sheet_by_name('LOCALES')
-    places = Lugares.objects.all().order_by('solicitud__folio', 'zona')
+    places = Lugares.objects.filter(tpay_pagado=True).order_by('solicitud__folio', 'zona')
     counter = 4
     for p in places:
         ws.cell(row=counter, column=1).value = p.folio
@@ -116,8 +122,8 @@ def get_report():
                 status = payment.get_tipo_display()
             ws.cell(row=counter, column=13).value = 'Pagado' if p.tpay_pagado else 'No pagado'
             ws.cell(row=counter, column=14).value = status
-            ws.cell(row=counter, column=15).value = p.fecha_mod.strftime("%Y-%m-%d") or 'No definido'
-            ws.cell(row=counter, column=16).value = p.fecha_mod.strftime("%H:%M:%S") or 'No definido'
+            ws.cell(row=counter, column=15).value = p.fecha_mod.astimezone(zona_horaria).strftime("%Y-%m-%d") or 'No definido'
+            ws.cell(row=counter, column=16).value = p.fecha_mod.astimezone(zona_horaria).strftime("%H:%M:%S") or 'No definido'
             ws.cell(row=counter, column=17).value = payment.validador if payment else 'No definido'
         counter_column = 18
         for px in p.extras.all():
