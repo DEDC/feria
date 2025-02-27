@@ -71,8 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }).catch((error) => {
                 console.log(error);
                 Swal.fire({
-                  title: "Plataforma de Pago",
-                  text: "Por el momento se encuentra deshabilitada la plataforma de pago, favor de intentar el pago en un momento.",
+                  title: "Estatus del pago",
+                  text: "El pago se encuentra en procesado de validacion, espere un momento.",
                   icon: "warning"
                 });
             });
