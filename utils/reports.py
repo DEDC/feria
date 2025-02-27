@@ -89,6 +89,7 @@ def get_requests_report():
             ws.cell(row=counter, column=22, value=c.nombre)
             ws.cell(row=counter, column=23, value=c.get_giro_display())
             ws.cell(row=counter, column=24, value=c.descripcion)
+            ws.cell(row=counter, column=25, value='Sí' if c.vende_alcohol else 'No')
         counter+=1
 
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
