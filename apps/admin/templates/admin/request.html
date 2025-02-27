@@ -676,10 +676,12 @@
                                             </a>
                                         </td>
                                         <td>
+                                        {% if user.is_superuser %}
                                             <a class="ms-3 del-place" data-uuid="{{ sp.uuid }}" data-type="place"
                                                 role="button">
                                                 <i class="fas fa-xmark fa-lg text-danger"></i>
                                             </a>
+                                        {% endif %} 
                                         </td>
                                         {% elif sp.caja_pago %}
                                         <td colspan="3">
