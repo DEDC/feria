@@ -3,7 +3,8 @@ from decimal import Decimal
 
 from apps.admin.views import place_concept_alcohol
 from apps.places.models import Lugares, HistorialTapy, ProductosExtras
-from apps.tpay.tools import consulta_linea_captura, generarToken, status_linea_captura, validar_linea_captura
+from apps.tpay.tools import consulta_linea_captura, generarToken, status_linea_captura, validar_linea_captura, \
+    escribir_log
 from feria import settings
 
 
@@ -115,3 +116,22 @@ def process_licencia():
                 p.tramite_id = place_concept_alcohol[p.tramite_id.__str__()][0]
                 p.tpay_alcohol = True
                 p.save()
+
+
+def process_validated_pay():
+    lugares = Lugares.objects.filter(tpay_pagado=False).exclude(tpay_folio=None)
+    escribir_log(f"Total: {lugares.count()}", "logs/process_validated.log")
+    for l in lugares:
+        data = json.dumps({
+            "orderId": "2025-{}".format(l.tpay_folio),
+            "sistemaId": 21,
+            "proyecto": settings.TPAY_PROJECT,
+            "monto": int(l.precio)
+        }, separators=(",", ":")
+        )
+        status = status_linea_captura("", data)
+        escribir_log(f"{status}", "logs/process_validated.log")
+        if status["codigoEstatus"] == 0:
+            # Obtener el PDF usando requests
+            l.tpay_service = True
+            l.save()

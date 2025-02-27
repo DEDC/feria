@@ -220,18 +220,17 @@ class TpayLineaCapturaView(APIView):
                 }, separators=(",", ":")
                 )
                 status = status_linea_captura("", data)
-                print(status)
-                if status["codigoEstatus"] == 0:
-                    lugar.recibo_url = status["data"]["urlReciboPago"]["_text"]
-                    lugar.tpay_status = status
-                    lugar.tpay_pagado = True
-                    lugar.tpay_service = True
-                    lugar.save()
-                    return Response(data={"pagado": True})
-                elif status["codigoEstatus"] == 1:
-                    return Response(data={"proceso": True})
-                    # pass
 
+                try:
+                    if status["respuesta"] == True:
+                        if status["codigoEstatus"] == 0:
+                            lugar.tpay_val = status
+                            lugar.tpay_pagado = True
+                            lugar.tpay_service = True
+                            lugar.save()
+                            return Response(data={"pagado": True})
+                except Exception as e:
+                    escribir_log(f"{e}", "logs/tpay_linea.log")
                 HistorialTapy.objects.create(
                     lugar=lugar, data_tpay=lugar.data_tpay, tpay_folio=lugar.tpay_folio
                 )
