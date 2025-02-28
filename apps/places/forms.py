@@ -53,3 +53,6 @@ class ShopForm(forms.ModelForm):
         super(ShopForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs.setdefault('class', 'form-control')
+        new_choices = self.fields['giro'].choices
+        new_choices.remove(('ambulante', 'Comercio Ambulante'))
+        self.fields['giro'].choices = new_choices
