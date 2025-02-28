@@ -606,7 +606,7 @@
                         {% for sp in selected_places %}
                             <tr>
                                 <td>
-                                {% if not sp.tpay_pagado and not sp.caja_pago %}
+                                {% if not sp.tpay_pagado and not sp.caja_pago and not sp.transfer_pago %}
                                     <input class="form-check-input config-chk" type="checkbox"
                                        value="{{ sp.uuid }}"
                                        data-m2="{{ sp.m2 }}" data-folio="{{ sp.folio }}"/>
@@ -618,7 +618,7 @@
                                 <td>{{ sp.m2 }}</td>
                                 <td>${{ sp.precio|intcomma }}</td>
                                 <td>{{ sp.fecha_reg }}</td>
-                                {% if not sp.tpay_pagado and not sp.caja_pago %}
+                                {% if not sp.tpay_pagado and not sp.caja_pago and not sp.transfer_pago %}
                                     <td>
 {#                                    {% if sp.extras.all.count > 0 %}#}
 {#                                        <p class="note note-warning mb-4">#}
@@ -626,7 +626,7 @@
 {#                                            ya que tiene selecionado una licencia de alcohol.#}
 {#                                        </p>#}
 {#                                    {% else %}#}
-                                        {% if not sp.tpay_pagado and not sp.caja_pago and sp.tramite_id != 0 %}
+                                        {% if not sp.tpay_pagado and not sp.caja_pago and not sp.transfer_pago and sp.tramite_id != 0 %}
                                             <button class="btn btn-rounded btn-success tpay-place" data-uuid="{{ sp.uuid }}">
                                                 Pagar
                                             </button>
@@ -661,6 +661,8 @@
                                     <td>
                                         {% if sp.caja_pago %}
                                             <span class="badge rounded-pill badge-success">Pagado en caja</span>
+                                        {% elif sp.transfer_pago %}
+                                            <span class="badge rounded-pill badge-success">Pagado con Transferencia</span>
                                         {% else %}
                                             <span class="badge rounded-pill badge-success">Pagado en Tpay</span>
                                             <a type="button" data-url="{{ sp.recibo_url }}" data-uuid="{{ sp.uuid}}"

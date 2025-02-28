@@ -101,7 +101,7 @@ def get_requests_report():
 def get_report():
     wb = load_workbook('static/docs/layout_feria.xlsx')
     ws = wb.get_sheet_by_name('LOCALES')
-    places = Lugares.objects.all().order_by('solicitud__folio', 'zona')
+    places = Lugares.objects.filter(Q(tpay_pagado=True) | Q(caja_pago=True) | Q(transfer_pago=True)).order_by('solicitud__folio', 'zona')
     counter = 4
     for p in places:
         ws.cell(row=counter, column=1).value = p.folio
@@ -132,6 +132,12 @@ def get_report():
                 status = payment.get_tipo_display()
             ws.cell(row=counter, column=13).value = 'Pagado'
             ws.cell(row=counter, column=14).value = "CAJA"
+            ws.cell(row=counter, column=15).value = p.fecha_mod.astimezone(zona_horaria).strftime("%Y-%m-%d") or 'No definido'
+            ws.cell(row=counter, column=16).value = p.fecha_mod.astimezone(zona_horaria).strftime("%H:%M:%S") or 'No definido'
+            ws.cell(row=counter, column=17).value = payment.validador if payment else 'No definido'
+        if p.transfer_pago:
+            ws.cell(row=counter, column=13).value = 'Pagado'
+            ws.cell(row=counter, column=14).value = "Transferencia"
             ws.cell(row=counter, column=15).value = p.fecha_mod.astimezone(zona_horaria).strftime("%Y-%m-%d") or 'No definido'
             ws.cell(row=counter, column=16).value = p.fecha_mod.astimezone(zona_horaria).strftime("%H:%M:%S") or 'No definido'
             ws.cell(row=counter, column=17).value = payment.validador if payment else 'No definido'
