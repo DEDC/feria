@@ -649,7 +649,7 @@
                                     {% for sp in selected_places  %}
                                     <tr>
                                         <td>
-                                        {% if not sp.tpay_descuento and not sp.caja_pago and not sp.tpay_pagado %}
+                                        {% if not sp.tpay_descuento and not sp.caja_pago and not sp.tpay_pagado and not sp.transfer_pago %}
                                             <input class="form-check-input config-chk" type="checkbox" value="{{ sp.uuid }}"
                                                 data-m2="{{ sp.m2 }}" data-folio="{{ sp.folio }}" />
                                         {% endif %} 
@@ -660,7 +660,7 @@
                                         <td>{{ sp.m2 }}</td>
                                         <td>${{ sp.precio|intcomma }}</td>
                                         <td>{{ sp.fecha_reg }}</td>
-                                        {% if not sp.tpay_pagado and not sp.caja_pago %}
+                                    {% if not sp.tpay_pagado and not sp.caja_pago and not sp.transfer_pago %}
                                         <td>
                                             <a href="{% url 'admin:download_receipt' object.uuid sp.uuid %}" 
                                                 type="button" class="btn btn-light btn-sm" data-mdb-ripple-init>
@@ -669,6 +669,13 @@
                                             </a>
                                         </td>
                                         <td>
+                                        {% if object.estatus == "validated-direct" %}
+                                            <a type="button" data-uuid="{{ sp.uuid }}" 
+                                                class="btn btn-light btn-sm aplicar-transferencia">
+                                                <i class="fas fa-refresh me-2"></i>
+                                                Aplicar Transferencia
+                                            </a>
+                                        {% endif %} 
                                             <a type="button" data-uuid="{{ sp.uuid }}" 
                                                 class="btn btn-light btn-sm aplicar-pago">
                                                 <i class="fas fa-upload me-2"></i>
@@ -683,15 +690,19 @@
                                             </a>
                                         {% endif %} 
                                         </td>
-                                        {% elif sp.caja_pago %}
+                                    {% elif sp.caja_pago %}
                                         <td colspan="3">
                                             <span class="badge rounded-pill badge-success">Pagado en caja</span>
                                         </td>
-                                        {% elif sp.tpay_pagado %}
+                                    {% elif sp.tpay_pagado %}
                                         <td colspan="3">
                                             <span class="badge rounded-pill badge-success">Pagado por TPAY</span>
                                         </td>
-                                        {% endif %}
+                                    {% elif sp.transfer_pago %}
+                                        <td colspan="3">
+                                            <span class="badge rounded-pill badge-success">Pagado por Transferencia</span>
+                                        </td>
+                                    {% endif %}
                                     </tr>
                                     {% endfor %}
                                 </tbody>

@@ -86,6 +86,11 @@ export const aplicarPago = async (uuid, uuid_place, data) => {
     return response;
 }
 
+export const aplicarTransferencia = async (uuid, uuid_place, data) => {
+    const response = await postAPICall(`/admin/solicitud/${uuid}/lugar/${uuid_place}/transfer`, data);
+    return response;
+}
+
 
 export const validateCURPService = async (curp) => {
     const response = await getAPICall(`/api/get-curp-service/${curp}`);

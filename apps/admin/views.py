@@ -735,13 +735,40 @@ def aplicar_pago_caja(request, uuid, uuid_place):
         place.save()
         places = request_.solicitud_lugar.filter(estatus='assign')
         validados = places.filter(caja_pago=True).count()
-        total_tpay = places.filter(tramite_id__gt=0).count()
+        total_tpay = places.count()
 
         if places.count() > 0 and validados == total_tpay:
             if request_.estatus == 'validated' or request_.estatus == 'validated-direct':
                 if not Pagos.objects.filter(solicitud=request_):
                     Pagos.objects.get_or_create(
                         solicitud=request_, usuario=request_.usuario, tipo='caja', pagado=True,
+                        validador=request_.usuario.get_full_name()
+                    )
+        return Response({"proceso": True})
+    except Exception as e:
+        return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([IsAuthenticated,])
+def aplicar_pago_transfer(request, uuid, uuid_place):
+    try:
+        registro = False
+        request_ = Solicitudes.objects.get(uuid=uuid)
+        place = Lugares.objects.get(uuid=uuid_place)
+        place.precio = request.POST.get('monto')
+        place.transfer_pago = True
+        place.save()
+        places = request_.solicitud_lugar.filter(estatus='assign')
+        validados = places.filter(transfer_pago=True).count()
+        total_tpay = places.count()
+
+        if places.count() > 0 and validados == total_tpay:
+            if request_.estatus == 'validated' or request_.estatus == 'validated-direct':
+                if not Pagos.objects.filter(solicitud=request_):
+                    Pagos.objects.get_or_create(
+                        solicitud=request_, usuario=request_.usuario, tipo='transferencia', pagado=True,
                         validador=request_.usuario.get_full_name()
                     )
         return Response({"proceso": True})

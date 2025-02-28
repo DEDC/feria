@@ -131,6 +131,7 @@ class Lugares(ControlInfo):
     tpay_folio = models.CharField(max_length=150, null=True, blank=True)
     tpay_pagado = models.BooleanField(default=False)
     caja_pago = models.BooleanField(default=False)
+    transfer_pago = models.BooleanField(default=False)
     caja_folio = models.CharField(max_length=150, null=True, blank=True)
     tpay_web = models.BooleanField(default=False)
     tpay_socket = models.BooleanField(default=False)

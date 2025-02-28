@@ -8,7 +8,7 @@ from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, Upda
                               DownloadTarjeton, UpdateParking, DownloadReceipt,
                               set_place_temp, unset_place_temp, set_place,
                               add_alcohol, add_terraza, add_big_terraza, delete_item, delete_place, add_descuento,
-                              aplicar_pago_caja)
+                              aplicar_pago_caja, aplicar_pago_transfer)
 app_name = 'admin'
 
 urlpatterns = [
@@ -33,6 +33,7 @@ urlpatterns = [
     path('solicitud/<uuid:uuid>/lugar/set', set_place),
     # products
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/pago', aplicar_pago_caja),
+    path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/transfer', aplicar_pago_transfer),
 
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/alcohol/agregar', add_alcohol),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/terraza/agregar', add_terraza),

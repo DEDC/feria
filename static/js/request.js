@@ -8,7 +8,7 @@ import {
     addBigTerraza,
     deleteItem,
     deletePlace,
-    addDescuento, statusPlace, consultaTpayPlace, webhookPlace, aplicarPago
+    addDescuento, statusPlace, consultaTpayPlace, webhookPlace, aplicarPago, aplicarTransferencia
 } from "../js/api/utilities.js";
 import {
     url_nave_1,
@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const delete_place = document.querySelectorAll('.del-place')
     const status_place = document.querySelectorAll('.status-place')
     const aplicar_pago = document.querySelectorAll('.aplicar-pago')
+    const aplicar_transfer = document.querySelectorAll('.aplicar-transferencia')
     const pdf_place = document.querySelectorAll('.pdf-place')
 
 
@@ -179,6 +180,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = new FormData();
                 data.append('folio', folio);
                 aplicarPago(request_uuid.value, element.dataset.uuid, data).then((resp) => {
+                    location.reload()
+                }).catch((error) => {
+                    console.log(error);
+                });
+            }
+        })
+    });
+
+    aplicar_transfer.forEach(element => {
+        element.addEventListener('click', async (e) => {
+            const {value: monto} = await Swal.fire({
+                title: "Ingrese la cantidad de aplicar a la transferencia",
+                input: "number",
+                inputLabel: "",
+                inputPlaceholder: "Ingrese el monto de pago",
+                inputAttributes: {
+                    maxlength: "150",
+                    autocapitalize: "off",
+                    autocorrect: "off"
+                }
+            });
+            if (monto) {
+                //Swal.fire(`Entered password: ${password}`);
+                const data = new FormData();
+                data.append('monto', monto);
+                aplicarTransferencia(request_uuid.value, element.dataset.uuid, data).then((resp) => {
                     location.reload()
                 }).catch((error) => {
                     console.log(error);
