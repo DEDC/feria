@@ -16,13 +16,13 @@ from num2words import num2words
 
 def generate_physical_document(request_):
     if request_.regimen_fiscal == 'moral':
-        f = open('static/docs/contrato_moral.docx', 'rb')
+        f = open('static/docs/contrato_moral_2025.docx', 'rb')
     else:
-        f = open('static/docs/contrato_fisica.docx', 'rb')
+        f = open('static/docs/contrato_fisica_2025.docx', 'rb')
 
     document = Document(f)
     buffer = io.BytesIO()
-    places = request_.solicitud_lugar.filter(fecha_reg__year=2024, estatus='assign')
+    places = request_.solicitud_lugar.filter(fecha_reg__year=2025, estatus='assign')
     
     price_places = places.aggregate(price=Sum('precio'))['price'] or 0
     price_extras = places.aggregate(price=Sum('extras__precio'))['price'] or 0
@@ -45,6 +45,7 @@ def generate_physical_document(request_):
         '<town>': request_.municipio,
         '<estate>': request_.get_estado_display(),
         '<rfc>': rfc,
+        '<curp>': request_.curp_txt.upper() if request_.curp_txt else 'NO ESPECIFICADO',
         '<price_no_iva>': intcomma(total_prices-price_iva),
         '<price_no_iva_text>': num2words(total_prices-price_iva, lang='es').upper(),
         '<price_iva>': intcomma(price_iva),
