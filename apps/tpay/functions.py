@@ -103,19 +103,17 @@ def updateFolioHistorial():
         hist.save()
 
 
-def process_licencia():
-    licencias = ProductosExtras.objects.filter(tipo='licencia_alcohol')
-    for lic in licencias:
-        p = lic.lugar
-        if not p.tpay_alcohol:
-            if place_concept_alcohol[p.tramite_id.__str__()][0] != 0:
-                lic.precio_tpay = p.precio
-                lic.tramite_id = p.tramite_id
-                lic.save()
-                p.precio = Decimal(place_concept_alcohol[p.tramite_id.__str__()][1])
-                p.tramite_id = place_concept_alcohol[p.tramite_id.__str__()][0]
-                p.tpay_alcohol = True
-                p.save()
+def aplicar_licencia(folio):
+    lugar: Lugares = Lugares.objects.filter(folio=folio).first()
+    if lugar:
+        ProductosExtras.objects.create(
+            lugar=lugar, tipo='licencia_alcohol', m2=lugar.m2, to_places=lugar.folio,
+            precio_tpay=lugar.precio, tramite_id=lugar.tramite_id
+        )
+        lugar.precio = Decimal(place_concept_alcohol[lugar.tramite_id.__str__()][1])
+        lugar.tramite_id = place_concept_alcohol[lugar.tramite_id.__str__()][0]
+        lugar.tpay_alcohol = True
+        lugar.save()
 
 
 def process_validated_pay():
