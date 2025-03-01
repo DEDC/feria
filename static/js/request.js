@@ -37,9 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const reload_places = document.querySelector('#reload-places')
     const btn_preselect = document.querySelector('#preselection')
     const btn_select = document.querySelector('#selection')
+    const lugarId = document.querySelector('#lugarId')
     const timer = new easytimer.Timer();
     const modal_select = document.querySelector('#modal-timer');
+    const modal_transfer = document.querySelector('#modal-transfer');
     const instance_select_modal = new mdb.Modal(modal_select)
+    let instance_modal_transfer = null;
     const request_uuid = document.querySelector('#request-uuid')
     const config_chks = document.querySelectorAll('.config-chk')
     const add_alcohol = document.querySelector('#add-alcohol')
@@ -51,6 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const aplicar_pago = document.querySelectorAll('.aplicar-pago')
     const aplicar_transfer = document.querySelectorAll('.aplicar-transferencia')
     const pdf_place = document.querySelectorAll('.pdf-place')
+
+    if(modal_transfer){
+
+        instance_modal_transfer = new mdb.Modal(modal_transfer)
+    }
 
 
     pdf_place.forEach(element => {
@@ -190,27 +198,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     aplicar_transfer.forEach(element => {
         element.addEventListener('click', async (e) => {
-            const {value: monto} = await Swal.fire({
-                title: "Ingrese la cantidad de aplicar a la transferencia",
-                input: "number",
-                inputLabel: "",
-                inputPlaceholder: "Ingrese el monto de pago",
-                inputAttributes: {
-                    maxlength: "150",
-                    autocapitalize: "off",
-                    autocorrect: "off"
-                }
-            });
-            if (monto) {
-                //Swal.fire(`Entered password: ${password}`);
-                const data = new FormData();
-                data.append('monto', monto);
-                aplicarTransferencia(request_uuid.value, element.dataset.uuid, data).then((resp) => {
-                    location.reload()
-                }).catch((error) => {
-                    console.log(error);
-                });
-            }
+            lugarId.value = element.dataset.uuid;
+            instance_modal_transfer.show();
+            // const {value: monto} = await Swal.fire({
+            //     title: "Ingrese la cantidad de aplicar a la transferencia",
+            //     input: "number",
+            //     inputLabel: "",
+            //     inputPlaceholder: "Ingrese el monto de pago",
+            //     inputAttributes: {
+            //         maxlength: "150",
+            //         autocapitalize: "off",
+            //         autocorrect: "off"
+            //     }
+            // });
+            // if (monto) {
+            //     //Swal.fire(`Entered password: ${password}`);
+            //     var form = $('form')[2]; // You need to use standard javascript object here
+            //     console.log(form);
+            //     var formData = new FormData(form);
+            //     aplicarTransferencia(request_uuid.value, element.dataset.uuid, data).then((resp) => {
+            //         location.reload()
+            //     }).catch((error) => {
+            //         console.log(error);
+            //     });
+            // }
         })
     });
 

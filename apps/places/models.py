@@ -138,6 +138,10 @@ class Lugares(ControlInfo):
     tpay_service = models.BooleanField(default=False)
     tpay_descuento = models.BooleanField(default=False)
     tpay_alcohol = models.BooleanField(default=False)
+    observacion = models.TextField(null=True, blank=True)
+    factura = models.FileField('Factura',
+                                         upload_to=UploadTo('Factura', 'solicitudes'),
+                                         validators=[validate_pdf_file], null=True, blank=True)
 
 
 class ProductosExtras(ControlInfo):

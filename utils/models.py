@@ -27,6 +27,7 @@ class ControlInfo(models.Model):
 
 
 class UploadTo:
+
   def __init__(self, name, folder_name):
     self.name = name
     self.folder_name = folder_name

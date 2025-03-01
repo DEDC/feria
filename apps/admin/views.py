@@ -297,6 +297,24 @@ class Request(AdminStaffPermissions, DetailView):
                     messages.success(request, 'Se confirma el pago en efectivo')
         elif 'transfer-paid' in request.POST:
             if request_.estatus == 'validated-direct':
+                place = Lugares.objects.get(uuid=request.POST.get('lugar'))
+                place.precio = request.POST.get('monto')
+                place.observacion = request.POST.get('descripcion')
+                if request.FILES.get("factura"):
+                    place.factura = request.FILES.get("factura")
+                place.transfer_pago = True
+                place.save()
+                places = request_.solicitud_lugar.filter(estatus='assign')
+                validados = places.filter(transfer_pago=True).count()
+                total_tpay = places.count()
+
+                if places.count() > 0 and validados == total_tpay:
+                    if request_.estatus == 'validated' or request_.estatus == 'validated-direct':
+                        if not Pagos.objects.filter(solicitud=request_):
+                            Pagos.objects.get_or_create(
+                                solicitud=request_, usuario=request_.usuario, tipo='transferencia', pagado=True,
+                                validador=request_.usuario.get_full_name()
+                            )
                 messages.success(request, 'Se confirma para que el usuario pueda realizar los pagos')
         if 'validated' in request.POST:
 
