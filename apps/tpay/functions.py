@@ -133,7 +133,7 @@ def process_validated_pay():
             )
             status = status_linea_captura("", data)
             escribir_log(f"{status}", "logs/process_validated.log")
-            # print(status)
+            print(status)
             if status["respuesta"] == True:
                 if status["codigoEstatus"] != 0:
                     # Obtener el PDF usando requests
