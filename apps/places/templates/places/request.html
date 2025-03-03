@@ -620,7 +620,7 @@
                                 <td>${{ sp.precio|intcomma }}</td>
                                 <td>{{ sp.fecha_reg }}</td>
                                 {% if not sp.tpay_pagado and not sp.caja_pago and not sp.transfer_pago %}
-                                    {% if object.estatus == "validated" or object.estatus == "validated-direct" %}
+                                    {% if object.estatus == "validatedx" or object.estatus == "validated-directx" %}
                                         <td>
                                             {#                                    {% if sp.extras.all.count > 0 %}#}
                                             {#                                        <p class="note note-warning mb-4">#}
@@ -660,6 +660,12 @@
                                                 {% endif %}
                                             {% endif %}
 
+                                        </td>
+                                    {% else %}
+                                        <td colspan="2">
+                                        <p class="note note-warning mt-4">
+                                            Por el momento esta deshabilitado el pago en linea, sera habilitado el dia Martes 04 de Marzo
+                                        </p>
                                         </td>
                                     {% endif %}
                                 {% else %}
