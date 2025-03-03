@@ -133,14 +133,14 @@ def process_validated_pay():
             )
             status = status_linea_captura("", data)
             escribir_log(f"{status}", "logs/process_validated.log")
-            print(status)
-            if status["respuesta"] == True:
-                if status["codigoEstatus"] != 0:
+            # print(status)
+            if status["respuesta"] == False:
+                # if status["codigoEstatus"] != 0:
                     # Obtener el PDF usando requests
                     # HistorialTapy.objects.filter(lugar=l).delete()
                     # l.delete()
-                    print(status)
-                    process += 1
+                print(status)
+                process += 1
         else:
             # l.delete()
             print("Eliminado sin tpay")
