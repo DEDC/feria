@@ -299,37 +299,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     if (btn_preselect) {
-        btn_preselect.addEventListener('click', (e) => {
+        btn_preselect.addEventListener('click', (e) => {            
             modal_shown = true
             e.preventDefault()
             const data = new FormData();
             let places = document.querySelectorAll('td.selected')
-            places.forEach(element => {
-                data.append('places', element.dataset.uuid);
-            });
-            setPlaceTemp(request_uuid.value, data, current_zone).then((resp) => {
-                console.log(resp);
-                if (resp.data.status_code == 'saved') {
-                    //instance_select_modal.show()
-                    const data = new FormData();
-                    let places = document.querySelectorAll('td.selected')
-                    places.forEach(element => {
-                        data.append('places', element.dataset.uuid);
-                    });
-                    setPlace(request_uuid.value, data).then((resp) => {
-                        console.log(resp)
-                    }).then(() => {
-                        location.reload()
-                    }).catch((error) => {
-                        console.log(error);
-                    });
-                }
-                else {
-                    //mdb.Alert.getInstance(document.getElementById('alert-notplaces')).show();
-                }
-            }).catch((error) => {
-                console.log(error);
-            });
+            if (places.length <= 3 ){
+                places.forEach(element => {
+                    data.append('places', element.dataset.uuid);
+                });
+                setPlaceTemp(request_uuid.value, data, current_zone).then((resp) => {
+                    console.log(resp);
+                    if (resp.data.status_code == 'saved') {
+                        //instance_select_modal.show()
+                        const data = new FormData();
+                        let places = document.querySelectorAll('td.selected')
+                        places.forEach(element => {
+                            data.append('places', element.dataset.uuid);
+                        });
+                        setPlace(request_uuid.value, data).then((resp) => {
+                            console.log(resp)
+                        }).then(() => {
+                            location.reload()
+                        }).catch((error) => {
+                            console.log(error);
+                        });
+                    }
+                    else {
+                        //mdb.Alert.getInstance(document.getElementById('alert-notplaces')).show();
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
+            } else {
+                Swal.fire({
+                    title: "Selección de Lugares",
+                    text: "Solo puede seleccionar como máximo 3 lugares",
+                    icon: "warning"
+                });
+            }
         });
     }
 
