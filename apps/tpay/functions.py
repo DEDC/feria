@@ -143,8 +143,10 @@ def process_validated_pay():
                 print(status)
                 process += 1
         else:
-            l.delete()
             print("Eliminado sin tpay")
+            HistorialTapy.objects.filter(lugar=l).delete()
+            ProductosExtras.objects.filter(lugar=l).delete()
+            l.delete()
             process_b += 1
 
     print(f"Elminados con tpay: {process}")
