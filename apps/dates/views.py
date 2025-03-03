@@ -230,7 +230,7 @@ class TpayLineaCapturaView(APIView):
                             lugar.save()
                             return Response(data={"pagado": True})
                 except Exception as e:
-                    escribir_log(f"{e}", "logs/tpay_linea.log")
+                    escribir_log(f"{e}", "logs/tpay_error.log")
                 HistorialTapy.objects.create(
                     lugar=lugar, data_tpay=lugar.data_tpay, tpay_folio=lugar.tpay_folio
                 )

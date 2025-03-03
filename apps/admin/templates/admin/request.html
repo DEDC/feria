@@ -531,7 +531,7 @@
                         {% endif %}
                     </ul>
                 </div>
-                {% if object.estatus == 'validated-direct' or object.estatus == 'validated' %}
+                {% if object and object.comercio %}
                     {% if not payment and object.estatus == 'validated-direct' %}
                     <div data-mdb-alert-init="" class="alert fade alert-success alert-fixed" id="alert-success" role="alert"
                         data-mdb-color="success" data-mdb-position="top-center" data-mdb-stacking="true"

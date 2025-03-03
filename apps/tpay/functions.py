@@ -117,21 +117,34 @@ def aplicar_licencia(folio):
 
 
 def process_validated_pay():
-    lugares = Lugares.objects.filter(tpay_pagado=False).exclude(tpay_folio=None)
+    lugares = Lugares.objects.filter(caja_pago=False, tpay_pagado=False, transfer_pago=False).exclude(usuario_id=1711)
     escribir_log(f"Total: {lugares.count()}", "logs/process_validated.log")
+    process = 0
+    process_b = 0
+    print(f"Total: {lugares.count()}")
     for l in lugares:
-        data = json.dumps({
-            "orderId": "2025-{}".format(l.tpay_folio),
-            "sistemaId": 21,
-            "proyecto": settings.TPAY_PROJECT,
-            "monto": int(l.precio)
-        }, separators=(",", ":")
-        )
-        status = status_linea_captura("", data)
-        escribir_log(f"{status}", "logs/process_validated.log")
-        print(status)
-        if status["respuesta"] == True:
-            if status["codigoEstatus"] == 0:
-                # Obtener el PDF usando requests
-                l.tpay_service = True
-                l.save()
+        if l.data_tpay:
+            data = json.dumps({
+                "orderId": "2025-{}".format(l.tpay_folio),
+                "sistemaId": 21,
+                "proyecto": settings.TPAY_PROJECT,
+                "monto": int(l.precio)
+            }, separators=(",", ":")
+            )
+            status = status_linea_captura("", data)
+            escribir_log(f"{status}", "logs/process_validated.log")
+            # print(status)
+            if status["respuesta"] == True:
+                if status["codigoEstatus"] != 0:
+                    # Obtener el PDF usando requests
+                    # HistorialTapy.objects.filter(lugar=l).delete()
+                    # l.delete()
+                    print(status)
+                    process += 1
+        else:
+            # l.delete()
+            print("Eliminado sin tpay")
+            process_b += 1
+
+    print(f"Elminados con tpay: {process}")
+    print(f"Elminados: {process_b}")

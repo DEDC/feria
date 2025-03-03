@@ -53,8 +53,8 @@
 
     </style>
     {% if object.data_tpay %}
-{#        <script async defer src="{{ tpay_ruta }}api/v1/component/js/orden?clientid={{ tpay_apikey }}"></script>#}
-{#        <script async defer src="{{ tpay_ruta }}api/v1/component/js/object?clientid={{ tpay_apikey }}"></script>#}
+        {#        <script async defer src="{{ tpay_ruta }}api/v1/component/js/orden?clientid={{ tpay_apikey }}"></script>#}
+        {#        <script async defer src="{{ tpay_ruta }}api/v1/component/js/object?clientid={{ tpay_apikey }}"></script>#}
         <script async defer src="{% url "tpay-js" 1 %}"></script>
         <script async defer src="{% url "tpay-js" 2 %}"></script>
         <script src="https://code.jquery.com/jquery-3.7.1.js"
@@ -94,13 +94,13 @@
                                 'X-CSRFToken': csrftoken  // Se incluye el token CSRF
                             }
                         })
-                        .then(response => {
-                            location.reload();
-                            console.log('Actualización exitosa:', response.data);
-                        })
-                        .catch(error => {
-                            console.error('Error en la actualización:', error);
-                        });
+                            .then(response => {
+                                location.reload();
+                                console.log('Actualización exitosa:', response.data);
+                            })
+                            .catch(error => {
+                                console.error('Error en la actualización:', error);
+                            });
                     }
 
                     // Procesar la respuesta
@@ -452,18 +452,18 @@
                     {% endif %}
                 </div>
                 <!-- Final Bloque Comercio -->
-                {% if object.estatus == "validated" or object.estatus == "validated-direct" %}
+                {% if object and object.comercio %}
                     <!-- Mensaje Provisional -->
-                    <div class="alert alert-dismissible fade show" role="alert" data-mdb-color="success"><i
-                            class="fas fa-check-circle me-3"></i>Su Solicitud con folio <b>{{ object.folio }}</b> ha
-                        sido
-                        validada, a partir del lunes 24 de febrero del presente año podrá seleccionar el/los espacios
-                        que
-                        desea
-                        adquirir en esta misma plataforma.
-                        <button type="button" class="btn-close" data-mdb-dismiss="alert"
-                                aria-label="Close"></button>
-                    </div>
+                    {#                    <div class="alert alert-dismissible fade show" role="alert" data-mdb-color="success"><i#}
+                    {#                            class="fas fa-check-circle me-3"></i>Su Solicitud con folio <b>{{ object.folio }}</b> ha#}
+                    {#                        sido#}
+                    {#                        validada, a partir del lunes 24 de febrero del presente año podrá seleccionar el/los espacios#}
+                    {#                        que#}
+                    {#                        desea#}
+                    {#                        adquirir en esta misma plataforma.#}
+                    {#                        <button type="button" class="btn-close" data-mdb-dismiss="alert"#}
+                    {#                                aria-label="Close"></button>#}
+                    {#                    </div>#}
                     <!-- Final Mensaje Provisional -->
 
                     <!-- Bloque selección de lugares -->
@@ -525,9 +525,9 @@
                             <button id="z-d" type="button" class="btn btn-light">Zona D<i
                                     class="fas fa-arrows-rotate ms-2"></i></button>
                             <button id="s-t" type="button" class="btn btn-light">Sabor a Tabasco<i
-                                class="fas fa-arrows-rotate ms-2"></i></button>
+                                    class="fas fa-arrows-rotate ms-2"></i></button>
                             <button id="teatro" type="button" class="btn btn-light">Teatro al aire libre<i
-                                class="fas fa-arrows-rotate ms-2"></i></button>
+                                    class="fas fa-arrows-rotate ms-2"></i></button>
                         </div>
                         <div class="shadow-4 bg-white rounded-5 p-4 mb-4">
                             <input type="hidden" name="limit_places" value="{{ object.cantidad_espacios }}">
@@ -544,18 +544,19 @@
                     {% endif %}
                 {% endif %}
                 {% if object.estatus == "rejected" %}
-                <!-- Bloque de solicitud rechazada -->
-                <div class="alert" role="alert" data-mdb-color="danger" data-mdb-alert-init>
-                    <h4 class="alert-heading"><i class="fas fa-times-circle me-3"></i> Solicitud Rechazada</h4>
-                    <hr>
-                    <p>
-                        Su solicitud ha sido rechazada por el validador.
-                        {% if object.validaciones.last.comentarios %}
-                        <br>
-                        Estas son las razones por las que su Solicitud fue rechazada: <b>{{object.validaciones.last.comentarios}}</b>
-                    {% endif %}
-                    </p>
-                </div>
+                    <!-- Bloque de solicitud rechazada -->
+                    <div class="alert" role="alert" data-mdb-color="danger" data-mdb-alert-init>
+                        <h4 class="alert-heading"><i class="fas fa-times-circle me-3"></i> Solicitud Rechazada</h4>
+                        <hr>
+                        <p>
+                            Su solicitud ha sido rechazada por el validador.
+                            {% if object.validaciones.last.comentarios %}
+                                <br>
+                                Estas son las razones por las que su Solicitud fue rechazada:
+                                <b>{{ object.validaciones.last.comentarios }}</b>
+                            {% endif %}
+                        </p>
+                    </div>
                 {% endif %}
                 {% if selected_places and tpay_activo %}
                     <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
@@ -594,7 +595,7 @@
                             <th scope="col">M2</th>
                             <th scope="col">Precio</th>
                             <th scope="col">Fecha de asignación</th>
-                            {% if not payment %}
+                            {% if not payment and object.estatus == "validated" or object.estatus == "validated-direct" %}
                                 <th>Pagar</th>
                                 <th>Eliminar</th>
                             {% else %}
@@ -606,11 +607,11 @@
                         {% for sp in selected_places %}
                             <tr>
                                 <td>
-                                {% if not sp.tpay_pagado and not sp.caja_pago and not sp.transfer_pago %}
-                                    <input class="form-check-input config-chk" type="checkbox"
-                                       value="{{ sp.uuid }}"
-                                       data-m2="{{ sp.m2 }}" data-folio="{{ sp.folio }}"/>
-                                {% endif %}
+                                    {% if not sp.tpay_pagado and not sp.caja_pago and not sp.transfer_pago %}
+                                        <input class="form-check-input config-chk" type="checkbox"
+                                               value="{{ sp.uuid }}"
+                                               data-m2="{{ sp.m2 }}" data-folio="{{ sp.folio }}"/>
+                                    {% endif %}
                                 </td>
                                 <th scope="row">{{ sp.folio }}</th>
                                 <td>{{ sp.nombre }}</td>
@@ -619,44 +620,48 @@
                                 <td>${{ sp.precio|intcomma }}</td>
                                 <td>{{ sp.fecha_reg }}</td>
                                 {% if not sp.tpay_pagado and not sp.caja_pago and not sp.transfer_pago %}
-                                    <td>
-{#                                    {% if sp.extras.all.count > 0 %}#}
-{#                                        <p class="note note-warning mb-4">#}
-{#                                            Este local podra ser pagado hasta el <b>miercoles 26 de Febrero</b>,#}
-{#                                            ya que tiene selecionado una licencia de alcohol.#}
-{#                                        </p>#}
-{#                                    {% else %}#}
-                                        {% if not sp.tpay_pagado and not sp.caja_pago and not sp.transfer_pago and sp.tramite_id != 0 %}
-                                            <button class="btn btn-rounded btn-success tpay-place" data-uuid="{{ sp.uuid }}">
-                                                Pagar
-                                            </button>
-                                        {% else %}
-                                            <span class="badge rounded-pill badge-success">Pagado</span>
-                                        {% endif %}
-{#                                    {% endif %}#}
-                                    </td>
-                                    <td>
-                                    {% if sp.extras.all.count > 0 %}
-
-                                    {% else %}
-                                        {% if not sp.tpay_pagado and not sp.caja_pago and sp.tramite_id != 0 %}
-                                            <a class="ms-3 del-place" data-uuid="{{ sp.uuid }}"
-                                               data-type="place"
-                                               role="button">
-                                                <i class="fas fa-xmark fa-lg text-danger"></i>
-                                            </a>
-                                        {% else %}
-                                            {% if sp.tpay_pagado %}
-                                            	<a type="button" data-url="{{ sp.recibo_url }}" data-uuid="{{ sp.uuid}}"
-                                                    class="btn btn-light btn-sm pdf-place">
-                                                    <i class="fas fa-download me-2"></i>
-                                                    Descargar recibo
-                                                </a>
+                                    {% if object.estatus == "validated" or object.estatus == "validated-direct" %}
+                                        <td>
+                                            {#                                    {% if sp.extras.all.count > 0 %}#}
+                                            {#                                        <p class="note note-warning mb-4">#}
+                                            {#                                            Este local podra ser pagado hasta el <b>miercoles 26 de Febrero</b>,#}
+                                            {#                                            ya que tiene selecionado una licencia de alcohol.#}
+                                            {#                                        </p>#}
+                                            {#                                    {% else %}#}
+                                            {% if not sp.tpay_pagado and not sp.caja_pago and not sp.transfer_pago and sp.tramite_id != 0 %}
+                                                <button class="btn btn-rounded btn-success tpay-place"
+                                                        data-uuid="{{ sp.uuid }}">
+                                                    Pagar
+                                                </button>
+                                            {% else %}
+                                                <span class="badge rounded-pill badge-success">Pagado</span>
                                             {% endif %}
-                                        {% endif %}
-                                    {% endif %}
+                                            {#                                    {% endif %}#}
+                                        </td>
+                                        <td>
+                                            {% if sp.extras.all.count > 0 %}
 
-                                    </td>
+                                            {% else %}
+                                                {% if not sp.tpay_pagado and not sp.caja_pago and sp.tramite_id != 0 %}
+                                                    <a class="ms-3 del-place" data-uuid="{{ sp.uuid }}"
+                                                       data-type="place"
+                                                       role="button">
+                                                        <i class="fas fa-xmark fa-lg text-danger"></i>
+                                                    </a>
+                                                {% else %}
+                                                    {% if sp.tpay_pagado %}
+                                                        <a type="button" data-url="{{ sp.recibo_url }}"
+                                                           data-uuid="{{ sp.uuid }}"
+                                                           class="btn btn-light btn-sm pdf-place">
+                                                            <i class="fas fa-download me-2"></i>
+                                                            Descargar recibo
+                                                        </a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endif %}
+
+                                        </td>
+                                    {% endif %}
                                 {% else %}
                                     <td>
                                         {% if sp.caja_pago %}
@@ -665,8 +670,8 @@
                                             <span class="badge rounded-pill badge-success">Pagado con Transferencia</span>
                                         {% else %}
                                             <span class="badge rounded-pill badge-success">Pagado en Tpay</span>
-                                            <a type="button" data-url="{{ sp.recibo_url }}" data-uuid="{{ sp.uuid}}"
-                                                class="btn btn-light btn-sm pdf-place">
+                                            <a type="button" data-url="{{ sp.recibo_url }}" data-uuid="{{ sp.uuid }}"
+                                               class="btn btn-light btn-sm pdf-place">
                                                 <i class="fas fa-download me-2"></i>
                                                 Descargar recibo
                                             </a>
@@ -701,7 +706,7 @@
                                             el/los espacio(s)
                                             ({{ px.to_places }}):
                                         </h5>
-{#                                        <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>#}
+                                        {#                                        <h5 class="m-0 ms-5">${{ px.precio|intcomma }}</h5>#}
                                         <h5 class="m-0 ms-5"></h5>
                                     {% endif %}
                                     {% if not payment %}
@@ -785,9 +790,11 @@
                                     <tr>
                                         <th class="bg-light" style="width: 40%;">Lugar</th>
                                         <td>Área de comercialización.
-Secretaría de Turismo y Desarrollo Económico. 
-Prolongación de paseo Tabasco No. 1504, Colonia Tabasco 2000. Villahermosa, Centro Tabasco. 
-Teléfono: 9933109750</td>
+                                            Secretaría de Turismo y Desarrollo Económico.
+                                            Prolongación de paseo Tabasco No. 1504, Colonia Tabasco 2000. Villahermosa,
+                                            Centro Tabasco.
+                                            Teléfono: 9933109750
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th class="bg-light" style="width: 40%;">Documento de Cita</th>
@@ -841,24 +848,25 @@ Teléfono: 9933109750</td>
                                 </table>
                             </div>
                         {% else %}
-{#                            <p class="note note-warning mt-4">#}
-{#                                A la espera del comprobante de pago en efectivo para liberar los documentos de#}
-{#                                descarga#}
-{#                            </p>#}
-{#                            <div class="d-flex justify-content-center">#}
-{#                                <button name="cash-paid"#}
-{#                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">#}
-{#                                    <i class="fas fa-money-bill-1 me-2"></i>#}
-{#                                    Pagado con efectivo#}
-{#                                </button>#}
-{#                                <button name="transfer-paid"#}
-{#                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">#}
-{#                                    <i class="fas fa-right-left me-2"></i>#}
-{#                                    Pagado con transferencia#}
-{#                                </button>#}
-{#                            </div>#}
+                            {#                            <p class="note note-warning mt-4">#}
+                            {#                                A la espera del comprobante de pago en efectivo para liberar los documentos de#}
+                            {#                                descarga#}
+                            {#                            </p>#}
+                            {#                            <div class="d-flex justify-content-center">#}
+                            {#                                <button name="cash-paid"#}
+                            {#                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">#}
+                            {#                                    <i class="fas fa-money-bill-1 me-2"></i>#}
+                            {#                                    Pagado con efectivo#}
+                            {#                                </button>#}
+                            {#                                <button name="transfer-paid"#}
+                            {#                                        class="btn btn-primary btn-lg btn-rounded shadow-0 mt-5 ms-5 w-50">#}
+                            {#                                    <i class="fas fa-right-left me-2"></i>#}
+                            {#                                    Pagado con transferencia#}
+                            {#                                </button>#}
+                            {#                            </div>#}
                             <p class="note note-info mb-4">
-                                En esta sección podrá descargar su contrato y otros documentos de acceso a partir del día de mañana.
+                                En esta sección podrá descargar su contrato y otros documentos de acceso a partir del
+                                día de mañana.
                                 Esté pendiente de su correo electrónico para su notificación.
                             </p>
                         {% endif %}
