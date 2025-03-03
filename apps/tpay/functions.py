@@ -138,6 +138,7 @@ def process_validated_pay():
                 # if status["codigoEstatus"] != 0:
                     # Obtener el PDF usando requests
                 HistorialTapy.objects.filter(lugar=l).delete()
+                ProductosExtras.objects.filter(lugar=l).delete()
                 l.delete()
                 print(status)
                 process += 1
