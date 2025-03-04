@@ -118,7 +118,7 @@ class Lugares(ControlInfo):
     uuid_place = models.UUIDField(editable=False, unique=True)
     estatus = models.CharField(max_length=20, choices=(('temp', 'Temporal'), ('assign', 'Asignado')), default='temp')
     zona = models.CharField(max_length=20, choices=(('z_a', 'Zona A'), ('z_b', 'Zona B'), ('z_c', 'Zona C'), ('z_d', 'Zona D'), ('n_1', 'Nave 1'), ('n_2', 'Nave 2'), ('n_3', 'Nave 3'), ('s_t', 'Sabor a Tab.'), ('teatro', 'Teatro al A. L.')), null=True)
-    precio = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    precio = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
     m2 = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     nombre = models.CharField(max_length=10, default='')
     recibo_url = models.TextField(null=True, blank=True)
@@ -152,7 +152,7 @@ class ProductosExtras(ControlInfo):
     m2 = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     to_places = models.TextField(default='')
     tramite_id = models.IntegerField(default=0)
-    precio_tpay = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    precio_tpay = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
 
 
 class Pagos(ControlInfo):

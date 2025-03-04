@@ -166,19 +166,19 @@ class Request(UserPermissions, DetailView):
         validados = places.filter(tpay_pagado=True).count()
         total_tpay = places.exclude(tramite_id=0).count()
         alcohol = ProductosExtras.objects.filter(lugar__in=places, tipo__in="licencia_alcohol")
-        if places.count() > 0:
-            if not self.request.user.citas.exists():
-                # assing date
-                assign = False
-                for d in dates:
-                    if assign: break
-                    for h in hours:
-                        assigned_dates = CitasAgendadas.objects.filter(fecha=d, hora=h)
-                        if assigned_dates.count() < settings.ATTENTION_MODULES:
-                            CitasAgendadas.objects.create(fecha=d, hora=h, usuario=self.request.user)
-                            assign = True
-                            messages.success(self.request, 'Cita asignada exitosamente.')
-                            break
+        # if places.count() > 0:
+        #     if not self.request.user.citas.exists():
+        #         # assing date
+        #         assign = False
+        #         for d in dates:
+        #             if assign: break
+        #             for h in hours:
+        #                 assigned_dates = CitasAgendadas.objects.filter(fecha=d, hora=h)
+        #                 if assigned_dates.count() < settings.ATTENTION_MODULES:
+        #                     CitasAgendadas.objects.create(fecha=d, hora=h, usuario=self.request.user)
+        #                     assign = True
+        #                     messages.success(self.request, 'Cita asignada exitosamente.')
+        #                     break
         context['total_places'] = places.aggregate(price=Sum('precio'))['price'] or 0
         context['total_extras'] = places.aggregate(price=Sum('extras__precio'))['price'] or 0
         context['total'] = context['total_extras'] + context['total_places']

@@ -565,6 +565,7 @@ class DownloadRequestsReport(AdminPermissions, RedirectView):
             print(e)
             return redirect('admin:main')
 
+
 class DownloadReceipt(AdminStaffPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
         try:
