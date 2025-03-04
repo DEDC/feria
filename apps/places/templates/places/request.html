@@ -623,7 +623,7 @@
                                 <td>${{ sp.precio|intcomma }}</td>
                                 <td>{{ sp.fecha_reg }}</td>
                                 {% if not sp.tpay_pagado and not sp.caja_pago and not sp.transfer_pago %}
-                                    {% if object.estatus == "validatedx" or object.estatus == "validated-directx" %}
+                                    {% if object.estatus == "validated" or object.estatus == "validated-direct" %}
                                         <td>
                                             {#                                    {% if sp.extras.all.count > 0 %}#}
                                             {#                                        <p class="note note-warning mb-4">#}
