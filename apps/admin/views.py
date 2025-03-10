@@ -1,4 +1,5 @@
 # Django
+import uuid
 from decimal import Decimal
 
 from django.views.generic import TemplateView, DetailView, UpdateView, RedirectView, ListView
@@ -807,19 +808,19 @@ class RegistroManualUbicacion(AdminStaffPermissions, DetailView):
             zona=self.request.POST.get("zona"), nombre=self.request.POST.get("nombre")
         ).first()
         if not lugar:
-            uuid_place = None
-            for p2 in places_dict[self.request.POST.get("zona")]['places']:
-                if int(p2['text']) == int(request.POST.get("nombre")):
-                    uuid_place = p2["uuid"]
-            if uuid_place:
-                Lugares.objects.create(
-                    estatus='assign', zona=self.request.POST.get("zona"), nombre=self.request.POST.get("nombre"),
-                    usuario=request_.usuario, solicitud=request_, m2=self.request.POST.get("m2"),
-                    precio=self.request.POST.get("precio"), uuid_place=uuid_place
-                )
-                messages.success(request, 'La ubicación ha sido asingada a la solicitud')
-            else:
-                messages.warning(request, 'La ubicación no se encuentra mapeada.')
+            # uuid_place = None
+            # for p2 in places_dict[self.request.POST.get("zona")]['places']:
+            #     if int(p2['text']) == int(request.POST.get("nombre")):
+            #         uuid_place = p2["uuid"]
+            # if uuid_place:
+            Lugares.objects.create(
+                estatus='assign', zona=self.request.POST.get("zona"), nombre=self.request.POST.get("nombre"),
+                usuario=request_.usuario, solicitud=request_, m2=self.request.POST.get("m2"),
+                precio=self.request.POST.get("precio"), uuid_place=str(uuid.uuid4())
+            )
+            messages.success(request, 'La ubicación ha sido asingada a la solicitud')
+            # else:
+            #     messages.warning(request, 'La ubicación no se encuentra mapeada.')
         else:
             messages.warning(request, 'La ubicación ya ha sido asingada a otro usuario.')
         return redirect('admin:request', request_.uuid)
