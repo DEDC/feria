@@ -561,7 +561,7 @@
                         </p>
                     </div>
                 {% endif %}
-                {% if selected_places and tpay_activo %}
+                {% if selected_places %}
                     <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
                          id="places">
                         <h4 class="mb-0 fw-bold">
@@ -623,7 +623,7 @@
                                 <td>${{ sp.precio|intcomma }}</td>
                                 <td>{{ sp.fecha_reg }}</td>
                                 {% if not sp.tpay_pagado and not sp.caja_pago and not sp.transfer_pago %}
-                                    {% if object.estatus == "validated" or object.estatus == "validated-direct" %}
+                                    {% if object.estatus == "validatedx" or object.estatus == "validated-directx" %}
                                         <td>
                                             {#                                    {% if sp.extras.all.count > 0 %}#}
                                             {#                                        <p class="note note-warning mb-4">#}
@@ -667,7 +667,7 @@
                                     {% else %}
                                         <td colspan="2">
                                         <p class="note note-warning mt-4">
-                                            Por el momento esta deshabilitado el pago en linea, sera habilitado el dia Martes 04 de Marzo
+                                            Por el momento esta deshabilitado el pago en linea, sera habilitado el dia Martes 11 de Marzo
                                         </p>
                                         </td>
                                     {% endif %}
