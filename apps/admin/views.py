@@ -816,7 +816,8 @@ class RegistroManualUbicacion(AdminStaffPermissions, DetailView):
             Lugares.objects.create(
                 estatus='assign', zona=self.request.POST.get("zona"), nombre=self.request.POST.get("nombre"),
                 usuario=request_.usuario, solicitud=request_, m2=self.request.POST.get("m2"),
-                precio=self.request.POST.get("precio"), uuid_place=str(uuid.uuid4())
+                precio=self.request.POST.get("precio"), uuid_place=str(uuid.uuid4()),
+                observacion=self.request.POST.get("observacion")
             )
             messages.success(request, 'La ubicación ha sido asingada a la solicitud')
             # else:
