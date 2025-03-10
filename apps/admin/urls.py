@@ -8,7 +8,7 @@ from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, Upda
                               DownloadTarjeton, UpdateParking, DownloadReceipt,
                               set_place_temp, unset_place_temp, set_place,
                               add_alcohol, add_terraza, add_big_terraza, delete_item, delete_place, add_descuento,
-                              aplicar_pago_caja, aplicar_pago_transfer)
+                              aplicar_pago_caja, aplicar_pago_transfer, RegistroManualUbicacion)
 app_name = 'admin'
 
 urlpatterns = [
@@ -18,6 +18,7 @@ urlpatterns = [
     path('citas', ListDates.as_view(), name='list_dates'),
     path('tarjetones', ListParking.as_view(), name='list_parking'),
     path('solicitud/<uuid:uuid>', Request.as_view(), name='request'),
+    path('solicitud/<uuid:uuid>/lugar', RegistroManualUbicacion.as_view(), name='ubicacion-manual'),
     path('solicitud/<uuid:uuid>/editar', UpdateRequest.as_view(), name='update_request'),
     path('comercio/<uuid:uuid>/editar', UpdateShop.as_view(), name='update_shop'),
     path('usuario/<int:pk>/editar', UpdateUser.as_view(), name='update_user'),

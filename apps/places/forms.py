@@ -5,6 +5,7 @@ from django.core.exceptions import NON_FIELD_ERRORS
 # places
 from apps.places.models import Solicitudes, Comercios, Estacionamiento
 
+
 class ParkingForm(forms.ModelForm):
     class Meta:
         model = Estacionamiento
@@ -20,6 +21,7 @@ class ParkingForm(forms.ModelForm):
         super(ParkingForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs.setdefault('class', 'form-control')
+
 
 class RequestForm(forms.ModelForm):
     class Meta:
@@ -37,6 +39,7 @@ class RequestForm(forms.ModelForm):
             if isinstance(visible.field, FileField):
                 visible.field.widget.attrs['accept'] = 'application/pdf'
             visible.field.widget.attrs.setdefault('class', 'form-control')
+
 
 class ShopForm(forms.ModelForm):
     class Meta:

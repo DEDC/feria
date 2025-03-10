@@ -223,7 +223,7 @@ class UpdateRequest(AdminStaffPermissions, SuccessMessageMixin, UpdateView):
     slug_url_kwarg = 'uuid'
 
     def get_success_url(self, *args, **kwargs):
-        return reverse_lazy('admin:update_request', kwargs={'uuid':self.object.uuid})
+        return reverse_lazy('admin:update_request', kwargs={'uuid': self.object.uuid})
 
 
 class UpdateShop(AdminStaffPermissions, SuccessMessageMixin, UpdateView):
@@ -793,3 +793,42 @@ def aplicar_pago_transfer(request, uuid, uuid_place):
         return Response({"proceso": True})
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class RegistroManualUbicacion(AdminStaffPermissions, DetailView):
+    template_name = 'admin/ubicacion_manual.html'
+    model = Solicitudes
+    slug_field = 'uuid'
+    slug_url_kwarg = 'uuid'
+
+    def post(self, request, *args, **kwargs):
+        request_ = self.get_object()
+        lugar = Lugares.objects.filter(
+            zona=self.request.POST.get("zona"), nombre=self.request.POST.get("nombre")
+        ).first()
+        if not lugar:
+            uuid_place = None
+            for p2 in places_dict[self.request.POST.get("zona")]['places']:
+                if int(p2['text']) == int(request.POST.get("nombre")):
+                    uuid_place = p2["uuid"]
+            if uuid_place:
+                Lugares.objects.create(
+                    estatus='assign', zona=self.request.POST.get("zona"), nombre=self.request.POST.get("nombre"),
+                    usuario=request_.usuario, solicitud=request_, m2=self.request.POST.get("m2"),
+                    precio=self.request.POST.get("precio"), uuid_place=uuid_place
+                )
+                messages.success(request, 'La ubicación ha sido asingada a la solicitud')
+            else:
+                messages.warning(request, 'La ubicación no se encuentra mapeada.')
+        else:
+            messages.warning(request, 'La ubicación ya ha sido asingada a otro usuario.')
+        return redirect('admin:request', request_.uuid)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # places = self.object.solicitud_lugar.filter(fecha_reg__year=2024, estatus='assign')pagado
+        context["zonas_list"] = [
+            ('z_a', 'Zona A'), ('z_b', 'Zona B'), ('z_c', 'Zona C'), ('z_d', 'Zona D'), ('n_1', 'Nave 1'),
+            ('n_2', 'Nave 2'), ('n_3', 'Nave 3'), ('s_t', 'Sabor a Tab.'), ('teatro', 'Teatro al A. L.')
+        ]
+        return context
