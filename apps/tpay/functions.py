@@ -117,7 +117,7 @@ def aplicar_licencia(folio):
 
 
 def process_validated_pay():
-    lugares = Lugares.objects.filter(caja_pago=False, tpay_pagado=False, transfer_pago=False).exclude(usuario_id=1711)
+    lugares = Lugares.objects.filter(caja_pago=False, tpay_pagado=False, transfer_pago=False).exclude(usuario_id=1711).exclude(solicitud_id=1177)
     escribir_log(f"Total: {lugares.count()}", "logs/process_validated.log")
     process = 0
     process_b = 0
@@ -137,16 +137,16 @@ def process_validated_pay():
             if status["respuesta"] == False:
                 # if status["codigoEstatus"] != 0:
                     # Obtener el PDF usando requests
-                HistorialTapy.objects.filter(lugar=l).delete()
-                ProductosExtras.objects.filter(lugar=l).delete()
-                l.delete()
+                # HistorialTapy.objects.filter(lugar=l).delete()
+                # ProductosExtras.objects.filter(lugar=l).delete()
+                # l.delete()
                 print(status)
                 process += 1
         else:
             print("Eliminado sin tpay")
-            HistorialTapy.objects.filter(lugar=l).delete()
-            ProductosExtras.objects.filter(lugar=l).delete()
-            l.delete()
+            # HistorialTapy.objects.filter(lugar=l).delete()
+            # ProductosExtras.objects.filter(lugar=l).delete()
+            # l.delete()
             process_b += 1
 
     print(f"Elminados con tpay: {process}")
