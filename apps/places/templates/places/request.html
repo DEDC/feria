@@ -511,6 +511,7 @@
                         <div class="alert alert-dismissible fade show" role="alert" data-mdb-color="warning"><i
                             class="fas fa-exclamation-triangle me-3"></i><b>Solo puede seleccionar 3 lugares</b>
                         </div>
+                        {% if selected_places.count < 3 %}
                         <div
                                 class="shadow-4 bg-white rounded-5 my-4 overflow-x-scroll p-4 d-flex justify-content-between align-items-center">
                             <button id="n-1" type="button" class="btn btn-light">Nave 1<i
@@ -544,6 +545,7 @@
                                     class="fas fa-check me-2"></i>Preseleccionar espacios
                             </button>
                         </div>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
                 {% if object.estatus == "rejected" %}
