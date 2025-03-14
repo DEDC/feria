@@ -102,7 +102,7 @@ class Comercios(ControlInfo):
     voltaje = models.CharField('¿Qué voltaje necesita su Comercio?',   max_length=10, choices=(('110', '110v'), ('220', '220v')), null=True, blank=True)
     equipos = models.CharField('¿Qué equipos usará para operar en su Comercio?', max_length=500, null=True, blank=True)
     giro = models.CharField('Giro del Comercio',   max_length=100, choices=giros, null=True)
-    subgiro = models.CharField('SubGiro del Comercio',   max_length=100, choices=SubGiros, null=True)
+    subgiro = models.CharField('SubGiro del Comercio',   max_length=100, choices=SubGiros, null=True, blank=True)
     solicitud = models.OneToOneField(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='comercio')
 
     def get_last_unattended_validation(self):
@@ -121,10 +121,16 @@ class Validaciones(ControlInfo):
 
 
 class Lugares(ControlInfo):
-    identifier='PLC'
+    identifier = 'PLC'
     uuid_place = models.UUIDField(editable=False, unique=True)
     estatus = models.CharField(max_length=20, choices=(('temp', 'Temporal'), ('assign', 'Asignado')), default='temp')
-    zona = models.CharField(max_length=20, choices=(('z_a', 'Zona A'), ('z_b', 'Zona B'), ('z_c', 'Zona C'), ('z_d', 'Zona D'), ('n_1', 'Nave 1'), ('n_2', 'Nave 2'), ('n_3', 'Nave 3'), ('s_t', 'Sabor a Tab.'), ('teatro', 'Teatro al A. L.')), null=True)
+    zona = models.CharField(max_length=20, choices=(
+        ('z_a', 'Zona A'), ('z_b', 'Zona B'), ('z_c', 'Zona C'),
+        ('z_d', 'Zona D'), ('n_1', 'Nave 1'), ('n_2', 'Nave 2'),
+        ('n_3', 'Nave 3'), ('s_t', 'Sabor a Tab.'),
+        ('teatro', 'Teatro al A. L.'), ('amb', 'Ambulantes')
+        ), null=True
+    )
     precio = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
     m2 = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     nombre = models.CharField(max_length=10, default='')

@@ -26,7 +26,7 @@
             <div
                 class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
                 <h4 class="mb-0 fw-bold">
-                    <i class="fas fa-shop me-3 green-text"></i>Agregar Ubicación Manual a {{object.folio}} -
+                    <i class="fas fa-shop me-3 green-text"></i>Agregar {% if object.comercio.giro == 'ambulante' %}Ambulante{% else %}Ubicación Manual{% endif %} a {{object.folio}} -
                     {{object.id}}
                 </h4>
                 <a class="btn btn-lg btn-link btn-rounded d-none d-sm-block" href="{% url 'admin:main' %}"
@@ -36,6 +36,8 @@
             <div class="shadow-4 bg-white rounded-5 p-4">
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
+                
+                    {% if object.comercio.giro != 'ambulante' %}
                     <div class="row">
                         <div class="col">
                             <label class="form-label" style="margin-left: 0px;">Zona</label>
@@ -47,8 +49,23 @@
                             </select>
                         </div>
                     </div>
+                    {% else %}
+                    <div class="row">
+                        <div class="col">
+                            <label class="form-label" style="margin-left: 0px;">SubCategoria</label>
+                            <select name="subgiro" class="select select-initialized" id="id_voltaje">
+                              <option value="">---------</option>
+                            {% for obj in subgiro_list %}
+                            	<option value="{{ obj.0 }}">{{ obj.1 }}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    {% endif %} 
+                    
                     <br>
                     <div class="row">
+                    {% if object.comercio.giro != 'ambulante' %}
                         <div class="col-4">
                             <div class="form-outline">
                                 <input type="number" name="nombre" maxlength="13" class="form-control" id="nombre">
@@ -82,10 +99,11 @@
                                 </div>
                             </div>
                         </div>
+                        {% endif %} 
                         <div class="col-12">
                             <div class="form-outline">
-                                <textarea class="form-control" name="observacion" id="observacion" cols="30" rows="5">
-                                </textarea>
+                                <textarea class="form-control" name="observacion" 
+                                          id="observacion" cols="30" rows="5"></textarea>
                                 <label class="form-label" style="margin-left: 0px;">Observaciones</label>
                                 <div class="form-notch">
                                     <div class="form-notch-leading" style="width: 9px;"></div>

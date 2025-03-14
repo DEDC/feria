@@ -21,7 +21,7 @@ from rest_framework.permissions import IsAuthenticated
 from apps.dates.tools import get_dates_from_range, get_times_from_range
 # places
 from apps.places.models import Solicitudes, Comercios, Validaciones, Lugares, ProductosExtras, Pagos, Estacionamiento, \
-    HistorialTapy
+    HistorialTapy, SubGiros
 from apps.places.forms import RequestForm, ShopForm, ParkingForm
 from apps.tpay.tools import sendEmail
 from apps.tpay.views import return_html_accept, return_html_rejected
@@ -809,26 +809,44 @@ class RegistroManualUbicacion(AdminStaffPermissions, DetailView):
 
     def post(self, request, *args, **kwargs):
         request_ = self.get_object()
-        lugar = Lugares.objects.filter(
-            zona=self.request.POST.get("zona"), nombre=self.request.POST.get("nombre")
-        ).first()
-        if not lugar:
-            # uuid_place = None
-            # for p2 in places_dict[self.request.POST.get("zona")]['places']:
-            #     if int(p2['text']) == int(request.POST.get("nombre")):
-            #         uuid_place = p2["uuid"]
-            # if uuid_place:
+
+        if request_.comercio.giro == 'ambulante':
+            comercio = request_.comercio
+            comercio.subgiro = self.request.POST.get("subgiro")
+            nombre = Lugares.objects.filter(estatus='assign', zona='amb').count() + 1
             Lugares.objects.create(
-                estatus='assign', zona=self.request.POST.get("zona"), nombre=self.request.POST.get("nombre"),
-                usuario=request_.usuario, solicitud=request_, m2=self.request.POST.get("m2"),
-                precio=self.request.POST.get("precio"), uuid_place=str(uuid.uuid4()),
+                estatus='assign', zona='amb',
+                nombre=nombre.__str__(),
+                usuario=request_.usuario, solicitud=request_,
+                precio=Decimal(ambulante_concept[self.request.POST.get("subgiro")][1]),
+                tramite_id=ambulante_concept[self.request.POST.get("subgiro")][0], uuid_place=str(uuid.uuid4()),
                 observacion=self.request.POST.get("observacion")
             )
+            comercio.save()
             messages.success(request, 'La ubicación ha sido asingada a la solicitud')
-            # else:
-            #     messages.warning(request, 'La ubicación no se encuentra mapeada.')
+
         else:
-            messages.warning(request, 'La ubicación ya ha sido asingada a otro usuario.')
+            lugar = Lugares.objects.filter(
+                zona=self.request.POST.get("zona"), nombre=self.request.POST.get("nombre")
+            ).first()
+            if not lugar:
+                # uuid_place = None
+                # for p2 in places_dict[self.request.POST.get("zona")]['places']:
+                #     if int(p2['text']) == int(request.POST.get("nombre")):
+                #         uuid_place = p2["uuid"]
+                # if uuid_place:
+                Lugares.objects.create(
+                    estatus='assign', zona=self.request.POST.get("zona"),
+                    nombre=self.request.POST.get("nombre"),
+                    usuario=request_.usuario, solicitud=request_, m2=self.request.POST.get("m2"),
+                    precio=self.request.POST.get("precio"), uuid_place=str(uuid.uuid4()),
+                    observacion=self.request.POST.get("observacion")
+                )
+                messages.success(request, 'La ubicación ha sido asingada a la solicitud')
+                # else:
+                #     messages.warning(request, 'La ubicación no se encuentra mapeada.')
+            else:
+                messages.warning(request, 'La ubicación ya ha sido asingada a otro usuario.')
         return redirect('admin:request', request_.uuid)
 
     def get_context_data(self, **kwargs):
@@ -838,4 +856,5 @@ class RegistroManualUbicacion(AdminStaffPermissions, DetailView):
             ('z_a', 'Zona A'), ('z_b', 'Zona B'), ('z_c', 'Zona C'), ('z_d', 'Zona D'), ('n_1', 'Nave 1'),
             ('n_2', 'Nave 2'), ('n_3', 'Nave 3'), ('s_t', 'Sabor a Tab.'), ('teatro', 'Teatro al A. L.')
         ]
+        context["subgiro_list"] = SubGiros
         return context
