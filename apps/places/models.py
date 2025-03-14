@@ -51,6 +51,12 @@ giros = (
     ('otro', 'Otro')
 )
 
+SubGiros = (
+    ('amb_1', 'Chicharrones y otros'),
+    ('amb_2', 'Cigarros y otros'),
+    ('amb_3', 'Esquites, aguas'),
+)
+
 
 class Solicitudes(ControlInfo):
     identifier = 'SLC'
@@ -96,6 +102,7 @@ class Comercios(ControlInfo):
     voltaje = models.CharField('¿Qué voltaje necesita su Comercio?',   max_length=10, choices=(('110', '110v'), ('220', '220v')), null=True, blank=True)
     equipos = models.CharField('¿Qué equipos usará para operar en su Comercio?', max_length=500, null=True, blank=True)
     giro = models.CharField('Giro del Comercio',   max_length=100, choices=giros, null=True)
+    subgiro = models.CharField('SubGiro del Comercio',   max_length=100, choices=SubGiros, null=True)
     solicitud = models.OneToOneField(Solicitudes, editable=False, on_delete=models.PROTECT, related_name='comercio')
 
     def get_last_unattended_validation(self):

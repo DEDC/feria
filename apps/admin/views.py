@@ -61,6 +61,11 @@ place_concept_alcohol = {
     "1065": [1108, 15000], "1066": [0, 0], "1067": [0, 0], "1068": [0, 0]
 }
 
+
+ambulante_concept = {
+    "amb_1": [1068, 2500], "amb_2": [1067, 3000], "amb_3": [1066, 3500]
+}
+
 dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
 
