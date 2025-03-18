@@ -117,7 +117,9 @@ def aplicar_licencia(folio):
 
 
 def process_validated_pay():
-    lugares = Lugares.objects.filter(caja_pago=False, tpay_pagado=False, transfer_pago=False).exclude(usuario_id=1711).exclude(solicitud_id=1177).exclude(solicitud_id=49)
+    lugares = Lugares.objects.filter(
+        caja_pago=False, tpay_pagado=False, transfer_pago=False
+    ).exclude(usuario_id=1711).exclude(solicitud_id=1177).exclude(solicitud_id=49).exclude(solicitud_id=1236).exclude(solicitud_id=1239)
     escribir_log(f"Total: {lugares.count()}", "logs/process_validated.log")
     process = 0
     process_b = 0
