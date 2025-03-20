@@ -24,6 +24,7 @@ def get_validar_pago(id, historico=False):
 
     if not error:
         folio = f"/?folioSeguimiento={data_tpay['folioSeguimiento']}&idTramite={lugar.tramite_id}&folioControlEstado={data_tpay['folioControlEstado']}"
+        print(folio)
         status = consulta_linea_captura(token, folio)
         print(status)
         return status
