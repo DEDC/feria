@@ -53,3 +53,33 @@
     </div>
 </div>
 {% endblock main %}
+{% block footer %}
+<footer class="bg-body-tertiary text-center">
+    <!-- Grid container -->
+    <div class="container p-4 pb-0">
+      <section class="mb-4">
+        <a target="_blank" class="btn text-white btn-floating m-1" style="background-color: #3b5998;" href="https://www.facebook.com/TurismoTabasco/" role="button">
+            <i class="fab fa-facebook-f"></i
+        ></a>
+        <a target="_blank" class="btn text-white btn-floating m-1" style="background-color: #C13584;" href="https://www.instagram.com/turismotabasco_/" role="button">
+            <i class="fab fa-instagram"></i>
+        </a>
+        <a target="_blank" class="btn text-white btn-floating m-1" style="background-color: #040404;" href="https://www.tiktok.com/@turismotabasco_" role="button">
+            <i class="fab fa-tiktok"></i>
+        </a>
+        <a target="_blank" class="btn text-white btn-floating m-1" style="background-color: #c4302b;" href="https://www.youtube.com/@turismotabasco" role="button">
+            <i class="fab fa-youtube"></i>
+        </a>
+      </section>
+    </div>
+    <!-- Grid container -->
+  
+    <!-- Copyright -->
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+        © 2025 Derechos Reservados | Secretaría de Turismo y Desarrollo Económico |
+        <a class="ms-1 text-body" href="{% url 'users:aviso_privacidad' %}"><b>Aviso de Privacidad</b></a>
+    </div>
+    <!-- Copyright -->
+  </footer>
+  
+{% endblock footer %}

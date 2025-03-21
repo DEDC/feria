@@ -1,0 +1,102 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block head %}
+{{block.super}}
+<style>
+    @media (min-width: 1400px) {
+
+        main,
+        header {
+            padding-left: 0px;
+        }
+    }
+</style>
+{% endblock %}
+{% block header %}{% endblock header %}
+{% block main %}
+<div class="container-sm px-5 py-3 mb-10 mt-5">
+    <div class="d-flex justify-content-around align-items-center flex-wrap">
+        <a href="{% url 'users:login' %}"><img src="{% static 'images/logov3.png' %}" alt="logo"
+                style="max-width: 200px;"></a>
+        <a href="{% url 'users:login' %}"><img src="{% static 'images/logo_turismo.png' %}" alt="logo"
+                    style="max-width: 330px;"></a>
+    </div>
+    <h3 class="text-center m-5">AVISO DE PRIVACIDAD SIMPLIFICADO DE LA COMISIÓN ESTATAL DE MEJORA
+        REGULATORIA DE LA SECRETARÍA DE TURISMO Y DESARROLLO ECONÓMICO</h3>
+    <h4 class="text-center fw-bold">SISTEMA DE COMERCIALIZACIÓN DE STANDS PARA FERIA TABASCO 2025</h4>
+    <br>
+    <p style="text-align: justify;">
+        Estimado (a) usuario (a): la Secretaría de Turismo y Desarrollo Económico del Estado de
+        Tabasco, a través de la Comisión Estatal de Mejora Regulatoria, recabará sus datos
+        personales con la finalidad de tener un control de los espacios del recinto donde se
+        realizará la feria Tabasco 2025 y el interesado ubique su espacio, para lo cual se llevarán a
+        cabo los tratamientos de obtención y almacenamiento de la información confidencial
+        contenida en la base de datos sistema de comercialización de stands para feria Tabasco
+        2025, la cual consiste en una plataforma (página web) donde se encuentran los espacios
+        para renta de stands para expositores.
+    </p>
+    <ul>
+        <li>Los datos personales que se recaban (INE, nombre, constancia de situación fiscal,
+            comprobante de domicilio, acta constitutiva, poder notarial, CURP, número
+            telefónico), no serán materia de transferencia.</li>
+    </ul>
+    <p style="text-align: justify;">
+        No se realizarán transferencias de datos personales o identificativos que requieran su
+        consentimiento, salvo aquellos que sean necesarios para atender requerimientos de
+        información de autoridades administrativas o jurisdiccionales judiciales competentes,
+        debidamente fundados y motivados.
+
+    </p>
+    <p style="text-align: justify;">
+        Usted podrá ejercer sus derechos de acceso, rectificación, cancelación u oposición de sus
+        datos personales (derechos ARCO) directamente en la Unidad de Transparencia de este
+        Sujeto Obligado, ubicada en Prolongación de Paseo Tabasco No. 1504, Col. Tabasco 2000,
+        C.P. 86035, Villahermosa, Tabasco; en un horario de 8:00 a 16:00 horas, en días hábiles, o a
+        través de la Plataforma Nacional de Transparencia (<a target="_blank"
+            href="https://www.plataformadetransparencia.org.mx/">https://www.plataformadetransparencia.org.mx/</a>).
+    </p>
+    <p style="text-align: justify;">
+        Para cualquier duda o aclaración al respecto, puede acudir a la Unidad de Transparencia,
+        enviar un correo electrónico a la dirección armandolizarraga@tabasco.gob.mx o
+        comunicarse al teléfono: (993) 310 97 50, extensión 48011.
+    </p>
+    <p style="text-align: justify;">
+        Para mayor información acerca del tratamiento de los datos personales y de los derechos
+        que puede hacer valer, puede consultar el aviso de privacidad integral disponible en el
+        Portal Oficial de la Secretaría de Turismo y Desarrollo Económico del Estado de Tabasco:
+        <a target="_blank" href="https://tabasco.gob.mx/turismo">https://tabasco.gob.mx/turismo</a>.
+    </p>
+</div>
+{% endblock main %}
+{% block footer %}
+<footer class="bg-body-tertiary text-center">
+    <!-- Grid container -->
+    <div class="container p-4 pb-0">
+        <section class="mb-4">
+            <a target="_blank" class="btn text-white btn-floating m-1" style="background-color: #3b5998;"
+                href="https://www.facebook.com/TurismoTabasco/" role="button">
+                <i class="fab fa-facebook-f"></i></a>
+            <a target="_blank" class="btn text-white btn-floating m-1" style="background-color: #C13584;"
+                href="https://www.instagram.com/turismotabasco_/" role="button">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a target="_blank" class="btn text-white btn-floating m-1" style="background-color: #040404;"
+                href="https://www.tiktok.com/@turismotabasco_" role="button">
+                <i class="fab fa-tiktok"></i>
+            </a>
+            <a target="_blank" class="btn text-white btn-floating m-1" style="background-color: #c4302b;"
+                href="https://www.youtube.com/@turismotabasco" role="button">
+                <i class="fab fa-youtube"></i>
+            </a>
+        </section>
+    </div>
+    <!-- Grid container -->
+
+    <!-- Copyright -->
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+        © 2025 Derechos Reservados | Secretaría de Turismo y Desarrollo Económico
+    </div>
+    <!-- Copyright -->
+</footer>
+
+{% endblock footer %}
