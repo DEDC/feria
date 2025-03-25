@@ -5,7 +5,7 @@ from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, Upda
                               ListRequests, ListUsers, UnlockRequest, UpdateUser, UserDates, ListDates,
                               DownloadContract, DownloadGafate, DownloadSuministros, DownloadReport,
                               DownloadRequestsReport, ListParking,
-                              DownloadTarjeton, UpdateParking, DownloadReceipt,
+                              DownloadTarjeton, UpdateParking, DownloadReceipt, ListStands,
                               set_place_temp, unset_place_temp, set_place,
                               add_alcohol, add_terraza, add_big_terraza, delete_item, delete_place, add_descuento,
                               aplicar_pago_caja, aplicar_pago_transfer, RegistroManualUbicacion)
@@ -17,6 +17,7 @@ urlpatterns = [
     path('usuarios', ListUsers.as_view(), name='list_users'),
     path('citas', ListDates.as_view(), name='list_dates'),
     path('tarjetones', ListParking.as_view(), name='list_parking'),
+    path('locales', ListStands.as_view(), name='list_stands'),
     path('solicitud/<uuid:uuid>', Request.as_view(), name='request'),
     path('solicitud/<uuid:uuid>/lugar', RegistroManualUbicacion.as_view(), name='ubicacion-manual'),
     path('solicitud/<uuid:uuid>/editar', UpdateRequest.as_view(), name='update_request'),

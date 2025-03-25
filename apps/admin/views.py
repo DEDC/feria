@@ -98,6 +98,28 @@ class Main(AdminStaffPermissions, TemplateView):
         context['payments_done'] = places.filter(Q(tpay_pagado=True) | Q(caja_pago=True)| Q(transfer_pago=True)).count()
         return context
 
+class ListStands(AdminPermissions, TemplateView):
+    template_name = 'admin/list_stands.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        selected_places = Lugares.objects.all()
+        metaplaces = places_dict.copy()
+        for k, v in metaplaces.items():
+            for p in v['places']:
+                try:
+                    pbd = selected_places.get(nombre=p['text'], zona=k)
+                    p['request_'] = pbd.solicitud.folio
+                    p['uuid_request'] = pbd.solicitud.uuid
+                    p['place'] = pbd.folio
+                    p['final_price'] = pbd.precio
+                    p['final_concept'] = pbd.tramite_id
+                    p['is_paid'] = 'Sí' if pbd.tpay_pagado or pbd.caja_pago or pbd.transfer_pago else 'No'
+                    p['alcohol'] = 'Sí' if pbd.extras.filter(tipo='licencia_alcohol').count() > 0 else 'No'
+                except Lugares.DoesNotExist:
+                    pass
+        context['metaplaces'] = metaplaces
+        return context
 
 class ListRequests(AdminStaffPermissions, ListView):
     model = Solicitudes
