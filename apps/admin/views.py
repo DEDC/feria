@@ -39,7 +39,7 @@ from utils.suministros import get_suministros
 from utils.tarjeton import get_tarjeton
 from utils.pase_caja import get_receipt
 from utils.word_writer import generate_physical_document
-from utils.reports import get_report, get_requests_report
+from utils.reports import get_report, get_requests_report, get_stands_report
 from utils.email import send_html_mail
 from datetime import datetime
 
@@ -597,6 +597,14 @@ class DownloadRequestsReport(AdminPermissions, RedirectView):
             print(e)
             return redirect('admin:main')
 
+class DownloadStandsReport(AdminPermissions, RedirectView):
+    def get(self, request, *args, **kwargs):
+        try:
+            report = get_stands_report(places_dict)
+            return report
+        except Exception as e:
+            print(e)
+            return redirect('admin:main')
 
 class DownloadReceipt(AdminStaffPermissions, RedirectView):
     def get(self, request, *args, **kwargs):

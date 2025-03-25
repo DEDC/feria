@@ -9,6 +9,16 @@
         white-space: nowrap;
     }
 </style>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let search = document.querySelector('#search')
+        search.addEventListener('submit', (e) => {
+            e.preventDefault()
+            const form_data = new FormData(e.target);
+            console.log(form_data.get('q'))
+        })
+    })
+</script>
 {% endblock head %}
 {% block main %}
 <div class="container-fluid p-5">
@@ -32,6 +42,11 @@
                         </div>
                     </div>
                 </div>
+                <div class="card-footer border-0 bg-light p-2">
+                    <a class="btn btn-link m-0 w-100" href="{% url 'admin:download_stands_report' %}" role="button"
+                        data-mdb-ripple-init data-ripple-color="primary">Descargar reporte<i
+                            class="fas fa-arrow-down ms-2"></i></a>
+                </div>
             </div>
         </div>
         <div class="col-xl-9 mb-4 mb-lg-0">
@@ -42,7 +57,7 @@
                 </h4>
             </div>
             <div class="shadow-4 bg-white rounded-5 mb-4 p-4">
-                <form>
+                <form id="search">
                     <div class="input-group">
                         <input name="q" value="{{q}}" type="search" class="form-control m-0 form-control-lg"
                             placeholder="Buscar local" />

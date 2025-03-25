@@ -55,6 +55,64 @@ def get_docs():
         counter+=1
     zf.close()
 
+def get_stands_report(places_dict):
+    wb = load_workbook('static/docs/reporte_locales.xlsx')
+    ws = wb.get_sheet_by_name('LOCALES')
+    counter = 3
+    selected_places = Lugares.objects.all()
+    metaplaces = places_dict.copy()
+    for k, v in metaplaces.items():
+        for p in v['places']:
+            try:
+                pbd = selected_places.get(nombre=p['text'], zona=k)
+                ws.cell(row=counter, column=1, value=pbd.nombre)
+                ws.cell(row=counter, column=2, value=pbd.get_zona_display())
+                ws.cell(row=counter, column=3, value=pbd.folio)
+                ws.cell(row=counter, column=4, value=pbd.solicitud.folio)
+                ws.cell(row=counter, column=5, value=pbd.solicitud.nombre)
+                ws.cell(row=counter, column=6, value=pbd.solicitud.usuario.phone_number)
+                if hasattr(pbd.solicitud, 'comercio'):
+                    c = pbd.solicitud.comercio
+                    ws.cell(row=counter, column=7, value=c.nombre)
+                    ws.cell(row=counter, column=8, value=c.get_giro_display())
+                else:
+                    ws.cell(row=counter, column=7, value='No especificado')
+                    ws.cell(row=counter, column=8, value='No especificado')
+                ws.cell(row=counter, column=9, value='Sí' if pbd.extras.filter(tipo='licencia_alcohol').count() > 0 else 'No')
+                ws.cell(row=counter, column=10, value='Sí' if pbd.tpay_pagado or pbd.caja_pago or pbd.transfer_pago else 'No')
+            except Lugares.DoesNotExist:
+                ws.cell(row=counter, column=1, value=p['text'])
+                ws.cell(row=counter, column=2, value=v['title'])
+                ws.cell(row=counter, column=3, value='Sin asignar')
+                ws.cell(row=counter, column=4, value='Sin asignar')
+                ws.cell(row=counter, column=5, value='Sin asignar')
+                ws.cell(row=counter, column=6, value='Sin asignar')
+                ws.cell(row=counter, column=7, value='Sin asignar')
+                ws.cell(row=counter, column=8, value='Sin asignar')
+                ws.cell(row=counter, column=9, value='Sin asignar')
+                ws.cell(row=counter, column=10, value='Sin asignar')
+            counter+=1
+    for p in selected_places.filter(zona='amb'):
+        ws.cell(row=counter, column=1, value=p.nombre)
+        ws.cell(row=counter, column=2, value=p.get_zona_display())
+        ws.cell(row=counter, column=3, value=p.folio)
+        ws.cell(row=counter, column=4, value=p.solicitud.folio)
+        ws.cell(row=counter, column=5, value=p.solicitud.nombre)
+        ws.cell(row=counter, column=6, value=p.solicitud.usuario.phone_number)
+        if hasattr(p.solicitud, 'comercio'):
+            c = p.solicitud.comercio
+            ws.cell(row=counter, column=7, value=c.nombre)
+            ws.cell(row=counter, column=8, value=c.get_giro_display())
+        else:
+            ws.cell(row=counter, column=7, value='No especificado')
+            ws.cell(row=counter, column=8, value='No especificado')
+        ws.cell(row=counter, column=9, value='No aplica')
+        ws.cell(row=counter, column=10, value='No aplica')
+        counter+=1
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    wb.save(response)
+    response['Content-Disposition'] = 'attachment; filename=REPORTE_LOCALES_FERIA_2025.xlsx'
+    return response
 
 def get_requests_report():
     wb = load_workbook('static/docs/reporte_solicitudes.xlsx')
