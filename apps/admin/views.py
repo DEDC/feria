@@ -105,7 +105,9 @@ class ListStands(AdminPermissions, TemplateView):
         context = super().get_context_data(**kwargs)
         selected_places = Lugares.objects.all()
         metaplaces = places_dict.copy()
+        count_static_places = 0
         for k, v in metaplaces.items():
+            count_static_places += len(v['places'])
             for p in v['places']:
                 try:
                     pbd = selected_places.get(nombre=p['text'], zona=k)
@@ -118,6 +120,8 @@ class ListStands(AdminPermissions, TemplateView):
                     p['alcohol'] = 'Sí' if pbd.extras.filter(tipo='licencia_alcohol').count() > 0 else 'No'
                 except Lugares.DoesNotExist:
                     pass
+        context['ambulantes'] = selected_places.filter(zona='amb')
+        context['total_places'] = count_static_places + context['ambulantes'].count()
         context['metaplaces'] = metaplaces
         return context
 
