@@ -676,7 +676,7 @@
                                             </a>
                                         </td>
                                         <td>
-                                        {% if object.estatus == "validated-direct" %}
+                                        {% if object.estatus == "validated-direct" or object.estatus == 'validated' %}
                                             <a type="button" data-uuid="{{ sp.uuid }}" 
                                                 class="btn btn-light btn-sm aplicar-transferencia">
                                                 <i class="fas fa-refresh me-2"></i>
