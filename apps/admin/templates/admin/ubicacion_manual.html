@@ -41,7 +41,7 @@
                     <div class="row">
                         <div class="col">
                             <label class="form-label" style="margin-left: 0px;">Zona</label>
-                            <select name="zona" class="select select-initialized" id="id_voltaje">
+                            <select name="zona" class="select select-initialized" id="id_voltaje" required>
                               <option value="">---------</option>
                             {% for obj in zonas_list %}
                             	<option value="{{ obj.0 }}">{{ obj.1 }}</option>
@@ -68,8 +68,8 @@
                     {% if object.comercio.giro != 'ambulante' %}
                         <div class="col-4">
                             <div class="form-outline">
-                                <input type="number" name="nombre" maxlength="13" class="form-control" id="nombre">
-                                <label class="form-label" style="margin-left: 0px;">Numero</label>
+                                <input type="number" name="nombre" maxlength="13" class="form-control" id="nombre" required>
+                                <label class="form-label" style="margin-left: 0px;">Número</label>
                                 <div class="form-notch">
                                     <div class="form-notch-leading" style="width: 9px;"></div>
                                     <div class="form-notch-middle" style="width: 31.2px;"></div>
@@ -79,7 +79,7 @@
                         </div>
                         <div class="col-4">
                             <div class="form-outline">
-                                <input type="number" name="m2" maxlength="13" class="form-control" id="m2">
+                                <input type="number" name="m2" maxlength="13" class="form-control" id="m2" required>
                                 <label class="form-label" style="margin-left: 0px;">M2</label>
                                 <div class="form-notch">
                                     <div class="form-notch-leading" style="width: 9px;"></div>
@@ -90,7 +90,7 @@
                         </div>
                         <div class="col-4">
                             <div class="form-outline">
-                                <input type="number" name="precio" class="form-control" id="precio">
+                                <input type="number" name="precio" class="form-control" id="precio" required>
                                 <label class="form-label" style="margin-left: 0px;">Precio</label>
                                 <div class="form-notch">
                                     <div class="form-notch-leading" style="width: 9px;"></div>

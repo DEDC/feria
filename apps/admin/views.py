@@ -888,7 +888,8 @@ class RegistroManualUbicacion(AdminStaffPermissions, DetailView):
         # places = self.object.solicitud_lugar.filter(fecha_reg__year=2024, estatus='assign')pagado
         context["zonas_list"] = [
             ('z_a', 'Zona A'), ('z_b', 'Zona B'), ('z_c', 'Zona C'), ('z_d', 'Zona D'), ('n_1', 'Nave 1'),
-            ('n_2', 'Nave 2'), ('n_3', 'Nave 3'), ('s_t', 'Sabor a Tab.'), ('teatro', 'Teatro al A. L.')
+            ('n_2', 'Nave 2'), ('n_3', 'Nave 3'), ('s_t', 'Sabor a Tab.'), ('teatro', 'Teatro al A. L.'),
+            ('patrocinador', 'Patrocinador')
         ]
         context["subgiro_list"] = (
             ('amb_1', 'Chicharrones y otros'),
