@@ -648,7 +648,6 @@
                                                 {% elif sp.tramite_id == 0 %}
                                                     <span class="badge rounded-pill badge-warning">Requiere Pago en Caja</span>
                                                 {% endif %}
-
                                             {% endif %}
                                             {#                                    {% endif %}#}
                                         </td>
@@ -656,7 +655,7 @@
                                             {% if sp.extras.all.count > 0 %}
 
                                             {% else %}
-                                                {% if not sp.tpay_pagado and not sp.caja_pago and sp.tramite_id != 0 %}
+                                                {% if not sp.tpay_pagado and not sp.caja_pago and not sp.transfer_pago %}
                                                     <a class="ms-3 del-place" data-uuid="{{ sp.uuid }}"
                                                        data-type="place"
                                                        role="button">
