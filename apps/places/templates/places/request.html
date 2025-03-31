@@ -639,7 +639,16 @@
                                                     Pagar
                                                 </button>
                                             {% else %}
-                                                <span class="badge rounded-pill badge-success">Pagado</span>
+                                                {% if sp.caja_pago %}
+                                                    <span class="badge rounded-pill badge-success">Pagado en caja</span>
+                                                {% elif sp.transfer_pago %}
+                                                    <span class="badge rounded-pill badge-success">Pagado con Transferencia</span>
+                                                {% elif sp.tpay_pagado %}
+                                                    <span class="badge rounded-pill badge-success">Pagado con Tpay</span>
+                                                {% elif sp.tramite_id == 0 %}
+                                                    <span class="badge rounded-pill badge-warning">Requiere Pago en Caja</span>
+                                                {% endif %}
+
                                             {% endif %}
                                             {#                                    {% endif %}#}
                                         </td>
