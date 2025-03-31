@@ -655,7 +655,7 @@
                                             {% if sp.extras.all.count > 0 %}
 
                                             {% else %}
-                                                {% if not sp.tpay_pagado and not sp.caja_pago and not sp.transfer_pago %}
+                                                {% if not sp.tpay_pagado and not sp.caja_pago and sp.tramite_id != 0 %}
                                                     <a class="ms-3 del-place" data-uuid="{{ sp.uuid }}"
                                                        data-type="place"
                                                        role="button">
