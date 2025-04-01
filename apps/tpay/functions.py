@@ -1,8 +1,10 @@
 import json
 from decimal import Decimal
 
+from django.db.models import Q
+
 from apps.admin.views import place_concept_alcohol
-from apps.places.models import Lugares, HistorialTapy, ProductosExtras
+from apps.places.models import Lugares, HistorialTapy, ProductosExtras, Solicitudes, Pagos
 from apps.tpay.tools import consulta_linea_captura, generarToken, status_linea_captura, validar_linea_captura, \
     escribir_log
 from feria import settings
@@ -154,3 +156,25 @@ def process_validated_pay():
 
     print(f"Elminados con tpay: {process}")
     print(f"Elminados: {process_b}")
+
+
+def pagos_solicitudes():
+    solicitudes = Solicitudes.objects.all()
+    print(f"Total: {solicitudes.count()}")
+    for x, sol in enumerate(solicitudes):
+        print(f"No: {x}")
+        places = sol.solicitud_lugar.filter(estatus='assign')
+        validados = places.filter(
+            Q(transfer_pago=True) |
+            Q(tpay_pagado=True) |
+            Q(caja_pago=True)
+        ).count()
+        total_tpay = places.count()
+
+        if places.count() > 0 and validados == total_tpay:
+            if sol.estatus == 'validated' or sol.estatus == 'validated-direct':
+                if not Pagos.objects.filter(solicitud=sol):
+                    Pagos.objects.get_or_create(
+                        solicitud=sol, usuario=sol.usuario, tipo='caja', pagado=True,
+                        validador=sol.usuario.get_full_name()
+                    )
