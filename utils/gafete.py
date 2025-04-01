@@ -17,20 +17,50 @@ from django.http import HttpResponse
 
 def get_gafete(place):
     output = PdfWriter()
+    qr_coords = 0, 0
+    name_coords = 0, 0
     if place.zona == 'amb':
         url = 'static/docs/gafete_ambulante.pdf'
+        qr_coords = 229, 120
+        name_coords = 480, 305
+        font_size = 33
+        line_height = 35
+    elif place.zona == 'z_a':
+        url = 'static/docs/gafete_zona_a.pdf'
+        qr_coords = 395, 113
+        name_coords = 230, 230
+        font_size = 20
+        line_height = 21
+    elif place.zona == 'z_b':
+        url = 'static/docs/gafete_zona_b.pdf'
+        qr_coords = 395, 113
+        name_coords = 230, 230
+        font_size = 20
+        line_height = 21
+    elif place.zona == 'z_c':
+        url = 'static/docs/gafete_zona_c.pdf'
+        qr_coords = 395, 113
+        name_coords = 230, 230
+        font_size = 20
+        line_height = 21
+    elif place.zona == 'z_d':
+        url = 'static/docs/gafete_zona_d.pdf'
+        qr_coords = 395, 113
+        name_coords = 230, 230
+        font_size = 20
+        line_height = 21
     else:
         raise ValidationError('No se generó gafete para esa Zona. Intente de nuevo más tarde.', code = 'invalid_gafete')
     
     inputw = PdfReader(open(url, 'rb'))
     buffer = io.BytesIO()
     pdf = Canvas(buffer)
-    pdf.setFont("Helvetica-Bold", 33)
+    pdf.setFont("Helvetica-Bold", font_size)
     text = place.solicitud.nombre.upper()
     for i, s in enumerate(wrap(text, 23)):
-        y_step  = 35 * i
-        y_start = 480 - y_step
-        pdf.drawCentredString(305, y_start, s)
+        y_step  = line_height * i
+        y_start = name_coords[0] - y_step
+        pdf.drawCentredString(name_coords[1], y_start, s)
         pdf.drawCentredString
     # QR
     qr_text = str(place.folio)
@@ -40,7 +70,7 @@ def get_gafete(place):
     height = bounds[3] - bounds[1]
     d = Drawing(100, 100, transform=[160./width, 0, 0, 160./height, 0, 0])
     d.add(qr_code)
-    renderPDF.draw(d, pdf, 229, 120)
+    renderPDF.draw(d, pdf, qr_coords[0], qr_coords[1])
     # Creación del pdf final
     pdf.save()
     watermark = PdfReader(buffer)
