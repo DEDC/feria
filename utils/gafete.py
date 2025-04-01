@@ -1,36 +1,76 @@
 # Python
 import io
-import textwrap
 # Django
 from django.http import HttpResponse
+from django.core.exceptions import ValidationError
 # Reportlab and PyPDF2
 from PyPDF2 import PdfWriter, PdfReader
 from reportlab.graphics.barcode import qr
 from reportlab.graphics.shapes import Drawing
 from reportlab.graphics import renderPDF
 from reportlab.pdfgen.canvas import Canvas
-from reportlab.lib.pagesizes import letter
+# Python
+import io
+from textwrap import wrap
+# Django
+from django.http import HttpResponse
 
 def get_gafete(place):
     output = PdfWriter()
-    inputw = PdfReader(open('static/docs/gafete.pdf', 'rb'))
+    qr_coords = 0, 0
+    name_coords = 0, 0
+    if place.zona == 'amb':
+        url = 'static/docs/gafete_ambulante.pdf'
+        qr_coords = 229, 120
+        name_coords = 480, 305
+        font_size = 33
+        line_height = 35
+    elif place.zona == 'z_a':
+        url = 'static/docs/gafete_zona_a.pdf'
+        qr_coords = 395, 113
+        name_coords = 230, 230
+        font_size = 20
+        line_height = 21
+    elif place.zona == 'z_b':
+        url = 'static/docs/gafete_zona_b.pdf'
+        qr_coords = 395, 113
+        name_coords = 230, 230
+        font_size = 20
+        line_height = 21
+    elif place.zona == 'z_c':
+        url = 'static/docs/gafete_zona_c.pdf'
+        qr_coords = 395, 113
+        name_coords = 230, 230
+        font_size = 20
+        line_height = 21
+    elif place.zona == 'z_d':
+        url = 'static/docs/gafete_zona_d.pdf'
+        qr_coords = 395, 113
+        name_coords = 230, 230
+        font_size = 20
+        line_height = 21
+    else:
+        raise ValidationError('No se generó gafete para esa Zona. Intente de nuevo más tarde.', code = 'invalid_gafete')
+    
+    inputw = PdfReader(open(url, 'rb'))
     buffer = io.BytesIO()
     pdf = Canvas(buffer)
-    width, height = letter
-    # username
-    pdf.setFont("Helvetica", 8)
-    pdf.drawString(107, 162, place.get_zona_display())
-    pdf.drawString(163, 162, place.nombre)
-    pdf.drawString(82, 147, textwrap.wrap(place.solicitud.nombre.upper(), 24)[0])
+    pdf.setFont("Helvetica-Bold", font_size)
+    text = place.solicitud.nombre.upper()
+    for i, s in enumerate(wrap(text, 23)):
+        y_step  = line_height * i
+        y_start = name_coords[0] - y_step
+        pdf.drawCentredString(name_coords[1], y_start, s)
+        pdf.drawCentredString
     # QR
     qr_text = str(place.folio)
     qr_code = qr.QrCodeWidget(qr_text)
     bounds = qr_code.getBounds()
     width = bounds[2] - bounds[0]
     height = bounds[3] - bounds[1]
-    d = Drawing(100, 100, transform=[130./width, 0, 0, 130./height, 0, 0])
+    d = Drawing(100, 100, transform=[160./width, 0, 0, 160./height, 0, 0])
     d.add(qr_code)
-    renderPDF.draw(d, pdf, 71, 20)
+    renderPDF.draw(d, pdf, qr_coords[0], qr_coords[1])
     # Creación del pdf final
     pdf.save()
     watermark = PdfReader(buffer)

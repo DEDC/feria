@@ -546,7 +546,7 @@ class DownloadContract(AdminPermissions, RedirectView):
             raise Http404()
 
 
-class DownloadGafate(AdminPermissions, RedirectView):
+class DownloadGafete(AdminPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
         try:
             request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
