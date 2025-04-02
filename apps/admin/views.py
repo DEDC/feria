@@ -23,6 +23,7 @@ from apps.dates.tools import get_dates_from_range, get_times_from_range
 from apps.places.models import Solicitudes, Comercios, Validaciones, Lugares, ProductosExtras, Pagos, Estacionamiento, \
     HistorialTapy, SubGiros
 from apps.places.forms import RequestForm, ShopForm, ParkingForm
+from apps.tpay.functions import aplicar_pago_solicitud
 from apps.tpay.tools import sendEmail
 from apps.tpay.views import return_html_accept, return_html_rejected
 # users
@@ -404,6 +405,9 @@ class Request(AdminStaffPermissions, DetailView):
         context = super().get_context_data(**kwargs)
         # places = self.object.solicitud_lugar.filter(fecha_reg__year=2024, estatus='assign')
         places = self.object.solicitud_lugar.filter(estatus='assign')
+
+        aplicar_pago_solicitud(self.object)
+
         context['total_places'] = places.aggregate(price=Sum('precio'))['price'] or 0
         context['total_extras'] = places.aggregate(price=Sum('extras__precio'))['price'] or 0
         context['total'] = context['total_extras'] + context['total_places']

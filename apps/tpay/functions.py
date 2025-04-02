@@ -158,6 +158,25 @@ def process_validated_pay():
     print(f"Elminados: {process_b}")
 
 
+def aplicar_pago_solicitud(sol: Solicitudes):
+    places = sol.solicitud_lugar.filter(estatus='assign')
+
+    validados = places.filter(
+        Q(transfer_pago=True) |
+        Q(tpay_pagado=True) |
+        Q(caja_pago=True)
+    ).count()
+    total_tpay = places.count()
+
+    if places.count() > 0 and validados == total_tpay:
+        if sol.estatus == 'validated' or sol.estatus == 'validated-direct':
+            if not Pagos.objects.filter(solicitud=sol):
+                Pagos.objects.get_or_create(
+                    solicitud=sol, usuario=sol.usuario, tipo='caja', pagado=True,
+                    validador=sol.usuario.get_full_name()
+                )
+
+
 def pagos_solicitudes():
     solicitudes = Solicitudes.objects.all()
     print(f"Total: {solicitudes.count()}")
