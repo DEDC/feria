@@ -867,6 +867,13 @@
                                     <td><a class="btn btn-sm btn-info shadow-0"
                                             href="{% url 'admin:download_contract' object.uuid %}">Descargar Contrato</a></td>
                                 </tr>
+                                {% if object.comercio.giro == 'ambulante' %}
+                                <tr>
+                                    <th class="bg-light" style="width: 40%;">Carta Responsiva de Ambulantes</th>
+                                    <td><a class="btn btn-sm btn-info shadow-0"
+                                            href="{% url 'admin:download_responsibility' object.uuid %}">Descargar Responsiva</a></td>
+                                </tr>
+                                {% endif %}
                                 {% for place in selected_places %}
                                 <tr>
                                     <th class="bg-light" style="width: 40%;">

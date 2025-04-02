@@ -38,7 +38,7 @@ from utils.gafete import get_gafete
 from utils.suministros import get_suministros
 from utils.tarjeton import get_tarjeton
 from utils.pase_caja import get_receipt
-from utils.word_writer import generate_physical_document
+from utils.word_writer import generate_physical_document, generate_responsibility
 from utils.reports import get_report, get_requests_report, get_stands_report
 from utils.email import send_html_mail
 from datetime import datetime
@@ -545,6 +545,14 @@ class DownloadContract(AdminPermissions, RedirectView):
         except (Solicitudes.DoesNotExist):
             raise Http404()
 
+class DownloadResponsibility(AdminPermissions, RedirectView):
+    def get(self, request, *args, **kwargs):
+        try:
+            request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
+            doc = generate_responsibility(request_)
+            return doc
+        except (Solicitudes.DoesNotExist):
+            raise Http404()
 
 class DownloadGafete(AdminPermissions, RedirectView):
     def get(self, request, *args, **kwargs):

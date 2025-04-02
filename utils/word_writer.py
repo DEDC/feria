@@ -108,6 +108,24 @@ def generate_physical_document(request_):
     response["Content-Disposition"] = 'attachment; filename = "CONTRATO_{}.docx"'.format(request_.folio)
     return response
 
+def generate_responsibility(request_):
+    f = open('static/docs/carta_responsiva_ambulantes.docx', 'rb')
+    document = Document(f)
+    buffer = io.BytesIO()
+    data = {
+        '<razon_social>': request_.nombre.upper()
+    }
+    for p in document.paragraphs:
+        for k, v in data.items():
+            regex = re.compile(k)
+            paragraph_replace_text(p, regex, v)
+    f.close()
+    document.save(buffer)
+    buffer.seek(0)
+    response = HttpResponse(buffer.getvalue(), content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    response["Content-Disposition"] = 'attachment; filename = "CARTA_RESPONSIVA_AMBULANTES_{}.docx"'.format(request_.folio)
+    return response
+
 def paragraph_replace_text(paragraph, regex, replace_str):
     """Return `paragraph` after replacing all matches for `regex` with `replace_str`.
 
