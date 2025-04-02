@@ -1,9 +1,7 @@
 import json
 from decimal import Decimal
-
 from django.db.models import Q
-
-from apps.admin.views import place_concept_alcohol
+from utils.metadata import place_concept_alcohol
 from apps.places.models import Lugares, HistorialTapy, ProductosExtras, Solicitudes, Pagos
 from apps.tpay.tools import consulta_linea_captura, generarToken, status_linea_captura, validar_linea_captura, \
     escribir_log
