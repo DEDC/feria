@@ -864,8 +864,8 @@
                             <tbody>
                                 <tr>
                                     <th class="bg-light" style="width: 40%;">Contrato</th>
-                                    <td><a class="btn btn-sm btn-secondary shadow-0 disabled"
-                                            href="#">No disponible</a></td>
+                                    <td><a class="btn btn-sm btn-info shadow-0"
+                                            href="{% url 'admin:download_contract' object.uuid %}">Descargar Contrato</a></td>
                                 </tr>
                                 {% for place in selected_places %}
                                 <tr>
@@ -874,8 +874,7 @@
                                         ({{ place.folio }})
                                     </th>
                                     <td>
-                                        <a class="btn btn-sm btn-secondary shadow-0 disabled" href="#">No disponible</a>
-                                        <a class="btn btn-sm btn-secondary shadow-0 disabled ms-2" href="#">No disponible</a>
+                                        <a class="btn btn-sm btn-success shadow-0" href="{% url 'admin:download_gafete' object.uuid place.uuid %}">Descargar Gafete</a>
                                     </td>
                                 </tr>
                                 {% endfor %}

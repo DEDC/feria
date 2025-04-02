@@ -22,8 +22,7 @@ def generate_physical_document(request_):
 
     document = Document(f)
     buffer = io.BytesIO()
-    places = request_.solicitud_lugar.filter(fecha_reg__year=2025, estatus='assign')
-    
+    places = request_.solicitud_lugar.filter(estatus='assign')
     price_places = places.aggregate(price=Sum('precio'))['price'] or 0
     price_extras = places.aggregate(price=Sum('extras__precio'))['price'] or 0
     total_prices = price_places + price_extras
