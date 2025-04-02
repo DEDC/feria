@@ -5,7 +5,7 @@ from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, Upda
                               ListRequests, ListUsers, UnlockRequest, UpdateUser, UserDates, ListDates,
                               DownloadContract, DownloadGafete, DownloadSuministros, DownloadReport,
                               DownloadRequestsReport, ListParking, DownloadStandsReport,
-                              DownloadTarjeton, UpdateParking, DownloadReceipt, ListStands,
+                              DownloadTarjeton, UpdateParking, DownloadReceipt, ListStands, DownloadResponsibility,
                               set_place_temp, unset_place_temp, set_place,
                               add_alcohol, add_terraza, add_big_terraza, delete_item, delete_place, add_descuento,
                               aplicar_pago_caja, aplicar_pago_transfer, RegistroManualUbicacion)
@@ -45,6 +45,7 @@ urlpatterns = [
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/eliminar', delete_place),
     # downloads
     path('solicitud/<uuid:uuid>/contrato/descargar', DownloadContract.as_view(), name='download_contract'),
+    path('solicitud/<uuid:uuid>/carta_responsiva/descargar', DownloadResponsibility.as_view(), name='download_responsibility'),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/gafete/descargar', DownloadGafete.as_view(), name='download_gafete'),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/suministros/descargar', DownloadSuministros.as_view(), name='download_suministros'),
     path('tarjeton/<uuid:uuid>/descargar', DownloadTarjeton.as_view(), name='download_tarjeton'),
