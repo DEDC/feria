@@ -43,7 +43,7 @@ def generate_physical_document(request_):
         '<address>': '{} {} {} {}'.format(request_.calle, request_.no_calle, request_.codigo_postal, request_.colonia),
         '<town>': request_.municipio,
         '<estate>': request_.get_estado_display(),
-        '<rfc>': rfc,
+        '<rfc>': rfc.upper(),
         '<curp>': request_.curp_txt.upper() if request_.curp_txt else 'NO ESPECIFICADO',
         '<price_no_iva>': intcomma(total_prices-price_iva),
         '<price_no_iva_text>': num2words(total_prices-price_iva, lang='es').upper(),
