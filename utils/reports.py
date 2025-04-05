@@ -175,33 +175,34 @@ def get_report():
         ws.cell(row=counter, column=10).value = p.solicitud.comercio.nombre if hasattr(p.solicitud, 'comercio') else 'Sin Comercio'
         ws.cell(row=counter, column=11).value = p.solicitud.comercio.get_giro_display() if hasattr(p.solicitud, 'comercio') else 'Sin Comercio'
         ws.cell(row=counter, column=12).value = p.solicitud.usuario.email
-        ws.cell(row=counter, column=13).value = p.solicitud.usuario.get_full_name()
+        ws.cell(row=counter, column=13).value = p.solicitud.usuario.phone_number
+        ws.cell(row=counter, column=14).value = p.solicitud.usuario.get_full_name()
         payment = p.solicitud.solicitud_pagos.first()
         if p.tpay_pagado:
             status = "TPAY"
             if payment:
                 status = payment.get_tipo_display()
-            ws.cell(row=counter, column=14).value = 'Pagado' if p.tpay_pagado else 'No pagado'
-            ws.cell(row=counter, column=15).value = status
-            ws.cell(row=counter, column=16).value = p.fecha_mod.astimezone(zona_horaria).strftime("%Y-%m-%d") or 'No definido'
-            ws.cell(row=counter, column=17).value = p.fecha_mod.astimezone(zona_horaria).strftime("%H:%M:%S") or 'No definido'
-            ws.cell(row=counter, column=18).value = payment.validador if payment else 'No definido'
+            ws.cell(row=counter, column=15).value = 'Pagado' if p.tpay_pagado else 'No pagado'
+            ws.cell(row=counter, column=16).value = status
+            ws.cell(row=counter, column=17).value = p.fecha_mod.astimezone(zona_horaria).strftime("%Y-%m-%d") or 'No definido'
+            ws.cell(row=counter, column=18).value = p.fecha_mod.astimezone(zona_horaria).strftime("%H:%M:%S") or 'No definido'
+            ws.cell(row=counter, column=19).value = payment.validador if payment else 'No definido'
         if p.caja_pago:
             status = "TPAY"
             if payment:
                 status = payment.get_tipo_display()
-            ws.cell(row=counter, column=14).value = 'Pagado'
-            ws.cell(row=counter, column=15).value = "CAJA"
-            ws.cell(row=counter, column=16).value = p.fecha_mod.astimezone(zona_horaria).strftime("%Y-%m-%d") or 'No definido'
-            ws.cell(row=counter, column=17).value = p.fecha_mod.astimezone(zona_horaria).strftime("%H:%M:%S") or 'No definido'
-            ws.cell(row=counter, column=18).value = payment.validador if payment else 'No definido'
+            ws.cell(row=counter, column=15).value = 'Pagado'
+            ws.cell(row=counter, column=16).value = "CAJA"
+            ws.cell(row=counter, column=17).value = p.fecha_mod.astimezone(zona_horaria).strftime("%Y-%m-%d") or 'No definido'
+            ws.cell(row=counter, column=18).value = p.fecha_mod.astimezone(zona_horaria).strftime("%H:%M:%S") or 'No definido'
+            ws.cell(row=counter, column=19).value = payment.validador if payment else 'No definido'
         if p.transfer_pago:
-            ws.cell(row=counter, column=14).value = 'Pagado'
-            ws.cell(row=counter, column=15).value = "Transferencia"
-            ws.cell(row=counter, column=16).value = p.fecha_mod.astimezone(zona_horaria).strftime("%Y-%m-%d") or 'No definido'
-            ws.cell(row=counter, column=17).value = p.fecha_mod.astimezone(zona_horaria).strftime("%H:%M:%S") or 'No definido'
-            ws.cell(row=counter, column=18).value = payment.validador if payment else 'No definido'
-        counter_column = 19
+            ws.cell(row=counter, column=15).value = 'Pagado'
+            ws.cell(row=counter, column=16).value = "Transferencia"
+            ws.cell(row=counter, column=17).value = p.fecha_mod.astimezone(zona_horaria).strftime("%Y-%m-%d") or 'No definido'
+            ws.cell(row=counter, column=18).value = p.fecha_mod.astimezone(zona_horaria).strftime("%H:%M:%S") or 'No definido'
+            ws.cell(row=counter, column=19).value = payment.validador if payment else 'No definido'
+        counter_column = 20
         for px in p.extras.all():
             ws.cell(row=counter, column=counter_column).value = px.get_tipo_display()
             counter_column += 1
