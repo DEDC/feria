@@ -22,6 +22,8 @@ from apps.tpay.tools import generarToken, solicitar_linea_captura
 from utils.permissions import UserPermissions
 from utils.date import get_date_constancy
 from utils.email import send_html_mail_creation
+from utils.word_writer import generate_physical_document, generate_responsibility
+from utils.gafete import get_gafete
 
 dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
@@ -327,4 +329,32 @@ class DownloadDateDoc(UserPermissions, RedirectView):
             doc = get_date_constancy(request_, date)
             return doc
         except (Solicitudes.DoesNotExist, CitasAgendadas.DoesNotExist):
+            raise Http404()
+
+class DownloadContractUser(UserPermissions, RedirectView):
+    def get(self, request, *args, **kwargs):
+        try:
+            request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
+            doc = generate_physical_document(request_)
+            return doc
+        except (Solicitudes.DoesNotExist):
+            raise Http404()
+
+class DownloadResponsibilityUser(UserPermissions, RedirectView):
+    def get(self, request, *args, **kwargs):
+        try:
+            request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
+            doc = generate_responsibility(request_)
+            return doc
+        except (Solicitudes.DoesNotExist):
+            raise Http404()
+
+class DownloadGafeteUser(UserPermissions, RedirectView):
+    def get(self, request, *args, **kwargs):
+        try:
+            request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
+            place = Lugares.objects.get(uuid=kwargs['uuid_place'])
+            gafete = get_gafete(place)
+            return gafete
+        except (Solicitudes.DoesNotExist, Lugares.DoesNotExist):
             raise Http404()

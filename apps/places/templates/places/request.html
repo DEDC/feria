@@ -702,7 +702,6 @@
                     <!-- Final Información de Pago -->
                     </div>
 
-                </div>
                     <ul class="list-group list-group-light" id="extra-products">
                         <li class="list-group-item d-flex justify-content-end">
                             <h5 class="me-5 fw-bold m-0">Total por espacios:</h5>
@@ -768,6 +767,7 @@
                             </div>
                         </form>
                     {% else %}
+                        {% comment %}
                         <p class="note note-success mt-4">
                             Se ha definido que el pago fue seleccionado como tipo
                             <b>{{ payment.get_tipo_display }}</b> el
@@ -781,11 +781,15 @@
                                 Revertir compra
                             </button>
                         </div>
+                        {% endcomment %}
                     {% endif %}
 
                     <!-- Final Bloque de Selección de Lugares -->
+
+                </div>
                 {% endif %}
                 <!-- Bloque de Citas -->
+
                 {% if user.citas.first %}
                     <div id="citas"
                          class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
@@ -831,6 +835,8 @@
                     </div>
                 {% endif %}
                 <!-- Final Bloque de Citas -->
+
+
                 <!-- Bloque de Información de Pago -->
                 {% if payment %}
                     <div class="shadow-4 bg-white rounded-5 my-4 overflow-hidden p-4 d-flex justify-content-between align-items-center"
@@ -846,10 +852,17 @@
                                     <tbody>
                                     <tr>
                                         <th class="bg-light" style="width: 40%;">Contrato</th>
-                                        <td><a class="btn btn-sm btn-success shadow-0"
-                                               href="{% url 'admin:download_contract' object.uuid %}">Descargar
+                                        <td><a class="btn btn-sm btn-info shadow-0"
+                                               href="{% url 'places:download_contract_user' object.uuid %}">Descargar
                                             Contrato</a></td>
                                     </tr>
+                                    {% if object.comercio.giro == 'ambulante' %}
+                                    <tr>
+                                        <th class="bg-light" style="width: 40%;">Carta Responsiva de Ambulantes</th>
+                                        <td><a class="btn btn-sm btn-info shadow-0"
+                                                href="{% url 'places:download_responsibility_user' object.uuid %}">Descargar Responsiva</a></td>
+                                    </tr>
+                                    {% endif %}
                                     {% for place in selected_places %}
                                         <tr>
                                             <th class="bg-light" style="width: 40%;">
@@ -857,11 +870,8 @@
                                                 ({{ place.folio }})
                                             </th>
                                             <td><a class="btn btn-sm btn-success shadow-0"
-                                                   href="{% url 'admin:download_gafete' object.uuid place.uuid %}">Descargar
+                                                   href="{% url 'places:download_gafete_user' object.uuid place.uuid %}">Descargar
                                                 Gafete</a>
-                                                <a class="btn btn-sm btn-primary shadow-0 ms-2"
-                                                   href="{% url 'admin:download_suministros' object.uuid place.uuid %}">Descargar
-                                                    Suministros</a>
                                             </td>
                                         </tr>
                                     {% endfor %}
@@ -893,6 +903,10 @@
                         {% endif %}
                     </div>
                 {% endif %}
+
+
+
+
             </div>
             <div class="modal fade" id="modal-iframe" tabindex="-1" aria-labelledby="exampleModalFullscreenLabel"
                  aria-modal="true"

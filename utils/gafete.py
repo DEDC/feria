@@ -2,7 +2,7 @@
 import io
 # Django
 from django.http import HttpResponse
-from django.core.exceptions import ValidationError
+from django.http import Http404
 # Reportlab and PyPDF2
 from PyPDF2 import PdfWriter, PdfReader
 from reportlab.graphics.barcode import qr
@@ -25,7 +25,7 @@ def get_gafete(place):
         name_coords = 480, 305
         font_size = 33
         line_height = 35
-    elif place.zona == 'z_a' or place.zona == 'n_1' or place.zona == 'n_2':
+    elif place.zona == 'z_a' or place.zona == 'n_1' or place.zona == 'n_2' or place.zona == 's_t':
         url = 'static/docs/gafete_zona_a.pdf'
         qr_coords = 395, 113
         name_coords = 230, 230
@@ -37,7 +37,7 @@ def get_gafete(place):
         name_coords = 230, 230
         font_size = 20
         line_height = 21
-    elif place.zona == 'z_c':
+    elif place.zona == 'z_c' or place.zona == 'teatro':
         url = 'static/docs/gafete_zona_c.pdf'
         qr_coords = 395, 113
         name_coords = 230, 230
@@ -56,7 +56,7 @@ def get_gafete(place):
         font_size = 20
         line_height = 21
     else:
-        raise ValidationError('No se generó gafete para esa Zona. Intente de nuevo más tarde.', code = 'invalid_gafete')
+        raise Http404('No se generó gafete para esa Zona. Intente de nuevo más tarde.')
     
     inputw = PdfReader(open(url, 'rb'))
     buffer = io.BytesIO()
