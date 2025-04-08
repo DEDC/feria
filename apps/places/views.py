@@ -180,7 +180,7 @@ class Request(UserPermissions, DetailView):
         #                     messages.success(self.request, 'Cita asignada exitosamente.')
         #                     break
 
-        
+
         context['total_places'] = places.aggregate(price=Sum('precio'))['price'] or 0
         context['total_extras'] = places.aggregate(price=Sum('extras__precio'))['price'] or 0
         context['total'] = context['total_extras'] + context['total_places']
