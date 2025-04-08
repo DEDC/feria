@@ -179,6 +179,8 @@ class Request(UserPermissions, DetailView):
         #                     assign = True
         #                     messages.success(self.request, 'Cita asignada exitosamente.')
         #                     break
+
+        
         context['total_places'] = places.aggregate(price=Sum('precio'))['price'] or 0
         context['total_extras'] = places.aggregate(price=Sum('extras__precio'))['price'] or 0
         context['total'] = context['total_extras'] + context['total_places']
@@ -195,7 +197,7 @@ class Request(UserPermissions, DetailView):
         context['tpay_access'] = settings.TPAY_SESSION_ACCESS
         context['tpat_sistema'] = settings.TPAY_SISTEMA
         context["tpay_activo"] = True
-        context["contrato_activo"] = False
+        context["contrato_activo"] = True
         return context
 
 
