@@ -40,6 +40,18 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.min.css">
 <script src="{% static 'js/request.js' %}" type="module" defer></script>
 <script src="{% static 'js/easytimer.min.js' %}" defer></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // to add a tarjeton by local
+        add_est = document.querySelectorAll('.add-tes')
+        place_tes = document.querySelector('#place_tes')
+        add_est.forEach(element => {
+            element.addEventListener('click', (e) => {
+                place_tes.value = e.target.dataset.uuidplace
+            })
+        });
+    })
+</script>
 {% endblock head %}
 {% load static %}
 {% block main %}
@@ -883,6 +895,11 @@
                                     </th>
                                     <td>
                                         <a class="btn btn-sm btn-success shadow-0" href="{% url 'admin:download_gafete' object.uuid place.uuid %}">Descargar Gafete</a>
+                                        {% if place.tarjetones.first %}
+                                        <a class="btn btn-sm btn-primary shadow-0" href="{% url 'admin:download_tarjeton' place.tarjetones.first.uuid %}">Descargar Tarjetón</a>
+                                        {% else %}
+                                        <a data-uuidplace="{{place.uuid}}" data-mdb-toggle="modal" data-mdb-target="#modal-tarjeton" class="btn btn-sm btn-warning shadow-0 add-tes">Agregar Tarjetón</a>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -913,6 +930,73 @@
         </div>
     </form>
 </div>
+<!-- Modal TES -->
+<form method="post" action="{% url 'admin:add_tes' object.uuid %}">
+    {% csrf_token %}
+    <input type="hidden" name="uuid_place" value="" id="place_tes">
+    <div class="modal fade" id="modal-tarjeton" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Tarjetón</h5>
+                    <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert mb-4" role="alert" data-mdb-color="primary" data-mdb-alert-init>
+                        <ul>
+                            <li>Agregue la información del vehículo como el Tipo (ej. Sedán, Hatchback), Marca (ej. Chevrolet, Nissan), Color y Número de Placa.</li>
+                            <li>Una vez capturada esa información descargue el Tarjetón correspondiente a su local en la parte inferior de esta página.</li>
+                        </ul>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-outline">
+                                {{form_tes.nombre}}
+                                <label class="form-label">{{form_tes.nombre.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-outline">
+                                {{form_tes.nombre_comercial}}
+                                <label class="form-label">{{form_tes.nombre_comercial.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form_tes.tipo}}
+                                <label class="form-label">{{form_tes.tipo.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form_tes.marca}}
+                                <label class="form-label">{{form_tes.marca.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form_tes.color}}
+                                <label class="form-label">{{form_tes.color.label}}</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                {{form_tes.placa}}
+                                <label class="form-label">{{form_tes.placa.label}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary shadow-0">Crear</button>
+                    <button type="button" class="btn btn-secondary" data-mdb-ripple-init
+                        data-mdb-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 <!-- Modal Validations -->
 <div class="modal fade" id="modal-validations" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">

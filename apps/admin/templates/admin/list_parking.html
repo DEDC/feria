@@ -41,10 +41,12 @@
                     <i class="fas fa-car me-3 green-text"></i>Tarjetones de Estacionamiento
                     &nbsp;({{object_list.count}})
                 </h4>
+                {% comment %}
                 <button type="button" class="btn btn-lg btn-secondary btn-rounded d-none d-sm-block"
                     data-mdb-toggle="modal" data-mdb-target="#modal-tarjeton">
                     <i class="fas fa-add me-2"></i>Crear Tarjetón
                 </button>
+                {% endcomment %}
             </div>
             <div class="shadow-4 bg-white rounded-5 mb-4 p-4">
                 <form>
@@ -70,9 +72,8 @@
                                 <th class="th-sm">Marca</th>
                                 <th class="th-sm">Color</th>
                                 <th class="th-sm">Nombre o Razón Social</th>
-                                <th class="th-sm">Puerta de Acceso</th>
-                                <th class="th-sm">No. de Estacionamiento</th>
-                                <th class="th-sm">Ubicación</th>
+                                <th class="th-sm">Nombre Comercial</th>
+                                <th class="th-sm">Solicitud relacionada</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -90,9 +91,8 @@
                                 <td>{{tes.marca}}</td>
                                 <td>{{tes.color}}</td>
                                 <td>{{tes.nombre}}</td>
-                                <td>{{tes.get_acceso_display}}</td>
-                                <td>{{tes.get_no_estacionamiento_display}}</td>
-                                <td>{{tes.get_ubicacion_display}}</td>
+                                <td>{{tes.nombre_comercial}}</td>
+                                <td><a target="_blank" href="{% url 'admin:request' tes.lugar.solicitud.uuid %}">{{tes.lugar.solicitud.folio}}</a></td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -122,17 +122,11 @@
                                 <label class="form-label">{{form.nombre.label}}</label>
                             </div>
                         </div>
-                        <div class="col-4">
-                            {{form.acceso}}
-                            <label class="form-label select-label">{{form.acceso.label}}</label>
-                        </div>
-                        <div class="col-4">
-                            {{form.no_estacionamiento}}
-                            <label class="form-label select-label">{{form.no_estacionamiento.label}}</label>
-                        </div>
-                        <div class="col-4">
-                            {{form.ubicacion}}
-                            <label class="form-label select-label">{{form.ubicacion.label}}</label>
+                        <div class="col-12">
+                            <div class="form-outline">
+                                {{form.nombre_comercial}}
+                                <label class="form-label">{{form.nombre_comercial.label}}</label>
+                            </div>
                         </div>
                         <div class="col-6">
                             <div class="form-outline">

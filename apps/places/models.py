@@ -196,13 +196,15 @@ class Pagos(ControlInfo):
 class Estacionamiento(ControlInfo):
     identifier = 'TES'
     nombre = models.CharField('Nombre o Razón Social', max_length=100)
-    acceso = models.CharField('Puerta de Acceso', max_length=20, choices=(('puerta_1', 'Puerta 1'), ('puerta_2', 'Puerta 2'), ('puerta_3', 'Puerta 3'), ('puerta_herradura', 'Puerta Herradura')))
-    no_estacionamiento = models.CharField('No. de Estacionamiento', max_length=2, choices=(('2', '2'), ('3', '3'), ('4', '4'), ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9')))
-    ubicacion = models.CharField('Ubicación', max_length=30, choices=(('n_1', 'Nave 1'), ('n_2', 'Nave 2'), ('n_3', 'Nave 3'), ('plaza_infantil', 'Plaza Infantil'), ('zona_extrema', 'Zona Extrema'), ('antojeria', 'Antojería'), ('circo', 'Atrás del Circo')))
+    nombre_comercial = models.CharField('Nombre Comercial', max_length=100, default='')
+    acceso = models.CharField('Puerta de Acceso', max_length=20, choices=(('puerta_1', 'Puerta 1'), ('puerta_2', 'Puerta 2'), ('puerta_3', 'Puerta 3'), ('puerta_herradura', 'Puerta Herradura')), null=True, blank=True)
+    no_estacionamiento = models.CharField('No. de Estacionamiento', max_length=2, choices=(('2', '2'), ('3', '3'), ('4', '4'), ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9')), null=True, blank=True)
+    ubicacion = models.CharField('Ubicación', max_length=30, choices=(('n_1', 'Nave 1'), ('n_2', 'Nave 2'), ('n_3', 'Nave 3'), ('plaza_infantil', 'Plaza Infantil'), ('zona_extrema', 'Zona Extrema'), ('antojeria', 'Antojería'), ('circo', 'Atrás del Circo')), null=True, blank=True)
     tipo = models.CharField('Tipo', max_length=12)
     marca = models.CharField('Marca', max_length=12)
     color = models.CharField('Color', max_length=12)
-    placa = models.CharField('Placa', max_length=12, unique=True)
+    placa = models.CharField('Placa', max_length=10, unique=True)
+    lugar = models.ForeignKey(Lugares, editable=False, on_delete=models.PROTECT, related_name='tarjetones', null=True)
 
 
 class HistorialTapy(ControlInfo):

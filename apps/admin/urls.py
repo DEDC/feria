@@ -8,7 +8,7 @@ from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, Upda
                               DownloadTarjeton, UpdateParking, DownloadReceipt, ListStands, DownloadResponsibility,
                               set_place_temp, unset_place_temp, set_place,
                               add_alcohol, add_terraza, add_big_terraza, delete_item, delete_place, add_descuento,
-                              aplicar_pago_caja, aplicar_pago_transfer, RegistroManualUbicacion)
+                              aplicar_pago_caja, aplicar_pago_transfer, RegistroManualUbicacion, AddTarjetonByLocal)
 app_name = 'admin'
 
 urlpatterns = [
@@ -29,6 +29,7 @@ urlpatterns = [
     path('solicitud/<uuid:uuid>/espacios', SetPlace.as_view(), name='set_place'),
     path('solicitud/<uuid:uuid>/cita/<uuid:uuid_date>/descargar', DownloadDateDoc.as_view(), name='download_date'),
     path('solicitud/<uuid:uuid>/validacion/desbloquear', UnlockRequest.as_view(), name='unlock_validation'),
+    path('solicitud/<uuid:uuid>/tarjeton/agregar', AddTarjetonByLocal.as_view(), name='add_tes'),
     # assign places
     path('solicitud/<uuid:uuid>/<str:zone>/lugar/temp', set_place_temp),
     path('solicitud/<uuid:uuid>/lugar/unset/temp', unset_place_temp),

@@ -73,18 +73,21 @@ class Main(AdminStaffPermissions, TemplateView):
         validations = Validaciones.objects.all()
         branches = Comercios.objects.all()
         places = Lugares.objects.all()
+        parkings = Estacionamiento.objects.all()
         context['requests'] = requests.count()
         context['dates'] = dates.count()
         context['users'] = users.count()
         context['validations'] = validations.count()
         context['branches'] = branches.count()
         context['places'] = places.count()
+        context['parking'] = parkings.count()
         context['requests_today'] = requests.filter(fecha_reg__date=today).count()
         context['dates_today'] = dates.filter(fecha_reg__date=today).count()
         context['users_today'] = users.filter(date_joined__date=today).count()
         context['validations_today'] = validations.filter(fecha_reg__date=today).count()
         context['branches_today'] = branches.filter(fecha_reg__date=today).count()
         context['places_today'] = places.filter(fecha_reg__date=today).count()
+        context['parking_today'] = parkings.filter(fecha_reg__date=today).count()
         context['payments'] = places.filter(Q(tpay_pagado=True) | Q(caja_pago=True) | Q(transfer_pago=True)).aggregate(monto=Sum('precio'))
         context['payments_done'] = places.filter(Q(tpay_pagado=True) | Q(caja_pago=True)| Q(transfer_pago=True)).count()
         return context
@@ -395,9 +398,9 @@ class Request(AdminStaffPermissions, DetailView):
         context = super().get_context_data(**kwargs)
         # places = self.object.solicitud_lugar.filter(fecha_reg__year=2024, estatus='assign')
         places = self.object.solicitud_lugar.filter(estatus='assign')
-
         aplicar_pago_solicitud(self.object)
-
+        nombre_comercial = self.object.comercio.nombre if hasattr(self.object, 'comercio') else 'No especificado'
+        context['form_tes'] = ParkingForm(initial={'nombre': self.object.nombre, 'nombre_comercial': nombre_comercial})
         context['total_places'] = places.aggregate(price=Sum('precio'))['price'] or 0
         context['total_extras'] = places.aggregate(price=Sum('extras__precio'))['price'] or 0
         context['total'] = context['total_extras'] + context['total_places']
@@ -635,6 +638,22 @@ class UnlockRequest(AdminStaffPermissions, RedirectView):
         except (Solicitudes.DoesNotExist):
             raise Http404()
 
+class AddTarjetonByLocal(AdminStaffPermissions, RedirectView):
+    def post(self, request, *args, **kwargs):
+        try:
+            request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
+            place = Lugares.objects.get(uuid=request.POST.get('uuid_place'))
+            form = ParkingForm(request.POST)
+            if form.is_valid():
+                form.instance.lugar = place
+                form.save()
+                messages.success(request, 'Tarjetón creado exitosamente')
+            else:
+                messages.error(request, 'Ha ocurrido un error al crear el Tarjetón')
+                messages.error(request, form.errors)
+            return redirect('admin:request', uuid = request_.uuid)
+        except:
+            raise Http404()
 
 class UserDates(AdminStaffPermissions, TemplateView):
     template_name = 'admin/user_dates.html'

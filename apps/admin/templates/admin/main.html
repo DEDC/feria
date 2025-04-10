@@ -174,8 +174,35 @@
             </div>
         </section>
         <section class="mb-4">
-            {% if user.is_superuser %}
             <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="p-3 badge-info rounded-4">
+                                        <i class="fas fa-car fa-2x fa-fw"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-4">
+                                    <p class="text-muted mb-1">Tarjetones</p>
+                                    <h2 class="mb-0">
+                                        {{parking|intcomma}}
+                                        <span class="text-success" style="font-size: 0.875rem"><i
+                                                class="fas fa-arrow-up fa-sm"></i>
+                                            <span>{{parking_today}}</span> hoy</span>
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer border-0 bg-light p-2">
+                            <a class="btn btn-link m-0" href="{% url 'admin:list_parking' %}" role="button"
+                                data-mdb-ripple-init data-ripple-color="primary">Ver más<i
+                                    class="fas fa-arrow-right ms-2"></i></a>
+                        </div>
+                    </div>
+                </div>
+                {% if user.is_superuser %}
                 <div class="col-md-4 mb-4 mb-md-0">
                     <div class="card">
                         <div class="card-body">
@@ -221,8 +248,8 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
             </div>
-            {% endif %}
         </section>
     </div>
 </div>
