@@ -864,8 +864,8 @@ class RegistroManualUbicacion(AdminStaffPermissions, DetailView):
 
     def post(self, request, *args, **kwargs):
         request_ = self.get_object()
-        if hasattr(request_, 'comercio'):
-            if request_.comercio.giro == 'ambulante':
+        giro_comercio = request_.comercio.giro if hasattr(request_, 'comercio') else ''     
+        if giro_comercio == 'ambulante':
                 comercio = request_.comercio
                 comercio.subgiro = self.request.POST.get("subgiro")
                 nombre = Lugares.objects.filter(estatus='assign', zona='amb').count() + 1
