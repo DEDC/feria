@@ -3,14 +3,13 @@ import io
 import textwrap
 # Django
 from django.http import HttpResponse
-from django.http import Http404
 # Reportlab and PyPDF2
 from PyPDF2 import PdfWriter, PdfReader
 from reportlab.graphics.barcode import qr
 from reportlab.graphics.shapes import Drawing
 from reportlab.graphics import renderPDF
 from reportlab.pdfgen.canvas import Canvas
-from reportlab.lib.pagesizes import letter, landscape, TABLOID
+from reportlab.lib.pagesizes import landscape, TABLOID
 
 def get_tarjeton(tarjeton):
     output = PdfWriter()
@@ -26,7 +25,7 @@ def get_tarjeton(tarjeton):
     elif place.zona == 'n_3':
         url = 'static/docs/tarjeton_zona_e.pdf'
     else:
-        raise Http404('No se generó Tarjetón para esa Zona. Intente de nuevo más tarde.')
+        return HttpResponse('No se generó Tarjetón para esa Zona. Intente de nuevo más tarde.')
     inputw = PdfReader(open(url, 'rb'))
     buffer = io.BytesIO()
     pdf = Canvas(buffer)

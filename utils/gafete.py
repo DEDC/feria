@@ -2,7 +2,6 @@
 import io
 # Django
 from django.http import HttpResponse
-from django.http import Http404
 # Reportlab and PyPDF2
 from PyPDF2 import PdfWriter, PdfReader
 from reportlab.graphics.barcode import qr
@@ -12,8 +11,6 @@ from reportlab.pdfgen.canvas import Canvas
 # Python
 import io
 from textwrap import wrap
-# Django
-from django.http import HttpResponse
 
 def get_gafete(place):
     output = PdfWriter()
@@ -56,7 +53,7 @@ def get_gafete(place):
         font_size = 20
         line_height = 21
     else:
-        raise Http404('No se generó gafete para esa Zona. Intente de nuevo más tarde.')
+        return HttpResponse('No se generó gafete para esa Zona. Intente de nuevo más tarde.')
     
     inputw = PdfReader(open(url, 'rb'))
     buffer = io.BytesIO()
