@@ -17,7 +17,7 @@ import pytz
 
 timezone.activate(pytz.timezone("America/Mexico_City"))
 
-def get_receipt(place):
+def get_receipt(place, px):
     output = PdfWriter()
     inputw = PdfReader(open('static/docs/pase_caja.pdf', 'rb'))
     buffer = io.BytesIO()
@@ -28,21 +28,15 @@ def get_receipt(place):
     pdf.drawString(107, 575, place.solicitud.folio)
     pdf.drawString(343, 575, place.nombre)
     pdf.drawString(475, 575, place.get_zona_display())
-    pdf.drawString(142, 521, f'${intcomma(place.precio)}')
-    pdf.drawString(375, 521, str(place.folio))
+    if px is not None:
+        pdf.drawString(142, 521, f'${intcomma(px.precio)}')
+        pdf.drawString(330, 521, str(f'{px.folio} (1 Gafete Extra)'))
+    else:
+        pdf.drawString(142, 521, f'${intcomma(place.precio)}')
+        pdf.drawString(375, 521, str(place.folio))
     pdf.setFont("Helvetica", 8)
     pdf.drawString(260, 464, timezone.localtime(timezone.now()).strftime("%d-%m-%Y %H:%M"))
     pdf.drawString(457, 464, timezone.localtime(timezone.now() + + timezone.timedelta(days=1)).strftime("%d-%m-%Y %H:%M"))
-    # # QR
-    # qr_text = str(place.folio)
-    # qr_code = qr.QrCodeWidget(qr_text)
-    # bounds = qr_code.getBounds()
-    # width = bounds[2] - bounds[0]
-    # height = bounds[3] - bounds[1]
-    # d = Drawing(100, 100, transform=[130./width, 0, 0, 130./height, 0, 0])
-    # d.add(qr_code)
-    # renderPDF.draw(d, pdf, 71, 20)
-    # Creación del pdf final
     pdf.save()
     watermark = PdfReader(buffer)
     page1 = inputw.pages[0]

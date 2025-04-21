@@ -12,7 +12,7 @@ from reportlab.pdfgen.canvas import Canvas
 import io
 from textwrap import wrap
 
-def get_gafete(place):
+def get_gafete(place, px):
     output = PdfWriter()
     qr_coords = 0, 0
     name_coords = 0, 0
@@ -65,6 +65,9 @@ def get_gafete(place):
         y_start = name_coords[0] - y_step
         pdf.drawCentredString(name_coords[1], y_start, s)
         pdf.drawCentredString
+    if px:
+        pdf.setFont("Helvetica-Bold", 13)
+        pdf.drawString(30, 50, f'GAFETE EXTRA ({px.folio})')
     # QR
     qr_text = str(place.folio)
     qr_code = qr.QrCodeWidget(qr_text)

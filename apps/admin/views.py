@@ -554,11 +554,14 @@ class DownloadResponsibility(AdminPermissions, RedirectView):
 class DownloadGafete(AdminPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
         try:
+            px = request.GET.get('px', None)
+            if px is not None:
+                px = ProductosExtras.objects.get(folio=px)
             request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
             place = Lugares.objects.get(uuid=kwargs['uuid_place'])
-            gafete = get_gafete(place)
+            gafete = get_gafete(place, px)
             return gafete
-        except (Solicitudes.DoesNotExist, Lugares.DoesNotExist):
+        except (Solicitudes.DoesNotExist, Lugares.DoesNotExist, ProductosExtras.DoesNotExist):
             raise Http404()
 
 
@@ -614,13 +617,15 @@ class DownloadStandsReport(AdminPermissions, RedirectView):
 class DownloadReceipt(AdminStaffPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
         try:
+            px = request.GET.get('px', None)
+            if px is not None:
+                px = ProductosExtras.objects.get(folio=px)
             request_ = Solicitudes.objects.get(uuid=kwargs['uuid'])
             place = Lugares.objects.get(uuid=kwargs['uuid_place'])
-            receipt = get_receipt(place)
+            receipt = get_receipt(place, px)
             return receipt
-        except (Solicitudes.DoesNotExist, Lugares.DoesNotExist):
+        except (Solicitudes.DoesNotExist, Lugares.DoesNotExist, ProductosExtras.DoesNotExist):
             raise Http404()
-
 
 class UnlockRequest(AdminStaffPermissions, RedirectView):
     def get(self, request, *args, **kwargs):
@@ -723,6 +728,18 @@ def add_big_terraza(request, uuid, uuid_place):
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([IsAuthenticated,])
+def add_gafete(request, uuid, uuid_place):
+    extra = 250
+    try:
+        request_ = Solicitudes.objects.get(uuid=uuid)
+        place = Lugares.objects.get(uuid=uuid_place)
+        ProductosExtras.objects.create(lugar=place, tipo='extra_gafete', precio=extra, m2=0, to_places=place.folio)
+        return Response({})
+    except Exception as e:
+        return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
@@ -801,6 +818,17 @@ def delete_place(request, uuid, uuid_place):
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([IsAuthenticated,])
+def apply_cash_payment_gafete(request, uuid, uuid_place, uuid_px):
+    try:
+        px = ProductosExtras.objects.get(uuid=uuid_px)
+        px.folio_caja = request.POST.get('folio')
+        px.save()
+        return Response({"status": 'success'})
+    except Exception as e:
+        return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))

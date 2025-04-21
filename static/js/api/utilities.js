@@ -71,6 +71,11 @@ export const addAlcohol = async (uuid, uuid_place, data) => {
     return response;
 }
 
+export const addGafete = async (uuid, uuid_place) => {
+    const response = await postAPICall(`/admin/solicitud/${uuid}/lugar/${uuid_place}/gafete/agregar`);
+    return response;
+}
+
 export const deleteItem = async (uuid, uuid_place, data) => {
     const response = await postAPICall(`/admin/solicitud/${uuid}/item/${uuid_place}/eliminar`, data);
     return response;
@@ -78,6 +83,11 @@ export const deleteItem = async (uuid, uuid_place, data) => {
 
 export const deletePlace = async (uuid, uuid_place, data) => {
     const response = await postAPICall(`/admin/solicitud/${uuid}/lugar/${uuid_place}/eliminar`, data);
+    return response;
+}
+
+export const applyCashPaymentGafete = async (uuid, uuid_place, uuid_px, data) => {
+    const response = await postAPICall(`/admin/solicitud/${uuid}/lugar/${uuid_place}/gafete/${uuid_px}/pago`, data);
     return response;
 }
 

@@ -6,8 +6,10 @@ import {
     addTerraza,
     addAlcohol,
     addBigTerraza,
+    addGafete,
     deleteItem,
     deletePlace,
+    applyCashPaymentGafete,
     addDescuento, statusPlace, consultaTpayPlace, webhookPlace, aplicarPago, aplicarTransferencia
 } from "../js/api/utilities.js";
 import {
@@ -48,12 +50,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const add_alcohol = document.querySelector('#add-alcohol')
     const add_terraza = document.querySelector('#add-terraza')
     const add_big_terraza = document.querySelector('#add-big-terraza')
+    const add_gafetes = document.querySelectorAll('.add-gafete')
     const delete_pdt = document.querySelectorAll('.del-pdt')
     const delete_place = document.querySelectorAll('.del-place')
     const status_place = document.querySelectorAll('.status-place')
     const aplicar_pago = document.querySelectorAll('.aplicar-pago')
     const aplicar_transfer = document.querySelectorAll('.aplicar-transferencia')
     const pdf_place = document.querySelectorAll('.pdf-place')
+    const apply_payment_gafete = document.querySelectorAll('.aplly-payment-gafete')
 
     if(modal_transfer){
 
@@ -225,6 +229,21 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     });
 
+    apply_payment_gafete.forEach(element => {
+        element.addEventListener('click', (e) => {
+            let folio = e.target.previousElementSibling.value
+            if (folio) {
+                const data = new FormData();
+                data.append('folio', folio);
+                applyCashPaymentGafete(e.target.dataset.uuid, e.target.dataset.uuidPlace, e.target.dataset.uuidPx, data).then((resp) => {
+                    location.reload()
+                }).catch((error) => {
+                    console.log(error);
+                });
+            }
+        })
+    })
+
     if (add_alcohol) {
         add_alcohol.addEventListener('click', (e) => {
             let chks = document.querySelectorAll('.config-chk:checked')
@@ -282,6 +301,17 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         })
     }
+
+    add_gafetes.forEach(element => {
+        element.addEventListener('click', (e) => {
+            e.preventDefault()
+            addGafete(e.target.dataset.uuid, e.target.dataset.uuidPlace).then((resp) => {
+                location.reload()
+            }).catch((error) => {
+                console.log(error);
+            });
+        })
+    });
 
     if (config_chks) {
         config_chks.forEach(element => {

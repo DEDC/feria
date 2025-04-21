@@ -7,8 +7,8 @@ from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, Upda
                               DownloadRequestsReport, ListParking, DownloadStandsReport,
                               DownloadTarjeton, UpdateParking, DownloadReceipt, ListStands, DownloadResponsibility,
                               set_place_temp, unset_place_temp, set_place,
-                              add_alcohol, add_terraza, add_big_terraza, delete_item, delete_place, add_descuento,
-                              aplicar_pago_caja, aplicar_pago_transfer, RegistroManualUbicacion, AddTarjetonByLocal)
+                              add_alcohol, add_terraza, add_big_terraza, add_gafete, delete_item, delete_place, add_descuento,
+                              aplicar_pago_caja, aplicar_pago_transfer, apply_cash_payment_gafete, RegistroManualUbicacion, AddTarjetonByLocal)
 app_name = 'admin'
 
 urlpatterns = [
@@ -37,11 +37,12 @@ urlpatterns = [
     # products
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/pago', aplicar_pago_caja),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/transfer', aplicar_pago_transfer),
-
+    path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/gafete/<uuid_px>/pago', apply_cash_payment_gafete),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/alcohol/agregar', add_alcohol),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/terraza/agregar', add_terraza),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/descuento/agregar', add_descuento),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/terraza_grande/agregar', add_big_terraza),
+    path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/gafete/agregar', add_gafete),
     path('solicitud/<uuid:uuid>/item/<uuid:uuid_pdt>/eliminar', delete_item),
     path('solicitud/<uuid:uuid>/lugar/<uuid:uuid_place>/eliminar', delete_place),
     # downloads

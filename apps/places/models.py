@@ -160,13 +160,13 @@ class Lugares(ControlInfo):
 class ProductosExtras(ControlInfo):
     identifier = 'PDX'
     lugar = models.ForeignKey(Lugares, editable=False, on_delete=models.PROTECT, related_name='extras')
-    tipo = models.CharField(max_length=20, null=True, choices=(('terraza', 'Terraza'), ('terraza_grande', 'Terraza Grande'), ('licencia_alcohol', 'Permiso de Alcohol')))
+    tipo = models.CharField(max_length=20, null=True, choices=(('terraza', 'Terraza'), ('terraza_grande', 'Terraza Grande'), ('licencia_alcohol', 'Permiso de Alcohol'), ('extra_gafete', 'Gafete Extra')))
     precio = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     m2 = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     to_places = models.TextField(default='')
     tramite_id = models.IntegerField(default=0)
     precio_tpay = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
-
+    folio_caja = models.CharField(max_length=150, null=True, blank=True, editable=False)
 
 class Pagos(ControlInfo):
     estatus = (
