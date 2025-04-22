@@ -18,7 +18,7 @@ def get_tarjeton(tarjeton):
         url = 'static/docs/tarjeton_zona_a.pdf'
     elif place.zona == 'z_b':
         url = 'static/docs/tarjeton_zona_b.pdf'
-    elif place.zona == 'z_c' or place.zona == 'teatro':
+    elif place.zona == 'z_c' or place.zona == 'teatro' or place.zona == 'ganadera':
         url = 'static/docs/tarjeton_zona_c.pdf'
     elif place.zona == 'z_d':
         url = 'static/docs/tarjeton_zona_d.pdf'

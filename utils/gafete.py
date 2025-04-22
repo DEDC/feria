@@ -34,7 +34,7 @@ def get_gafete(place, px):
         name_coords = 230, 230
         font_size = 20
         line_height = 21
-    elif place.zona == 'z_c' or place.zona == 'teatro':
+    elif place.zona == 'z_c' or place.zona == 'teatro' or place.zona == 'ganadera':
         url = 'static/docs/gafete_zona_c.pdf'
         qr_coords = 395, 113
         name_coords = 230, 230
