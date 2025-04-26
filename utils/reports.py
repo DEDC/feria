@@ -102,6 +102,7 @@ def get_stands_report(places_dict):
 
         ws.cell(row=counter, column=9, value=p.get('has_alcohol', 'Sin asignar'))
         ws.cell(row=counter, column=10, value=p.get('is_paid', 'Sin asignar'))
+        ws.cell(row=counter, column=11, value=p.get('added_by', 'Sin asignar'))
 
         # if hasattr(p.solicitud, 'comercio'):
         #     c = p.solicitud.comercio
