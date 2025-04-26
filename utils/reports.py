@@ -92,7 +92,7 @@ def get_stands_report(places_dict):
                 ws.cell(row=counter, column=9, value='Sin asignar')
                 ws.cell(row=counter, column=10, value='Sin asignar')
             counter+=1
-    for p in selected_places.filter(zona='amb'):
+    for p in selected_places.filter(Q(zona='amb') |  Q(zona='patrocinador') | Q(zona='ganadera') | Q(zona='flor') | Q(zona='bandas')):
         ws.cell(row=counter, column=1, value=p.nombre)
         ws.cell(row=counter, column=2, value=p.get_zona_display())
         ws.cell(row=counter, column=3, value=p.folio)
