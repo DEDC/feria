@@ -38,7 +38,7 @@
                         </div>
                         <div class="flex-grow-1 ms-4">
                             <p class="text-muted mb-1">Total</p>
-                            <h2 class="mb-0">{{total_places}}</h2>
+                            <h2 class="mb-0">{{selected_places|length}}</h2>
                         </div>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
             <div
                 class="shadow-4 bg-white rounded-5 mb-4 overflow-hidden p-4 d-flex justify-content-between align-items-center">
                 <h4 class="mb-0 fw-bold">
-                    <i class="fas fa-map-pin me-3 green-text"></i>Locales &nbsp;({{total_places}})
+                    <i class="fas fa-map-pin me-3 green-text"></i>Locales &nbsp;({{selected_places|length}})
                 </h4>
             </div>
             <div class="shadow-4 bg-white rounded-5 mb-4 p-4">
@@ -69,16 +69,18 @@
                 </form>
             </div>
             <div class="shadow-4 bg-white rounded-5 p-4">
+                {% regroup selected_places|dictsort:"zona_display" by zona_display as places_list %}
                 <div class="accordion accordion-flush" id="accordionStands">
-                    {% for k,v in metaplaces.items %}
+                    {% for place in places_list %}
                     <div class="accordion-item">
-                        <h2 class="accordion-header" id="flush-{{k}}-h">
+                        <h2 class="accordion-header" id="flush-{{forloop.counter}}-h">
                             <button class="accordion-button collapsed" type="button" data-mdb-toggle="collapse"
-                                data-mdb-target="#flush-{{k}}">
-                                <b>{{v.title}} ({{v.places|length}})</b>
+                                data-mdb-target="#flush-{{forloop.counter}}">
+                                <b>{{place.grouper}} ({{place.list|length}})</b>
                             </button>
                         </h2>
-                        <div id="flush-{{k}}" class="accordion-collapse collapse" data-mdb-parent="#accordionStands">
+                        <div id="flush-{{forloop.counter}}" class="accordion-collapse collapse"
+                            data-mdb-parent="#accordionStands">
                             <div class="accordion-body">
                                 <div class="table-responsive">
                                     <div class="datatable">
@@ -96,29 +98,31 @@
                                                     <th class="th-sm">UUID base</th>
                                                     <th class="th-sm">Concepto inicial de Finanzas</th>
                                                     <th class="th-sm">Concepto final de Finanzas</th>
+                                                    <th class="th-sm">Método de asignación</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for p in v.places %}
+                                                {% for p in place.list %}
                                                 <tr>
-                                                    <td><b>{{p.text}} - {{v.title}}</b></td>
-                                                    <td>
-                                                        {% if p.request_ %}
+                                                    <td class="th-sm">{% firstof p.nombre p.text "No especificado" %}</td>
+                                                    <td class="th-sm">
+                                                        {% if p.solicitud__uuid %}
                                                         <a target="_blank"
-                                                            href="{% url 'admin:request' p.uuid_request %}#payinfo">{{p.request_}}</a>
+                                                            href="{% url 'admin:request' p.solicitud__uuid %}#payinfo">{{p.solicitud__folio}}</a>
                                                         {% else %}
                                                         Sin asignar
                                                         {% endif %}
                                                     </td>
-                                                    <td>{{p.place|default:"Sin asignar"}}</td>
-                                                    <td>{{p.is_paid|default:"Sin asignar"}}</td>
-                                                    <td>{{p.alcohol|default:"Sin asignar"}}</td>
-                                                    <td>{{p.m2}}</td>
-                                                    <td>${{p.price|intcomma}}</td>
-                                                    <td>${{p.final_price|intcomma|default:"0"}}</td>
-                                                    <td>{{p.uuid}}</td>
-                                                    <td>{{p.concept}}</td>
-                                                    <td>{{p.final_concept|default:"Sin asignar"}}</td>
+                                                    <td class="th-sm">{{p.folio|default:"Sin asignar"}}</td>
+                                                    <td class="th-sm">{{p.is_paid|default:"No especificado"}}</td>
+                                                    <td class="th-sm">{{p.has_alcohol|default:"Sin asignar"}}</td>
+                                                    <td class="th-sm">{{p.m2|default:"No especificado"}}</td>
+                                                    <td class="th-sm">${{p.price|intcomma|default:"0"}}</td>
+                                                    <td class="th-sm">${{p.precio|intcomma|default:"0"}}</td>
+                                                    <td class="th-sm">{% firstof p.uuid_internal p.uuid "No especificado" %}{{p.uuid_internal|default:"No especificado"}}</td>
+                                                    <td class="th-sm">{% firstof p.concept_internal p.concept "No especificado" %}</td>
+                                                    <td class="th-sm">{{p.tramite_id|default:"No especificado"}}</td>
+                                                    <td class="th-sm">{{p.added_by|default:"No especificado"}}</td>
                                                 </tr>
                                                 {% endfor %}
                                             </tbody>
@@ -129,63 +133,6 @@
                         </div>
                     </div>
                     {% endfor %}
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="flush-amb-h">
-                            <button class="accordion-button collapsed" type="button" data-mdb-toggle="collapse"
-                                data-mdb-target="#flush-amb">
-                                <b>Ambulantes ({{ambulantes.count}})</b>
-                            </button>
-                        </h2>
-                        <div id="flush-amb" class="accordion-collapse collapse" data-mdb-parent="#accordionStands">
-                            <div class="accordion-body">
-                                <div class="table-responsive">
-                                    <div class="datatable">
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                    <th class="th-sm">Stand</th>
-                                                    <th class="th-sm">Asignado a</th>
-                                                    <th class="th-sm">Folio en el sistema</th>
-                                                    <th class="th-sm">Pagado</th>
-                                                    <th class="th-sm">Permiso de Alcohol</th>
-                                                    <th class="th-sm">M<sup>2</sup></th>
-                                                    <th class="th-sm">Precio inicial</th>
-                                                    <th class="th-sm">Precio final</th>
-                                                    <th class="th-sm">UUID base</th>
-                                                    <th class="th-sm">Concepto inicial de Finanzas</th>
-                                                    <th class="th-sm">Concepto final de Finanzas</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for p in ambulantes %}
-                                                <tr>
-                                                    <td><b>{{p.nombre}} - {{p.get_zona_display}}</b></td>
-                                                    <td>
-                                                        {% if p.solicitud %}
-                                                        <a target="_blank"
-                                                            href="{% url 'admin:request' p.solicitud.uuid %}#payinfo">{{p.solicitud.folio}}</a>
-                                                        {% else %}
-                                                        Sin asignar
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>{{p.folio}}</td>
-                                                    <td>No aplica</td>
-                                                    <td>No aplica</td>
-                                                    <td>{{p.m2}}</td>
-                                                    <td>${{p.precio|intcomma|default:"0"}}</td>
-                                                    <td>No aplica</td>
-                                                    <td>{{p.uuid}}</td>
-                                                    <td>{{p.tramite_id}}</td>
-                                                    <td>No aplica</td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

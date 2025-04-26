@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Q, Sum
+from django.db.models import Q, Sum, Case, When, Value, CharField, Count
 from django.http import Http404
 from django.conf import settings
 from django.http import JsonResponse
@@ -42,6 +42,7 @@ from utils.word_writer import generate_physical_document, generate_responsibilit
 from utils.reports import get_report, get_requests_report, get_stands_report
 from utils.email import send_html_mail
 from utils.metadata import place_concept_alcohol
+from utils.tools import get_difference_by_different_keys, flatten_nested_dicts
 
 places_dict = {'n_1': nave1, 'n_2': nave2, 'n_3': nave3, 'z_a': zona_a, 'z_b': zona_b, 'z_c': zona_c, 'z_d': zona_d, 's_t': sabor_tabasco, 'teatro': teatro}
 
@@ -97,26 +98,41 @@ class ListStands(AdminPermissions, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        selected_places = Lugares.objects.all()
+        # get zone choices from Lugares model
+        zone_choices = Lugares.zona.field.choices
+        
+        # get the queryset values using when case
+        selected_places = Lugares.objects.all().select_related('solicitud_lugar').prefetch_related('extras').annotate(
+            zona_display=Case(*[When(zona=choice[0], then=Value(choice[1])) for choice in zone_choices], output_field=CharField(), default=Value('Desconocido')),
+            is_paid=Case(When(Q(tpay_pagado=True) | Q(caja_pago=True) | Q(transfer_pago=True), then=Value('Sí')), output_field=CharField(), default=Value('No')),
+            permisos=Count('extras__tipo', filter=Q(extras__tipo='licencia_alcohol')),
+            has_alcohol=Case(When(permisos__gt=1, then=Value("Sí")), default=Value("No"), output_field=CharField())
+        ).values('folio', 'uuid', 'uuid_place', 'nombre', 'zona', 'zona_display', 'm2', 'precio', 'tramite_id', 'is_paid', 'has_alcohol', 'solicitud__folio', 'solicitud__uuid')
+        
+        # convert queryset to mutable list
+        selected_places = list(selected_places)
         metaplaces = places_dict.copy()
-        count_static_places = 0
-        for k, v in metaplaces.items():
-            count_static_places += len(v['places'])
-            for p in v['places']:
-                try:
-                    pbd = selected_places.get(nombre=p['text'], zona=k)
-                    p['request_'] = pbd.solicitud.folio
-                    p['uuid_request'] = pbd.solicitud.uuid
-                    p['place'] = pbd.folio
-                    p['final_price'] = pbd.precio
-                    p['final_concept'] = pbd.tramite_id
-                    p['is_paid'] = 'Sí' if pbd.tpay_pagado or pbd.caja_pago or pbd.transfer_pago else 'No'
-                    p['alcohol'] = 'Sí' if pbd.extras.filter(tipo='licencia_alcohol').count() > 0 else 'No'
-                except Lugares.DoesNotExist:
-                    pass
-        context['ambulantes'] = selected_places.filter(zona='amb')
-        context['total_places'] = count_static_places + context['ambulantes'].count()
-        context['metaplaces'] = metaplaces
+        for p in selected_places:
+            if p['zona'] in metaplaces.keys():
+                result = next((place for place in metaplaces[p['zona']]['places'] if place['uuid'] == str(p['uuid_place'])), None)
+                if result:
+                    p['price'] = result['price']
+                    p['uuid_internal'] = result['uuid']
+                    p['concept_internal'] = result['concept']
+                    p['added_by'] = 'Mapa'
+                else:
+                    p['added_by'] = 'Manual'
+            else:
+                p['added_by'] = 'Manual'
+        
+        # the list of dicts converts in one single list o dicts 
+        base_places = flatten_nested_dicts(places_dict)                
+        
+        # get the difference beetwen base place to selected places on bd
+        not_selected_places = get_difference_by_different_keys(base_places, selected_places, 'uuid', 'uuid_place')
+        all_places = (selected_places + not_selected_places)
+        context['selected_places'] = all_places
+        
         return context
 
 class ListRequests(AdminStaffPermissions, ListView):
