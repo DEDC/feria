@@ -1,6 +1,6 @@
 # Django
 from django.http import HttpResponse
-from django.db.models import Q, Sum, Count
+from django.db.models import Q, Sum, Case, When, Value, CharField, Count
 import zipfile
 import os
 # places
@@ -8,6 +8,8 @@ from apps.places.models import Lugares, Pagos, ProductosExtras, Solicitudes
 # openpyxl
 from openpyxl import load_workbook
 import pytz
+# utils
+from utils.tools import get_difference_by_different_keys, flatten_nested_dicts
 
 # Especificar la zona horaria deseada
 zona_horaria = pytz.timezone("America/Mexico_City")
@@ -59,55 +61,56 @@ def get_stands_report(places_dict):
     wb = load_workbook('static/docs/reporte_locales.xlsx')
     ws = wb.get_sheet_by_name('LOCALES')
     counter = 3
-    selected_places = Lugares.objects.all()
+    zone_choices = Lugares.zona.field.choices
+    # get the queryset values using when case
+    selected_places = Lugares.objects.all().select_related('solicitud_lugar').prefetch_related('extras').annotate(
+        zona_display=Case(*[When(zona=choice[0], then=Value(choice[1])) for choice in zone_choices], output_field=CharField(), default=Value('Desconocido')),
+        is_paid=Case(When(Q(tpay_pagado=True) | Q(caja_pago=True) | Q(transfer_pago=True), then=Value('Sí')), output_field=CharField(), default=Value('No')),
+        permisos=Count('extras__tipo', filter=Q(extras__tipo='licencia_alcohol')),
+        has_alcohol=Case(When(permisos__gt=1, then=Value("Sí")), default=Value("No"), output_field=CharField())
+    ).values('folio', 'uuid', 'uuid_place', 'nombre', 'zona', 'zona_display', 'm2', 'precio', 'tramite_id', 'is_paid', 'has_alcohol', 'solicitud__folio', 'solicitud__uuid', 'solicitud__nombre')
+
+    # convert queryset to mutable list
+    selected_places = list(selected_places)
     metaplaces = places_dict.copy()
-    for k, v in metaplaces.items():
-        for p in v['places']:
-            try:
-                pbd = selected_places.get(nombre=p['text'], zona=k)
-                ws.cell(row=counter, column=1, value=pbd.nombre)
-                ws.cell(row=counter, column=2, value=pbd.get_zona_display())
-                ws.cell(row=counter, column=3, value=pbd.folio)
-                ws.cell(row=counter, column=4, value=pbd.solicitud.folio)
-                ws.cell(row=counter, column=5, value=pbd.solicitud.nombre)
-                ws.cell(row=counter, column=6, value=pbd.solicitud.usuario.phone_number)
-                if hasattr(pbd.solicitud, 'comercio'):
-                    c = pbd.solicitud.comercio
-                    ws.cell(row=counter, column=7, value=c.nombre)
-                    ws.cell(row=counter, column=8, value=c.get_giro_display())
-                else:
-                    ws.cell(row=counter, column=7, value='No especificado')
-                    ws.cell(row=counter, column=8, value='No especificado')
-                ws.cell(row=counter, column=9, value='Sí' if pbd.extras.filter(tipo='licencia_alcohol').count() > 0 else 'No')
-                ws.cell(row=counter, column=10, value='Sí' if pbd.tpay_pagado or pbd.caja_pago or pbd.transfer_pago else 'No')
-            except Lugares.DoesNotExist:
-                ws.cell(row=counter, column=1, value=p['text'])
-                ws.cell(row=counter, column=2, value=v['title'])
-                ws.cell(row=counter, column=3, value='Sin asignar')
-                ws.cell(row=counter, column=4, value='Sin asignar')
-                ws.cell(row=counter, column=5, value='Sin asignar')
-                ws.cell(row=counter, column=6, value='Sin asignar')
-                ws.cell(row=counter, column=7, value='Sin asignar')
-                ws.cell(row=counter, column=8, value='Sin asignar')
-                ws.cell(row=counter, column=9, value='Sin asignar')
-                ws.cell(row=counter, column=10, value='Sin asignar')
-            counter+=1
-    for p in selected_places.filter(Q(zona='amb') |  Q(zona='patrocinador') | Q(zona='ganadera') | Q(zona='flor') | Q(zona='bandas')):
-        ws.cell(row=counter, column=1, value=p.nombre)
-        ws.cell(row=counter, column=2, value=p.get_zona_display())
-        ws.cell(row=counter, column=3, value=p.folio)
-        ws.cell(row=counter, column=4, value=p.solicitud.folio)
-        ws.cell(row=counter, column=5, value=p.solicitud.nombre)
-        ws.cell(row=counter, column=6, value=p.solicitud.usuario.phone_number)
-        if hasattr(p.solicitud, 'comercio'):
-            c = p.solicitud.comercio
-            ws.cell(row=counter, column=7, value=c.nombre)
-            ws.cell(row=counter, column=8, value=c.get_giro_display())
+    for p in selected_places:
+        if p['zona'] in metaplaces.keys():
+            result = next((place for place in metaplaces[p['zona']]['places'] if place['uuid'] == str(p['uuid_place'])), None)
+            if result:
+                p['price'] = result['price']
+                p['uuid_internal'] = result['uuid']
+                p['concept_internal'] = result['concept']
+                p['added_by'] = 'Mapa'
+            else:
+                p['added_by'] = 'Manual'
         else:
-            ws.cell(row=counter, column=7, value='No especificado')
-            ws.cell(row=counter, column=8, value='No especificado')
-        ws.cell(row=counter, column=9, value='No aplica')
-        ws.cell(row=counter, column=10, value='No aplica')
+            p['added_by'] = 'Manual'
+    
+    # the list of dicts converts in one single list o dicts 
+    base_places = flatten_nested_dicts(places_dict)                
+    
+    # get the difference beetwen base place to selected places on bd
+    not_selected_places = get_difference_by_different_keys(base_places, selected_places, 'uuid', 'uuid_place')
+    all_places = sorted(selected_places + not_selected_places, key=lambda x: x['zona_display'])
+
+    for p in all_places:
+        ws.cell(row=counter, column=1, value=p.get('nombre', p.get('text', 'No especificado')))
+        ws.cell(row=counter, column=2, value=p.get('zona_display', 'No especificado'))
+        ws.cell(row=counter, column=3, value=p.get('folio', 'Sin asignar'))
+        ws.cell(row=counter, column=4, value=p.get('solicitud__folio', 'Sin asignar'))
+        ws.cell(row=counter, column=5, value=p.get('solicitud__nombre', 'Sin asignar'))
+
+        ws.cell(row=counter, column=9, value=p.get('has_alcohol', 'Sin asignar'))
+        ws.cell(row=counter, column=10, value=p.get('is_paid', 'Sin asignar'))
+
+        # if hasattr(p.solicitud, 'comercio'):
+        #     c = p.solicitud.comercio
+        #     ws.cell(row=counter, column=7, value=c.nombre)
+        #     ws.cell(row=counter, column=8, value=c.get_giro_display())
+        # else:
+        #     ws.cell(row=counter, column=7, value='No especificado')
+        #     ws.cell(row=counter, column=8, value='No especificado')
+
         counter+=1
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     wb.save(response)
