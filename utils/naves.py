@@ -5222,7 +5222,7 @@ sabor_tabasco = {'rows': 8,
 
 teatro = {'rows': 7,
  'columns': 13,
- 'title': 'Teatro al aire libre',
+ 'title': 'Teatro al A. L.',
  'places': [{'text': '01',
    'm2': 175,
    'price': 50000,
