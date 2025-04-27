@@ -4,7 +4,7 @@ from django.db.models import Q, Sum, Case, When, Value, CharField, Count
 import zipfile
 import os
 # places
-from apps.places.models import Lugares, Pagos, ProductosExtras, Solicitudes
+from apps.places.models import Lugares, Pagos, ProductosExtras, Solicitudes, Comercios
 # openpyxl
 from openpyxl import load_workbook
 import pytz
@@ -62,13 +62,15 @@ def get_stands_report(places_dict):
     ws = wb.get_sheet_by_name('LOCALES')
     counter = 3
     zone_choices = Lugares.zona.field.choices
+    giros_choices = Comercios.giro.field.choices
     # get the queryset values using when case
-    selected_places = Lugares.objects.all().select_related('solicitud_lugar').prefetch_related('extras').annotate(
-        zona_display=Case(*[When(zona=choice[0], then=Value(choice[1])) for choice in zone_choices], output_field=CharField(), default=Value('Desconocido')),
+    selected_places = Lugares.objects.all().select_related('solicitud_lugar', 'solicitud_lugar__comercio').prefetch_related('extras').annotate(
+        zona_display=Case(*[When(zona=choice[0], then=Value(choice[1])) for choice in zone_choices], output_field=CharField(), default=Value('No especificado')),
+        giro_comercio_display=Case(*[When(solicitud__comercio__giro=choice[0], then=Value(choice[1])) for choice in giros_choices], output_field=CharField(), default=Value('No especificado')),
         is_paid=Case(When(Q(tpay_pagado=True) | Q(caja_pago=True) | Q(transfer_pago=True), then=Value('Sí')), output_field=CharField(), default=Value('No')),
         permisos=Count('extras__tipo', filter=Q(extras__tipo='licencia_alcohol')),
         has_alcohol=Case(When(permisos__gt=1, then=Value("Sí")), default=Value("No"), output_field=CharField())
-    ).values('folio', 'uuid', 'uuid_place', 'nombre', 'zona', 'zona_display', 'm2', 'precio', 'tramite_id', 'is_paid', 'has_alcohol', 'solicitud__folio', 'solicitud__uuid', 'solicitud__nombre')
+    ).values('folio', 'uuid', 'uuid_place', 'nombre', 'zona', 'zona_display', 'm2', 'precio', 'tramite_id', 'is_paid', 'has_alcohol', 'solicitud__folio', 'solicitud__uuid', 'solicitud__nombre', 'usuario__phone_number', 'solicitud__comercio__nombre', 'giro_comercio_display')
 
     # convert queryset to mutable list
     selected_places = list(selected_places)
@@ -99,10 +101,12 @@ def get_stands_report(places_dict):
         ws.cell(row=counter, column=3, value=p.get('folio', 'Sin asignar'))
         ws.cell(row=counter, column=4, value=p.get('solicitud__folio', 'Sin asignar'))
         ws.cell(row=counter, column=5, value=p.get('solicitud__nombre', 'Sin asignar'))
-
+        ws.cell(row=counter, column=6, value=p.get('usuario__phone_number', 'No especificado'))
+        ws.cell(row=counter, column=7, value=p.get('solicitud__comercio__nombre', 'No especificado'))
+        ws.cell(row=counter, column=8, value=p.get('giro_comercio_display', 'No especificado'))
         ws.cell(row=counter, column=9, value=p.get('has_alcohol', 'Sin asignar'))
-        ws.cell(row=counter, column=10, value=p.get('is_paid', 'Sin asignar'))
-        ws.cell(row=counter, column=11, value=p.get('added_by', 'Sin asignar'))
+        ws.cell(row=counter, column=10, value=p.get('is_paid', 'No especificado'))
+        ws.cell(row=counter, column=11, value=p.get('added_by', 'No espeficado'))
 
         # if hasattr(p.solicitud, 'comercio'):
         #     c = p.solicitud.comercio
