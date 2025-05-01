@@ -5,13 +5,14 @@ from apps.admin.views import (Main, Request, Shop, SetPlace, UpdateRequest, Upda
                               ListRequests, ListUsers, UnlockRequest, UpdateUser, UserDates, ListDates,
                               DownloadContract, DownloadGafete, DownloadSuministros, DownloadReport,
                               DownloadRequestsReport, ListParking, DownloadStandsReport,
-                              DownloadTarjeton, UpdateParking, DownloadReceipt, ListStands, DownloadResponsibility,
+                              DownloadTarjeton, UpdateParking, DownloadReceipt, ListStands, DownloadResponsibility, QRReader,
                               set_place_temp, unset_place_temp, set_place,
                               add_alcohol, add_terraza, add_big_terraza, add_gafete, delete_item, delete_place, add_descuento,
                               aplicar_pago_caja, aplicar_pago_transfer, apply_cash_payment_gafete, RegistroManualUbicacion, AddTarjetonByLocal)
 app_name = 'admin'
 
 urlpatterns = [
+    path('lector_qr', QRReader.as_view(), name='qr_reader'),
     path('main', Main.as_view(), name='main'),
     path('solicitudes', ListRequests.as_view(), name='list_requests'),
     path('usuarios', ListUsers.as_view(), name='list_users'),

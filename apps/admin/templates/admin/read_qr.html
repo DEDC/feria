@@ -1,0 +1,26 @@
+{% extends 'places/base.html' %}
+{% load static %}
+{% block head %}
+{{block.super}}
+<style>
+    #input-search{
+        height: 80px;
+        font-size: 35px;
+        text-align: center;
+    }
+</style>
+{% endblock head %}
+{% load static %}
+{% block header %}
+{% endblock header %}
+{% block main %}
+<div class="container w-50 mt-5 d-flex flex-column align-items-center justify-content-center shadow-4 p-5 rounded border-top border-5 border-primary" style="min-width: 400px;">
+    <img src="{% static 'images/logov3.png' %}" alt="logo" width="40%">
+    <br>
+    <h2 class="text-center m-4 fw-bold">Verificador de Documentos</h2>
+    <div class="form-outline" data-mdb-input-init>
+        <input type="text" id="input-search" class="form-control form-control-lg m-0" />
+    </div>
+    <button type="button" class="btn btn-primary btn-lg w-100 mt-2">Verificar</button>
+</div>
+{% endblock main %}

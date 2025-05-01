@@ -251,6 +251,31 @@
                 {% endif %}
             </div>
         </section>
+        <section class="mb-4">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="p-3 badge-info rounded-4">
+                                        <i class="fas fa-qrcode fa-2x fa-fw"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-4">
+                                    <h4>Verificación de QR</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer border-0 bg-light p-2">
+                            <a class="btn btn-link m-0" href="{% url 'admin:qr_reader' %}" role="button"
+                                data-mdb-ripple-init data-ripple-color="primary">Comenzar<i
+                                    class="fas fa-arrow-right ms-2"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 </div>
 {% endblock main %}

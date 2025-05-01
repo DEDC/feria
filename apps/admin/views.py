@@ -61,6 +61,8 @@ ambulante_concept = {
 dates = get_dates_from_range(settings.START_DATES, settings.END_DATES)
 hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.PERIODS_TIME)
 
+class QRReader(AdminStaffPermissions, TemplateView):
+    template_name = 'admin/read_qr.html'
 
 class Main(AdminStaffPermissions, TemplateView):
     template_name = 'admin/main.html'
