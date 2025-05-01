@@ -3,24 +3,262 @@
 {% block head %}
 {{block.super}}
 <style>
-    #input-search{
+    #input-search {
         height: 80px;
         font-size: 35px;
         text-align: center;
     }
+
+    .initial {
+        border-top: 7px solid #3b71ca;
+    }
+
+    .car,
+    .extra,
+    .place {
+        border-top: 7px solid #14a44d;
+    }
+
+    .not-exists,
+    .error {
+        border-top: 7px solid #d1485f;
+    }
 </style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let form = document.querySelector('#form-search')
+        let input = document.querySelector('#input-search')
+        input.addEventListener('change', (e) => {
+            input.value = input.value.replaceAll('’', '')
+            form.submit()
+        })
+
+        input.addEventListener('blur', function () {
+            setTimeout(() => {
+                input.focus();
+            }, 0);
+        });
+
+        window.onload = function () {
+            input.focus();
+        };
+    })
+</script>
 {% endblock head %}
 {% load static %}
 {% block header %}
 {% endblock header %}
 {% block main %}
-<div class="container w-50 mt-5 d-flex flex-column align-items-center justify-content-center shadow-4 p-5 rounded border-top border-5 border-primary" style="min-width: 400px;">
+<div class="container {{data.type}} w-50 mt-5 d-flex flex-column align-items-center justify-content-center shadow-4 p-5 rounded"
+    style="min-width: 400px;">
     <img src="{% static 'images/logov3.png' %}" alt="logo" width="40%">
     <br>
     <h2 class="text-center m-4 fw-bold">Verificador de Documentos</h2>
-    <div class="form-outline" data-mdb-input-init>
-        <input type="text" id="input-search" class="form-control form-control-lg m-0" />
-    </div>
-    <button type="button" class="btn btn-primary btn-lg w-100 mt-2">Verificar</button>
+    <form method="get" id="form-search">
+        <div class="form-outline">
+            <input type="text" name="qr-code" class="form-control form-control-lg m-0" id="input-search" required
+                autofocus />
+        </div>
+        <div class="d-grid gap-2">
+            <button type="button" class="btn btn-primary btn-lg w-100 mt-2">Verificar</button>
+            <a href="{% url 'admin:qr_reader' %}" class="btn btn-light btn-lg" type="button">Reiniciar</a>
+          </div>
+    </form>
 </div>
+{% if data.type == 'place' or data.type == 'car' or data.type == 'extra' %}
+<div class="container mt-5 mb-5 shadow-4 p-5 rounded">
+    <div class="table-responsive">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Folio recién leído</th>
+                    <td class="border border-warning border-3">{{data.object.folio}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Fecha de asignación</th>
+                    <td>{{data.object.fecha_reg}}</td>
+                </tr>
+                {% if data.type == 'place' %}
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Nombre y Zona</th>
+                    <td>Local {{data.object.nombre}} {{data.object.get_zona_display}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">M2</th>
+                    <td>{{data.object.m2}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Asignado a la Solicitud</th>
+                    <td class="border border-warning border-3"><a target="_blank"
+                            href="{% url 'admin:request' data.object.solicitud.uuid %}">{{data.object.solicitud.folio}}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Nombre o razón social</th>
+                    <td>{{data.object.solicitud.nombre}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Correo electrónico</th>
+                    <td>{{data.object.solicitud.usuario.email}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Número de Teléfono</th>
+                    <td>{{data.object.solicitud.usuario.phone_number}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Comercio</th>
+                    <td>{{data.object.solicitud.comercio.nombre|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Giro del Comercio</th>
+                    <td>{{data.object.solicitud.comercio.get_giro_display|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">RFC</th>
+                    <td>{{data.object.solicitud.rfc_txt|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">CURP</th>
+                    <td>{{data.object.solicitud.curp_txt|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Estado</th>
+                    <td>{{data.object.solicitud.get_estado_display|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Municipio</th>
+                    <td>{{data.object.solicitud.municipio|default:"No especificado"}}</td>
+                </tr>
+                {% endif %}
+                {% if data.type == 'extra' %}
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Nombre y Zona</th>
+                    <td>Local {{data.object.lugar.nombre}} {{data.object.lugar.get_zona_display}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">M2</th>
+                    <td>{{data.object.lugar.m2}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Asignado a la Solicitud</th>
+                    <td class="border border-warning border-3"><a target="_blank"
+                            href="{% url 'admin:request' data.object.lugar.solicitud.uuid %}">{{data.object.lugar.solicitud.folio}}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Nombre o razón social</th>
+                    <td>{{data.object.lugar.solicitud.nombre}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Correo electrónico</th>
+                    <td>{{data.object.lugar.solicitud.usuario.email}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Número de Teléfono</th>
+                    <td>{{data.object.lugar.solicitud.usuario.phone_number}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Comercio</th>
+                    <td>{{data.object.lugar.solicitud.comercio.nombre|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Giro del Comercio</th>
+                    <td>{{data.object.lugar.solicitud.comercio.get_giro_display|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">RFC</th>
+                    <td>{{data.object.lugar.solicitud.rfc_txt|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">CURP</th>
+                    <td>{{data.object.lugar.solicitud.curp_txt|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Estado</th>
+                    <td>{{data.object.lugar.solicitud.get_estado_display|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Municipio</th>
+                    <td>{{data.object.lugar.solicitud.municipio|default:"No especificado"}}</td>
+                </tr>
+                {% endif %}
+                {% if data.type == 'car' %}
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Nombre o razón social</th>
+                    <td>{{data.object.nombre|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Nombre comercial</th>
+                    <td>{{data.object.nombre_comercial|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Tipo</th>
+                    <td>{{data.object.tipo|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Marca</th>
+                    <td>{{data.object.marca|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Color</th>
+                    <td>{{data.object.color|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Placa</th>
+                    <td>{{data.object.placa|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Nombre y Zona</th>
+                    <td>Local {{data.object.lugar.nombre}} {{data.object.lugar.get_zona_display}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Asignado a la Solicitud</th>
+                    <td class="border border-warning border-3"><a target="_blank"
+                            href="{% url 'admin:request' data.object.lugar.solicitud.uuid %}">{{data.object.lugar.solicitud.folio}}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Correo electrónico</th>
+                    <td>{{data.object.lugar.solicitud.usuario.email}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Número de Teléfono</th>
+                    <td>{{data.object.lugar.solicitud.usuario.phone_number}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">RFC</th>
+                    <td>{{data.object.lugar.solicitud.rfc_txt|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">CURP</th>
+                    <td>{{data.object.lugar.solicitud.curp_txt|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Estado</th>
+                    <td>{{data.object.lugar.solicitud.get_estado_display|default:"No especificado"}}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light" style="width: 40%;">Municipio</th>
+                    <td>{{data.object.lugar.solicitud.municipio|default:"No especificado"}}</td>
+                    {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% if data.type == 'error' %}
+<div class="container mt-5 mb-5 shadow-4 p-5 rounded">
+    <div class="alert m-0" role="alert" data-mdb-color="danger" data-mdb-alert-init>
+        <i class="fas fa-times-circle me-3"></i>Ha ocurrido un error, intente de nuevo. Si el problema persiste,
+        contacte a soporte técnico.
+    </div>
+</div>
+{% endif %}
+{% if data.type == 'not-exists' %}
+<div class="container mt-5 mb-5 shadow-4 p-5 rounded">
+    <div class="alert m-0" role="alert" data-mdb-color="danger" data-mdb-alert-init>
+        <i class="fas fa-times-circle me-3"></i>No existen registros con ese folio.
+    </div>
+</div>
+{% endif %}
 {% endblock main %}

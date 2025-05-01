@@ -64,6 +64,27 @@ hours = get_times_from_range(settings.START_HOURS, settings.END_HOURS, settings.
 class QRReader(AdminStaffPermissions, TemplateView):
     template_name = 'admin/read_qr.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            folio = self.request.GET.get('qr-code', None)
+            if folio is not None:
+                data = None
+                place = Lugares.objects.filter(folio__exact=folio)
+                extra = ProductosExtras.objects.filter(folio__exact=folio)
+                car_card = Estacionamiento.objects.filter(folio__exact=folio)
+                if place.first(): data = {'type': 'place', 'object': place.get()}
+                elif extra.first(): data = {'type': 'extra', 'object': extra.get()}
+                elif car_card.first(): data = {'type': 'car', 'object': car_card.get()}
+                else: data = {'type': 'not-exists'}
+                context['data'] = data
+            else:
+                context['data'] = {'type': 'initial'}
+            return context
+        except:
+            context['data'] = {'type': 'error'}
+        return context
+
 class Main(AdminStaffPermissions, TemplateView):
     template_name = 'admin/main.html'
 
@@ -901,6 +922,36 @@ def aplicar_pago_transfer(request, uuid, uuid_place):
     except Exception as e:
         return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def validate_qr(request):
+#     try:
+#         qr_code = request.query_params.get('qr-code', None)
+#         print(qr_code)
+#         if qr_code is None:
+#             return Response(
+#                 {'error': 'Es necesario escanear o ingresar el folio de búsqueda'},
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
+#         # search in the models
+#         place = Lugares.objects.filter(folio__exact=qr_code)
+#         extra = ProductosExtras.objects.filter(folio__exact=qr_code)
+#         car_card = Estacionamiento.objects.filter(folio__exact=qr_code)
+#         reults = [place.first(), extra.first(), car_card.first()]
+#         print(reults)
+
+#         # Lógica de búsqueda simulada
+#         resultados = {'folio', 'fsd'}
+
+#         # Respuesta exitosa
+#         return Response(resultados, status=status.HTTP_200_OK)
+
+#     except Exception as e:
+#         print(e)
+#         return Response(
+#             {'error': 'Ha ocurrido un error. Inténte de nuevo. Si el problema persiste, contacte a soporte técnico.'},
+#             status=status.HTTP_500_INTERNAL_SERVER_ERROR
+#         )
 
 class RegistroManualUbicacion(AdminStaffPermissions, DetailView):
     template_name = 'admin/ubicacion_manual.html'
